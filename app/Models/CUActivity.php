@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class CUActivity extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'course_id',
+        'title',
+        'description',
+        'type',
+        'due_date'
+    ];
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(AssignmentSubmission::class, 'cu_id');
+    }
+}
