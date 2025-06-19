@@ -21,5 +21,9 @@ class ViewController extends Controller
     {
         return view('register');
     }
+    public function register_studentVerify()
+    {
+        return view('register_studentVerify');
+    }
 
 }
