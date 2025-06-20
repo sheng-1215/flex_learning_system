@@ -9,12 +9,19 @@ class CUActivity extends Model
 {
     use HasFactory;
 
+    protected $table = 'cu_activities';
+
     protected $fillable = [
         'course_id',
         'title',
         'description',
         'type',
-        'due_date'
+        'due_date',
+        'file_paths',
+    ];
+
+    protected $casts = [
+        'file_paths' => 'array',
     ];
 
     public function course()

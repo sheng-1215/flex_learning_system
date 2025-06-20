@@ -45,6 +45,11 @@ class FunctionController extends Controller
         $form['password'] = Hash::make($form['password']);
         $user = User::create($form);
         auth()->login($user);
+
+        if ($user->role === 'admin' || $user->role === 'lecturer') {
+            return redirect()->route('admin_dashboard');
+        }
+
         return redirect()->route('index');
     }
 

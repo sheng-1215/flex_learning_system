@@ -100,11 +100,11 @@
     <div class="sidebar" id="sidebar">
         <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"><a href="#" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-user-plus mr-2"></i>Register Student</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-user-check mr-2"></i>Assign Student to Course</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-book mr-2"></i>Add Course</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
+            <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
+            <li><a href="{{ route('admin.registerStudentView') }}" class="nav-link"><i class="fas fa-user-plus mr-2"></i>Register Student</a></li>
+            <li><a href="{{ route('admin.users') }}" class="nav-link"><i class="fas fa-users-cog mr-2"></i>Manage Users</a></li>
+            <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Add Course</a></li>
+            <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
             <li><a href="#" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li>
             <li><a href="#" class="nav-link"><i class="fas fa-pen mr-2"></i>Grade Assignment</a></li>
             <li>
@@ -125,46 +125,58 @@
         </div>
         <div class="row dashboard-cards">
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
-                    <h6>Register Student</h6>
-                    <p class="text-muted small">Add new students to the system.</p>
-                </div>
+                <a href="{{ route('admin.registerStudentView') }}" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
+                        <h6>Register Student</h6>
+                        <p class="text-muted small">Add new students to the system.</p>
+                    </div>
+                </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-book fa-2x text-success mb-2"></i>
-                    <h6>Add Course</h6>
-                    <p class="text-muted small">Create and manage courses.</p>
-                </div>
+                <a href="{{ route('admin.courses') }}" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-book fa-2x text-success mb-2"></i>
+                        <h6>Add Course</h6>
+                        <p class="text-muted small">Create and manage courses.</p>
+                    </div>
+                </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-tasks fa-2x text-warning mb-2"></i>
-                    <h6>Add Assignment</h6>
-                    <p class="text-muted small">Create assignments for students.</p>
-                </div>
+                <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-tasks fa-2x text-warning mb-2"></i>
+                        <h6>Add Assignment</h6>
+                        <p class="text-muted small">Create assignments for students.</p>
+                    </div>
+                </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-user-check fa-2x text-info mb-2"></i>
-                    <h6>Assign Student</h6>
-                    <p class="text-muted small">Assign students to courses.</p>
-                </div>
+                <a href="{{ route('admin.users') }}" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-users-cog fa-2x text-info mb-2"></i>
+                        <h6>Manage Users</h6>
+                        <p class="text-muted small">Edit student and lecturer details.</p>
+                    </div>
+                </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
-                    <h6>Check Assignment Status</h6>
-                    <p class="text-muted small">Monitor student assignment submissions.</p>
-                </div>
+                <a href="#" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
+                        <h6>Check Assignment Status</h6>
+                        <p class="text-muted small">Monitor student assignment submissions.</p>
+                    </div>
+                </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card p-3 text-center">
-                    <i class="fas fa-pen fa-2x text-danger mb-2"></i>
-                    <h6>Grade Assignment</h6>
-                    <p class="text-muted small">Grade and give feedback on assignments.</p>
-                </div>
+                <a href="#" class="text-decoration-none">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-pen fa-2x text-danger mb-2"></i>
+                        <h6>Grade Assignment</h6>
+                        <p class="text-muted small">Grade and give feedback on assignments.</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
