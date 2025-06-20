@@ -18,3 +18,17 @@ Route::controller(FunctionController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logoutFunction');
     Route::post('/register/studentVerify','register_studentVerify')->name('register.studentVerify.function');
 });
+
+Route::prefix("student")->group(function () {
+    Route::controller(ViewController::class)->group(function () {
+        Route::get('/dashboard', 'dashboard')->name('student.dashboard');
+        Route::get('/login','login')->name('login');
+
+    });
+    Route::controller(FunctionController::class)->group(function () {
+        Route::post('/login', 'login')->name('student.loginFunction');
+        Route::post('/logout', 'logout')->name('student.logoutFunction');
+    });
+    // Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
+    
+});

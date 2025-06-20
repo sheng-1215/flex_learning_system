@@ -13,7 +13,6 @@ class Course extends Model
         'title',
         'start_date',
         'end_date',
-        'created_by'
     ];
 
     protected $casts = [
@@ -29,6 +28,11 @@ class Course extends Model
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function enrollmentsCourse()
+    {
+        return $this->hasMany(Enrollment::class, 'course_id');
     }
 
     public function enrolledUsers()

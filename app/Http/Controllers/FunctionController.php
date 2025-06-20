@@ -19,7 +19,7 @@ class FunctionController extends Controller
         if (Auth::attempt($form)) {
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard'); 
+            return redirect()->route('student.dashboard'); 
         }
 
         return back()->withErrors([
@@ -31,6 +31,7 @@ class FunctionController extends Controller
     {
         // dd($request->ic);
         $authCheck= Http::get("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
+        
         // dd("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
         if($authCheck->json()['status'] == 200){
             $json=$authCheck->json()['data'];
