@@ -22,4 +22,9 @@ class ViewController extends Controller
         return view('register');
     }
 
+    public function adminDashboard()
+    {
+        return view('admin_dashboard');
+    }
+
 }
