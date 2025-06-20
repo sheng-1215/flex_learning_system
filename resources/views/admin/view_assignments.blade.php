@@ -49,7 +49,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($assignments as $assignment)
+                                @forelse($assignments as $assignment)
                                 <tr>
                                     <td>{{ $assignment->title }}</td>
                                     <td>{{ Str::limit($assignment->description, 50) }}</td>
@@ -71,7 +71,7 @@
                                 <tr>
                                     <td colspan="5" class="text-center">No assignments found for this course.</td>
                                 </tr>
-                                @endforeach
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
