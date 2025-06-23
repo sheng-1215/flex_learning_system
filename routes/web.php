@@ -23,6 +23,7 @@ Route::prefix("student")->group(function () {
     Route::controller(ViewController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('student.dashboard');
         Route::get('/login','login')->name('login');
+        
 
     });
     Route::controller(FunctionController::class)->group(function () {

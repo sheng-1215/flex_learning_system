@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Course;
+use App\Models\CUActivity;
 use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -54,7 +55,10 @@ class DatabaseSeeder extends Seeder
             'user_id' => 3, // alex
             'course_id' => 2, // Course 1
         ]);
-       
+        CUActivity::factory(10)->create()->each(function ($activity) {
+            $activity->course_id = Course::inRandomOrder()->first()->id;
+            $activity->save();
+        });
 
     }
 }
