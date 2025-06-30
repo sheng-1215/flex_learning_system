@@ -24,8 +24,109 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
-            <!-- Students Table -->
+            <!-- Admins Table -->
             <div class="card shadow-sm mb-4">
+                <div class="card-header"><h5 class="mb-0">Admins</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Created Courses</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($admins as $admin)
+                                <tr>
+                                    <td>{{ $admin->name }}</td>
+                                    <td>{{ $admin->email }}</td>
+                                    <td>{{ ucfirst($admin->role) }}</td>
+                                    <td>
+                                        @forelse($admin->courses as $course)
+                                            - {{ $course->title }}<br>
+                                        @empty
+                                            No courses created.
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.editUser', $admin) }}" class="btn btn-sm btn-info">Edit</a>
+                                        <form action="{{ route('admin.destroyUser', $admin) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="5" class="text-center">No admins found.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lecturers Table -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header"><h5 class="mb-0">Lecturers</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Created Courses</th>
+                                    <th>Enrolled Courses</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($lecturers as $lecturer)
+                                <tr>
+                                    <td>{{ $lecturer->name }}</td>
+                                    <td>{{ $lecturer->email }}</td>
+                                    <td>
+                                        @forelse($lecturer->courses as $course)
+                                            - {{ $course->title }}<br>
+                                        @empty
+                                            No courses created.
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        @php
+                                            $enrolled = $lecturer->lecturerEnrolledCourses;
+                                        @endphp
+                                        @forelse($enrolled as $course)
+                                            - {{ $course->title }}<br>
+                                        @empty
+                                            Not responsible for any courses.
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.editUser', $lecturer) }}" class="btn btn-sm btn-info">Edit</a>
+                                        <form action="{{ route('admin.destroyUser', $lecturer) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="5" class="text-center">No lecturers found.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Table -->
+            <div class="card shadow-sm">
                 <div class="card-header"><h5 class="mb-0">Students</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -67,55 +168,6 @@
                     </div>
                     <div class="d-flex justify-content-center">
                         {{ $students->appends(request()->except('students_page'))->links() }}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lecturers Table -->
-            <div class="card shadow-sm">
-                <div class="card-header"><h5 class="mb-0">Lecturers & Admins</h5></div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Created Courses</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($lecturers as $lecturer)
-                                <tr>
-                                    <td>{{ $lecturer->name }}</td>
-                                    <td>{{ $lecturer->email }}</td>
-                                    <td>{{ ucfirst($lecturer->role) }}</td>
-                                    <td>
-                                        @forelse($lecturer->courses as $course)
-                                            - {{ $course->title }}<br>
-                                        @empty
-                                            No courses created.
-                                        @endforelse
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('admin.editUser', $lecturer) }}" class="btn btn-sm btn-info">Edit</a>
-                                        <form action="{{ route('admin.destroyUser', $lecturer) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="5" class="text-center">No lecturers or admins found.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        {{ $lecturers->appends(request()->except('lecturers_page'))->links() }}
                     </div>
                 </div>
             </div>

@@ -15,13 +15,8 @@ class CUActivity extends Model
         'course_id',
         'title',
         'description',
-        'type',
         'due_date',
-        'file_paths',
-    ];
-
-    protected $casts = [
-        'file_paths' => 'array',
+        
     ];
 
     public function course()
@@ -32,5 +27,10 @@ class CUActivity extends Model
     public function assignmentSubmissions()
     {
         return $this->hasMany(AssignmentSubmission::class, 'cu_id');
+    }
+
+    public function topics()
+    {
+        return $this->hasMany(\App\Models\topic::class, 'cu_id');
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Assignment to {{ $course->title }}</title>
+    <title>Add Topic to {{ $assignment->title }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -20,7 +20,6 @@
             color: white;
             border-radius: 10px;
         }
-        .custom-file-label::after { content: "Browse"; }
     </style>
 </head>
 <body>
@@ -28,12 +27,12 @@
     <div class="content">
         <div class="container-fluid">
             <div class="page-header mb-4 text-center">
-                <h1 class="display-4">Add Assignment to {{ $course->title }}</h1>
-                <a href="{{ route('admin.assignments.view', $course) }}" class="text-white">Back to Assignments</a>
+                <h1 class="display-4">Add Topic to: {{ $assignment->title }}</h1>
+                <a href="{{ route('admin.assignments.view', $assignment->course_id) }}" class="text-white">Back to Assignments</a>
             </div>
             <div class="card shadow-sm">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-plus mr-2"></i>Add New Assignment</h5>
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus mr-2"></i>Add New Topic</h5>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -45,22 +44,26 @@
                             </ul>
                         </div>
                     @endif
-                    <form action="{{ route('admin.assignments.add.post', ['course' => $course->id]) }}" method="POST">
+                    <form action="{{ route('admin.topic.store', $assignment) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="title">Title <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="title" name="title" required value="{{ old('title') }}">
                         </div>
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                            <label for="type">Type <span class="text-danger">*</span></label>
+                            <select class="form-control" id="type" name="type" required>
+                                <option value="slide"{{ old('type') == 'slide' ? ' selected' : '' }}>Slide (Picture)</option>
+                                <option value="document"{{ old('type') == 'document' ? ' selected' : '' }}>Document (file)</option>
+                                <option value="video"{{ old('type') == 'video' ? ' selected' : '' }}>Video (mp4)</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="due_date">Due Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="due_date" name="due_date" required value="{{ old('due_date') }}">
+                            <label for="file_path">File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="file_path" name="file_path[]" required multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp4">
                         </div>
-                        <button type="submit" class="btn btn-warning"><i class="fas fa-save mr-2"></i>Save Assignment</button>
-                        <a href="{{ route('admin.assignments.view', $course) }}" class="btn btn-secondary ml-2">Cancel</a>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save mr-2"></i>Save Topic</button>
+                        <a href="{{ route('admin.assignments.view', $assignment->course_id) }}" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
             </div>
@@ -68,12 +71,5 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 显示选中的文件名
-        $(document).on('change', '.custom-file-input', function (event) {
-            var inputFile = event.currentTarget;
-            $(inputFile).parent().find('.custom-file-label').html(Array.from(inputFile.files).map(f => f.name).join(', '));
-        });
-    </script>
 </body>
 </html> 

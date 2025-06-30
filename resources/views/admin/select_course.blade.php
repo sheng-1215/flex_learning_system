@@ -27,6 +27,37 @@
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Assignments</h5>
                 <h1>Select a Course to add Assignments</h1>
             </div>
+            {{-- Add Assignment Form --}}
+            <div class="card mb-4">
+                <div class="card-header">Add New Assignment</div>
+                <div class="card-body">
+                    <form id="add-assignment-form" action="" method="POST">
+                        @csrf
+                        <div class="form-group mb-2">
+                            <label for="course_id">Course</label>
+                            <select name="course_id" id="course_id" class="form-control" required>
+                                <option value="">Select Course</option>
+                                @foreach($courses as $course)
+                                    <option value="{{ $course->id }}">{{ $course->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="title">Assignment Title</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="description">Description</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="due_date">Due Date</label>
+                            <input type="date" name="due_date" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Assignment</button>
+                    </form>
+                </div>
+            </div>
             <div class="row">
                 @forelse($courses as $course)
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -37,13 +68,26 @@
                         </div>
                         <div class="p-4">
                             <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fas fa-tasks text-primary mr-2"></i>{{ $course->assignmentCount ?? 0 }} Assignments</small>
+                                <small class="m-0"><i class="fas fa-tasks text-primary mr-2"></i>{{ $course->cu_activities_count ?? 0 }} Assignments</small>
                                 <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ $course->start_date->format('M d, Y') }}</small>
                             </div>
                             <a class="h5" href="{{ route('admin.assignments.view', $course) }}">{{ $course->title }}</a>
                             <div class="border-top mt-4 pt-4">
                                 <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-user text-primary mr-2"></i>Created by {{ $course->creator->name ?? 'N/A' }}</h6>
+                                    <div>
+                                        @php
+                                            $lecturers = $course->enrollments()->where('role', 'lecturer')->with('user')->get()->pluck('user');
+                                        @endphp
+                                        @if($lecturers->count())
+                                            <div style="font-size:1em; color:#333; margin-bottom:2px;">
+                                                <i class="fa fa-chalkboard-teacher text-info mr-1"></i><strong>Lecturer(s):</strong>
+                                                @foreach($lecturers as $lecturer)
+                                                    <span class="badge badge-info" style="font-size:0.95em; margin-right:2px;">{{ $lecturer->name }}</span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                        <h6 class="m-0"><i class="fa fa-user text-primary mr-2"></i>Created by {{ $course->creator->name ?? 'N/A' }}</h6>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -59,5 +103,16 @@
             </div>
         </div>
     </div>
+    <script>
+    document.getElementById('add-assignment-form').addEventListener('submit', function(e) {
+        var courseId = document.getElementById('course_id').value;
+        if (!courseId) {
+            alert('Please select a course!');
+            e.preventDefault();
+            return false;
+        }
+        this.action = '/admin/courses/' + courseId + '/assignments/add';
+    });
+    </script>
 </body>
 </html>

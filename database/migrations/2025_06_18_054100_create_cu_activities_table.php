@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('type');
             $table->date('due_date');
             $table->timestamps();
         });

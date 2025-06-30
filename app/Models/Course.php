@@ -14,7 +14,7 @@ class Course extends Model
         'cover_image',
         'start_date',
         'end_date',
-        'created_by'
+        'created_by',
     ];
 
     protected $casts = [
@@ -32,10 +32,15 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function enrollmentsCourse()
+    {
+        return $this->hasMany(Enrollment::class, 'course_id');
+    }
+
     public function enrolledUsers()
     {
         return $this->belongsToMany(User::class, 'enrollments')
-            ->withPivot('status', 'enrolled_at')
+            ->withPivot('status', 'enrolled_at', 'role')
             ->withTimestamps();
     }
 

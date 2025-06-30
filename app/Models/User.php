@@ -60,4 +60,10 @@ class User extends Authenticatable
             ->withPivot('status', 'enrolled_at')
             ->withTimestamps();
     }
+
+    public function lecturerEnrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments', 'user_id', 'course_id')
+            ->wherePivot('role', 'lecturer');
+    }
 }

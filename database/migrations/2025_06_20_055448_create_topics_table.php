@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('enrollments', function (Blueprint $table) {
+        Schema::create('topics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('course_id')->constrained();
-            $table->string('role')->nullable();
+            $table->foreignId('cu_id')->constrained("cu_activities")->onDelete('cascade');
+            $table->string('title');
+            $table->string("file_path")->nullable();
+            $table->string('type');
             $table->timestamps();
-
-            // 确保一个用户只能注册一次同一个课程
-            $table->unique(['user_id', 'course_id']);
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('enrollments');
+        Schema::dropIfExists('topics');
     }
-}; 
+};

@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Models\CUActivity;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function courses()
     {
-        $courses = Course::all();
+        $courses = Course::with(['enrollments.user'])->get();
         return view('admin.courses', ['courses' => $courses]);
     }
 
@@ -57,7 +59,20 @@ class AdminController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $course->update($request->all());
+        $course->update($request->only(['title', 'start_date', 'end_date']));
+
+        // Remove all current lecturers for this course
+        $course->enrollments()->where('role', 'lecturer')->delete();
+        // Add only the selected lecturers
+        if ($request->filled('lecturers')) {
+            foreach ($request->lecturers as $lecturerId) {
+                Enrollment::create([
+                    'user_id' => $lecturerId,
+                    'course_id' => $course->id,
+                    'role' => 'lecturer',
+                ]);
+            }
+        }
 
         return redirect()->route('admin.courses')->with('success', 'Course updated successfully.');
     }
@@ -73,7 +88,8 @@ class AdminController extends Controller
 
     public function registerStudentView()
     {
-        return view('admin.register_student');
+        $courses = \App\Models\Course::all();
+        return view('admin.register_student', compact('courses'));
     }
 
     public function registerStudent(Request $request)
@@ -82,37 +98,64 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed'],
+            'role' => ['required', 'in:student,lecturer'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'student',
+            'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.editUser', $user)->with('success', 'Student registered successfully! You can now manage their courses.');
+        if ($user->role === 'student' && $request->has('student_courses')) {
+            foreach ($request->student_courses as $courseId) {
+                // 避免重复插入
+                if (!Enrollment::where('user_id', $user->id)->where('course_id', $courseId)->where('role', 'student')->exists()) {
+                    Enrollment::create([
+                        'user_id' => $user->id,
+                        'course_id' => $courseId,
+                        'role' => 'student',
+                        'enrollment_date' => now(),
+                    ]);
+                }
+            }
+        }
+        if ($user->role === 'lecturer' && $request->has('lecturer_courses')) {
+            foreach ($request->lecturer_courses as $courseId) {
+                // 避免重复插入
+                if (!Enrollment::where('user_id', $user->id)->where('course_id', $courseId)->where('role', 'lecturer')->exists()) {
+                    Enrollment::create([
+                        'user_id' => $user->id,
+                        'course_id' => $courseId,
+                        'role' => 'lecturer',
+                        'enrollment_date' => now(),
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.editUser', $user)->with('success', 'Account registered successfully!');
     }
 
     public function users()
     {
+        $admins = User::where('role', 'admin')->get();
+        $lecturers = User::where('role', 'lecturer')
+            ->with(['courses', 'enrollments.course' => function($q){ $q->wherePivot('role', 'lecturer'); }])
+            ->get();
         $students = User::where('role', 'student')
-                        ->with('enrollments.course')
-                        ->paginate(10, ['*'], 'students_page');
-        $lecturers = User::whereIn('role', ['lecturer', 'admin'])
-                         ->with('courses')
-                         ->paginate(10, ['*'], 'lecturers_page');
-
-        return view('admin.users', compact('students', 'lecturers'));
+            ->with('enrollments.course')
+            ->paginate(10, ['*'], 'students_page');
+        return view('admin.users', compact('admins', 'lecturers', 'students'));
     }
 
     public function editUser(User $user)
     {
-        $courses = null;
-        if ($user->role === 'student') {
-            $courses = Course::all();
-        }
-        return view('admin.edit_user', compact('user', 'courses'));
+        $courses = Course::all();
+        $enrolledCourseIds = $user->enrollments()->where('role', 'student')->pluck('course_id')->toArray();
+        $lecturerCourseIds = $user->enrollments()->where('role', 'lecturer')->pluck('course_id')->toArray();
+        return view('admin.edit_user', compact('user', 'courses', 'enrolledCourseIds', 'lecturerCourseIds'));
     }
 
     public function updateUser(Request $request, User $user)
@@ -121,7 +164,8 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
-            'courses' => 'nullable|array'
+            'student_courses' => 'nullable|array',
+            'lecturer_courses' => 'nullable|array',
         ]);
 
         $user->name = $request->name;
@@ -131,15 +175,35 @@ class AdminController extends Controller
         }
         $user->save();
 
+        // 更新学生课程
         if ($user->role === 'student') {
-            $user->enrollments()->delete();
-            if ($request->has('courses')) {
-                foreach ($request->courses as $courseId) {
-                    Enrollment::create([
-                        'user_id' => $user->id,
-                        'course_id' => $courseId,
-                        'enrollment_date' => now(),
-                    ]);
+            $user->enrollments()->where('role', 'student')->delete();
+            if ($request->has('student_courses')) {
+                foreach ($request->student_courses as $courseId) {
+                    // 避免重复插入
+                    if (!Enrollment::where('user_id', $user->id)->where('course_id', $courseId)->where('role', 'student')->exists()) {
+                        Enrollment::create([
+                            'user_id' => $user->id,
+                            'course_id' => $courseId,
+                            'role' => 'student',
+                        ]);
+                    }
+                }
+            }
+        }
+        // 更新老师负责课程
+        if ($user->role === 'lecturer') {
+            $user->enrollments()->where('role', 'lecturer')->delete();
+            if ($request->has('lecturer_courses')) {
+                foreach ($request->lecturer_courses as $courseId) {
+                    // 避免重复插入
+                    if (!Enrollment::where('user_id', $user->id)->where('course_id', $courseId)->where('role', 'lecturer')->exists()) {
+                        Enrollment::create([
+                            'user_id' => $user->id,
+                            'course_id' => $courseId,
+                            'role' => 'lecturer',
+                        ]);
+                    }
                 }
             }
         }
@@ -159,51 +223,27 @@ class AdminController extends Controller
 
     public function viewCourseAssignments(Course $course)
     {
-        $assignments = $course->cuActivities()->where('type', 'assignment')->get();
+        $assignments = $course->cuActivities()->with('topics')->get();
         return view('admin.view_assignments', compact('course', 'assignments'));
     }
 
-    public function addAssignmentToCourse(Course $course)
+    public function addAssignmentToCourse(Request $request, Course $course)
     {
-        return view('admin.add_assignment', compact('course'));
-    }
+        if ($request->isMethod('get')) {
+            return view('admin.add_assignment', compact('course'));
+        }
 
-    public function storeAssignmentToCourse(Request $request, Course $course)
-    {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'type' => 'required|in:slide,document,video',
             'due_date' => 'required|date',
-            'file' => 'required|array',
-            'file.*' => 'file|mimes:pdf,doc,docx,ppt,pptx,mp4,avi,mov,wmv,jpg,jpeg,png,gif|max:51200',
         ]);
-
-        $filePaths = [];
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
-                $mimeType = $file->getMimeType();
-                $path = '';
-                if (str_starts_with($mimeType, 'image/')) {
-                    $path = $file->store('assignments/images', 'public');
-                } elseif (str_starts_with($mimeType, 'video/')) {
-                    $path = $file->store('assignments/videos', 'public');
-                } elseif (in_array($file->extension(), ['ppt', 'pptx'])) {
-                    $path = $file->store('assignments/slides', 'public');
-                } else {
-                    $path = $file->store('assignments/documents', 'public');
-                }
-                $filePaths[] = $path;
-            }
-        }
 
         \App\Models\CUActivity::create([
             'course_id' => $course->id,
             'title' => $request->title,
             'description' => $request->description,
-            'type' => 'assignment',
             'due_date' => $request->due_date,
-            'file_paths' => $filePaths,
         ]);
 
         return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment created successfully!');
@@ -211,9 +251,110 @@ class AdminController extends Controller
 
     public function selectCourseForAssignment()
     {
-        $courses = Course::withCount(['cuActivities as assignmentCount' => function ($query) {
-            $query->where('type', 'assignment');
-        }])->get();
+        $courses = \App\Models\Course::withCount('cuActivities')->get();
         return view('admin.select_course', compact('courses'));
+    }
+
+    public function viewAssignmentTopics(CUActivity $assignment)
+    {
+        $topics = $assignment->topics;
+        return view('admin.assignment_topics', compact('assignment', 'topics'));
+    }
+
+    public function addTopic(CUActivity $assignment)
+    {
+        return view('admin.add_topic', compact('assignment'));
+    }
+
+    public function storeTopic(Request $request, CUActivity $assignment)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:slide,document,video',
+            'file_path' => 'required',
+            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+        ]);
+
+        $filePaths = [];
+        if ($request->hasFile('file_path')) {
+            foreach ($request->file('file_path') as $file) {
+                $path = $file->store('topics', 'public');
+                $filePaths[] = str_replace(['\\', '"'], '/', $path);
+            }
+        }
+
+        \App\Models\topic::create([
+            'cu_id' => $assignment->id,
+            'title' => $request->title,
+            'type' => $request->type,
+            'file_path' => $filePaths,
+        ]);
+        return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic added successfully!');
+    }
+
+    public function editTopic(\App\Models\topic $topic)
+    {
+        $assignment = $topic->cuActivity;
+        return view('admin.edit_topic', compact('assignment', 'topic'));
+    }
+
+    public function updateTopic(Request $request, \App\Models\topic $topic)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:slide,document,video',
+            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'type' => $request->type,
+        ];
+        if ($request->hasFile('file_path')) {
+            $filePaths = [];
+            foreach ($request->file('file_path') as $file) {
+                $path = $file->store('topics', 'public');
+                $filePaths[] = str_replace(['\\', '"'], '/', $path);
+            }
+            $data['file_path'] = $filePaths;
+        }
+        $topic->update($data);
+        $assignment = $topic->cuActivity;
+        return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic updated successfully!');
+    }
+
+    public function deleteTopic(\App\Models\topic $topic)
+    {
+        $assignment = $topic->cuActivity;
+        $topic->delete();
+        return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic deleted successfully!');
+    }
+
+    public function editAssignment(Course $course, \App\Models\CUActivity $assignment)
+    {
+        return view('admin.edit_assignment', compact('course', 'assignment'));
+    }
+
+    public function updateAssignment(Request $request, Course $course, \App\Models\CUActivity $assignment)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+        ]);
+        $assignment->update($request->only(['title', 'description', 'due_date']));
+        return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment updated successfully!');
+    }
+
+    public function deleteAssignment(Course $course, \App\Models\CUActivity $assignment)
+    {
+        $assignment->delete();
+        return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment deleted successfully!');
+    }
+
+    public function viewTopicFiles(CUActivity $assignment, \App\Models\topic $topic)
+    {
+        $files = is_array($topic->file_path) ? $topic->file_path : (json_decode($topic->file_path, true) ?: [$topic->file_path]);
+        return view('admin.topic_files', compact('assignment', 'topic', 'files'));
     }
 }

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class FunctionController extends Controller
 {
@@ -17,6 +18,7 @@ class FunctionController extends Controller
 
         if (Auth::attempt($form)) {
             $request->session()->regenerate();
+
             $user = Auth::user();
             if ($user->role === 'student') {
                 return redirect()->route('index');
@@ -26,11 +28,32 @@ class FunctionController extends Controller
                 Auth::logout();
                 return back()->withErrors(['email' => 'Unknown user role.'])->onlyInput('email');
             }
+
+            return redirect()->route('student.dashboard'); 
+
         }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
+    }
+
+    public function register_studentVerify(Request $request)
+    {
+        // dd($request->ic);
+        $authCheck= Http::get("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
+        
+        // dd("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
+        if($authCheck->json()['status'] == 200){
+            $json=$authCheck->json()['data'];
+            return view('register', [
+                'name' => $json['name'],
+                'email' => $json['email'],
+            ]);
+        }
+        return back()->withErrors([
+            'ic' => 'The provided IC does not match our records.',
+        ])->onlyInput('ic');
     }
 
     public function register(Request $request)
@@ -51,7 +74,14 @@ class FunctionController extends Controller
         }
 
         return redirect()->route('index');
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard');
+
     }
+
 
     public function logout(Request $request)
     {

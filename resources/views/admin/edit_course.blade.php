@@ -42,6 +42,19 @@
                                 <input type="date" class="form-control" id="end_date" name="end_date" value="{{ old('end_date', $course->end_date->format('Y-m-d')) }}" required>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="lecturers">Lecturer(s)</label>
+                            <select class="form-control" id="lecturers" name="lecturers[]" multiple>
+                                @php
+                                    $allLecturers = \App\Models\User::where('role', 'lecturer')->get();
+                                    $selectedLecturerIds = old('lecturers', $course->enrollments()->where('role', 'lecturer')->pluck('user_id')->toArray());
+                                @endphp
+                                @foreach($allLecturers as $lecturer)
+                                    <option value="{{ $lecturer->id }}" {{ in_array($lecturer->id, $selectedLecturerIds) ? 'selected' : '' }}>{{ $lecturer->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple lecturers.</small>
+                        </div>
                         <button type="submit" class="btn btn-primary">Update Course</button>
                         <a href="{{ route('admin.courses') }}" class="btn btn-secondary">Cancel</a>
                     </form>

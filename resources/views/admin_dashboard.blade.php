@@ -103,7 +103,7 @@
             <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
             <li><a href="{{ route('admin.registerStudentView') }}" class="nav-link"><i class="fas fa-user-plus mr-2"></i>Register Student</a></li>
             <li><a href="{{ route('admin.users') }}" class="nav-link"><i class="fas fa-users-cog mr-2"></i>Manage Users</a></li>
-            <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Add Course</a></li>
+            <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Manage Courses</a></li>
             <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
             <li><a href="#" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li>
             <li><a href="#" class="nav-link"><i class="fas fa-pen mr-2"></i>Grade Assignment</a></li>
@@ -120,7 +120,7 @@
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">
-            <h2>Welcome to the Control Panel</h2>
+            <h2>Welcome to the Control Panel - {{ Auth::user()->name }}</h2>
             <p class="text-muted">Manage courses, students, assignments and more from this dashboard.</p>
         </div>
         <div class="row dashboard-cards">
@@ -137,7 +137,7 @@
                 <a href="{{ route('admin.courses') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
                         <i class="fas fa-book fa-2x text-success mb-2"></i>
-                        <h6>Add Course</h6>
+                        <h6>Manage Courses</h6>
                         <p class="text-muted small">Create and manage courses.</p>
                     </div>
                 </a>

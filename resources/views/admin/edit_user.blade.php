@@ -20,7 +20,10 @@
 
     <div class="content">
         <div class="container-fluid">
-            <h2 class="mb-4">Edit User: {{ $user->name }}</h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Edit User: {{ $user->name }}</h2>
+                <span class="badge badge-info" style="font-size:1.1em;">Role: {{ ucfirst($user->role) }}</span>
+            </div>
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -52,16 +55,26 @@
                         @if ($user->role === 'student')
                         <hr>
                         <div class="form-group">
-                            <label>Enrolled Courses</label>
-                            @forelse($courses as $course)
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="course_{{ $course->id }}" name="courses[]" value="{{ $course->id }}"
-                                        {{ $user->enrollments->pluck('course_id')->contains($course->id) ? 'checked' : '' }}>
+                            <label>Enrolled Course</label>
+                            @foreach($courses as $course)
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="course_{{ $course->id }}" name="student_course" value="{{ $course->id }}" {{ (isset($enrolledCourseIds) && in_array($course->id, $enrolledCourseIds)) ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="course_{{ $course->id }}">{{ $course->title }}</label>
                                 </div>
-                            @empty
-                                <p class="text-muted">No courses available.</p>
-                            @endforelse
+                            @endforeach
+                        </div>
+                        @endif
+
+                        @if ($user->role === 'lecturer')
+                        <hr>
+                        <div class="form-group">
+                            <label>Responsible Courses</label>
+                            @foreach($courses as $course)
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="lecturer_course_{{ $course->id }}" name="lecturer_courses[]" value="{{ $course->id }}" {{ in_array($course->id, $lecturerCourseIds ?? []) ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="lecturer_course_{{ $course->id }}">{{ $course->title }}</label>
+                                </div>
+                            @endforeach
                         </div>
                         @endif
 

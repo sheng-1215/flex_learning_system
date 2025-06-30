@@ -16,7 +16,7 @@
         .page-header {
             background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url({{ asset('img/page-header.jpg') }}) no-repeat center center;
             background-size: cover;
-            padding: 60px 0;
+            padding: 60px 0;    
             color: white;
             border-radius: 10px;
         }
@@ -34,7 +34,7 @@
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Assignments</h5>
-                     <a href="{{ route('admin.assignments.add', $course) }}" class="btn btn-warning"><i class="fas fa-plus mr-2"></i>Add New Assignment</a>
+                    <a href="{{ route('admin.assignments.add', $course) }}" class="btn btn-warning"><i class="fas fa-plus mr-2"></i>Add New Assignment</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -44,7 +44,6 @@
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Due Date</th>
-                                    <th>Files</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -55,16 +54,60 @@
                                     <td>{{ Str::limit($assignment->description, 50) }}</td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($assignment->due_date)->format('Y-m-d') }}</td>
                                     <td>
-                                        @if($assignment->file_paths)
-                                            {{ count($assignment->file_paths) }} file(s)
-                                        @else
-                                            No files
-                                        @endif
+                                        <button class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#topics-{{ $assignment->id }}" aria-expanded="false" aria-controls="topics-{{ $assignment->id }}">
+                                            View
+                                        </button>
+                                        <a href="{{ route('admin.assignment.edit', [$course, $assignment]) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        <form action="{{ route('admin.assignment.delete', [$course, $assignment]) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this assignment?')">Delete</button>
+                                        </form>
                                     </td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-info">View</a>
-                                        <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                                </tr>
+                                <tr class="collapse" id="topics-{{ $assignment->id }}">
+                                    <td colspan="4">
+                                        <div class="card card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0">Topics</h6>
+                                                <a href="{{ route('admin.topic.add', $assignment) }}" class="btn btn-success btn-sm">+ Add Topic</a>
+                                            </div>
+                                            @if($assignment->topics->count())
+                                            <table class="table table-bordered mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Title</th>
+                                                        <th>Type</th>
+                                                        <th>File</th>
+                                                        <th>Created At</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($assignment->topics as $topic)
+                                                    <tr>
+                                                        <td>{{ $topic->title }}</td>
+                                                        <td>{{ $topic->type }}</td>
+                                                        <td>
+                                                            <a href="{{ route('admin.topic.files', [$assignment, $topic]) }}" class="btn btn-info btn-sm" target="_blank">View All</a>
+                                                        </td>
+                                                        <td>{{ $topic->created_at->format('Y-m-d') }}</td>
+                                                        <td>
+                                                            <a href="{{ route('admin.topic.edit', $topic) }}" class="btn btn-sm btn-primary">Edit</a>
+                                                            <form action="{{ route('admin.topic.delete', $topic) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this topic?')">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            @else
+                                                <div class="text-muted">No topics found for this assignment.</div>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
@@ -79,5 +122,7 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
