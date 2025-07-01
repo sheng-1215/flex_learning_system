@@ -25,6 +25,7 @@ class Course extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
@@ -33,6 +34,11 @@ class Course extends Model
     public function enrollmentsCourse()
     {
         return $this->hasMany(Enrollment::class, 'course_id');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(CUActivity::class);
     }
 
     public function enrolledUsers()

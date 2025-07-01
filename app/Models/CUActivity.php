@@ -21,6 +21,10 @@ class CUActivity extends Model
     {
         return $this->belongsTo(Course::class);
     }
+    public function topics()
+    {
+        return $this->hasMany(topic::class, 'cu_id');
+    }
 
     public function assignmentSubmissions()
     {

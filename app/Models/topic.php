@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class topic extends Model
 {
     use HasFactory;
+    public function CUActivity()
+    {
+        return $this->belongsTo(CUActivity::class);
+    }
 }
