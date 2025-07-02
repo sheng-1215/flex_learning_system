@@ -83,6 +83,9 @@
                         </div>
                         @auth
                             <div class="d-flex align-items-center ml-auto">
+                                <span class="mr-3 text-secondary" style="font-size: 1rem;">
+                                    Logged in as: <strong>{{ Auth::user()->name }}</strong>
+                                </span>
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-toggle="dropdown" title="Profile">
                                         <i class="fas fa-user-circle fa-lg mr-2"></i>

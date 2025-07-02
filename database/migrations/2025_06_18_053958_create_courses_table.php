@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('cover_image');
             $table->date('start_date');
             $table->date('end_date');
+            //谁负责这个课程
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

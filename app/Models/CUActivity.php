@@ -8,13 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class CUActivity extends Model
 {
     use HasFactory;
+
     protected $table = 'cu_activities';
+
     protected $fillable = [
         'course_id',
         'title',
         'description',
-        'type',
-        'due_date'
+        'due_date',
+        
     ];
 
     public function course()

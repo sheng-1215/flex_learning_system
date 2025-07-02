@@ -108,6 +108,18 @@
                 <label for="password_confirmation">Confirm Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required>
             </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="admin">Admin</option>
+                    <option value="lecturer">Lecturer</option>
+                    <option value="student">Student</option>
+                </select>
+                @error('role')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
             <button type="submit">Register</button>
         </form>
         <p style="margin-top: 20px; color: #777;">Already have an account? <a href="{{ route('login') }}" style="color: #007bff; text-decoration: none;">Login here</a>.</p>

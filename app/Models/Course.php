@@ -11,8 +11,10 @@ class Course extends Model
 
     protected $fillable = [
         'title',
+        'cover_image',
         'start_date',
         'end_date',
+        'created_by',
     ];
 
     protected $casts = [
@@ -44,7 +46,12 @@ class Course extends Model
     public function enrolledUsers()
     {
         return $this->belongsToMany(User::class, 'enrollments')
-            ->withPivot('status', 'enrolled_at')
+            ->withPivot('status', 'enrolled_at', 'role')
             ->withTimestamps();
+    }
+
+    public function cuActivities()
+    {
+        return $this->hasMany(\App\Models\CUActivity::class, 'course_id');
     }
 }

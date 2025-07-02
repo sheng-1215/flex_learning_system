@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('course_id')->constrained();
+            $table->string('role')->nullable();
             $table->timestamps();
 
             // 确保一个用户只能注册一次同一个课程

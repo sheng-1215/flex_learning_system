@@ -22,7 +22,18 @@ class FunctionController extends Controller
         if (Auth::attempt($form)) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
+            if ($user->role === 'student') {
+                return redirect()->route('index');
+            } else if ($user->role === 'admin' || $user->role === 'lecturer') {
+                return redirect()->route('admin_dashboard');
+            } else {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Unknown user role.'])->onlyInput('email');
+            }
+
             return redirect()->route('student.dashboard'); 
+
         }
 
         return back()->withErrors([
@@ -52,17 +63,26 @@ class FunctionController extends Controller
     {
         $form = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:3', 'confirmed'],
+            'role' => ['required', 'in:admin,lecturer,student'],
         ]);
 
         $form['password'] = Hash::make($form['password']);
         $user = User::create($form);
+        auth()->login($user);
+
+        if ($user->role === 'admin' || $user->role === 'lecturer') {
+            return redirect()->route('admin_dashboard');
+        }
+
+        return redirect()->route('index');
 
         Auth::login($user);
         $request->session()->regenerate();
 
         return redirect()->route('dashboard');
+
     }
     public function assignmentSubmit(Request $request)
     {

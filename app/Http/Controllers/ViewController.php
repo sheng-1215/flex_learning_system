@@ -84,4 +84,9 @@ class ViewController extends Controller
         return view('register_studentVerify');
     }
 
+    public function adminDashboard()
+    {
+        return view('admin_dashboard');
+    }
+
 }
