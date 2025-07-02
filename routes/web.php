@@ -57,12 +57,18 @@ Route::controller(AdminController::class)->group(function() {
 Route::prefix("student")->group(function () {
     Route::controller(ViewController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('student.dashboard');
+        Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
+        Route::get('/assignment','assignment')->name('student.assignment');
+        Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
+        
         Route::get('/login','login')->name('login');
 
     });
     Route::controller(FunctionController::class)->group(function () {
         Route::post('/login', 'login')->name('student.loginFunction');
         Route::post('/logout', 'logout')->name('student.logoutFunction');
+        Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
+
     });
     // Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
 });

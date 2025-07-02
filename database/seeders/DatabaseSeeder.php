@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\CUActivity;
 use App\Models\Enrollment;
+use App\Models\topic;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -56,7 +57,7 @@ class DatabaseSeeder extends Seeder
             'password' => '123',
             'role' => 'student',
         ]);
-        Course::factory(6)->create();
+        Course::factory(3)->create();
         
         Enrollment::create([
             'user_id' => 1, // admin
@@ -83,10 +84,16 @@ class DatabaseSeeder extends Seeder
             'course_id' => 4, // Course 4
             'role' => 'student',
         ]);
-        CUActivity::factory(10)->create()->each(function ($activity) {
+        CUActivity::factory(3)->create()->each(function ($activity) {
             $activity->course_id = Course::inRandomOrder()->first()->id;
             $activity->save();
         });
+
+        topic::factory(3)->create()->each(function ($topic) {
+            $topic->cu_id = CUActivity::inRandomOrder()->first()->id;
+            $topic->save();
+        });
+        
 
     }
 }

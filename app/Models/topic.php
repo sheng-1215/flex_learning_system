@@ -8,20 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class topic extends Model
 {
     use HasFactory;
-    
-    protected $fillable = [
-        'cu_id',
-        'title',
-        'type',
-        'file_path',
-    ];
-
-    protected $casts = [
-        'file_path' => 'array',
-    ];
-
-    public function cuActivity()
+    public function CUActivity()
     {
-        return $this->belongsTo(\App\Models\CUActivity::class, 'cu_id');
+        return $this->belongsTo(CUActivity::class);
     }
 }
