@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\assignment;
 use App\Models\Course;
 use App\Models\CUActivity;
 use Illuminate\Http\Request;
@@ -47,6 +48,26 @@ class ViewController extends Controller
             }
         }
         return view('student.CUActivity_detail', compact('activity', 'topics'));
+    }
+
+    public function assignment()
+    {   
+        $cuActivities = auth()->user()->enrollments->flatMap(function ($enrollment) {
+            return $enrollment->course->activities;
+        });
+
+        $assignments= $cuActivities->flatMap(function ($activity) {
+            return $activity->assignments;
+        });
+        
+        return view('student.assignment',compact('assignments'));
+    }
+    public function assignmentDetail($id)
+    {
+        $assignment = assignment::findOrFail($id);
+        $submissions = $assignment->assignmentSubmissions;
+
+        return view('student.assignmentsubmition', compact('assignment', 'submissions'));
     }
 
     public function login()

@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\assignment;
+use App\Models\assignmentSubmit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -60,6 +63,25 @@ class FunctionController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('dashboard');
+    }
+    public function assignmentSubmit(Request $request)
+    {
+        $form = $request->validate([
+            'file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
+        ]);
+
+        $assignment=new assignmentSubmit();
+        $assignment->user_id = Auth::id();
+        $assignment->assignment_id = $request->id;
+        $assignment->attachment = $request->file('file')->store('assignments', 'public');
+        $assignment->status= 'submitted';
+        $assignment->submitted_at = now();
+        $assignment->save();
+
+
+        return redirect()->route('student.assignment', ['id' => $assignment->id])
+                         ->with('success', 'Assignment submitted successfully.');
+
     }
 
 
