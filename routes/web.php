@@ -61,6 +61,7 @@ Route::prefix("student")->group(function () {
         Route::get('/assignment','assignment')->name('student.assignment');
         Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
         
+
         Route::get('/login','login')->name('login');
 
     });

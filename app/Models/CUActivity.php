@@ -36,4 +36,9 @@ class CUActivity extends Model
     {
         return $this->hasMany(AssignmentSubmission::class, 'cu_id');
     }
+
+    public function topics()
+    {
+        return $this->hasMany(\App\Models\topic::class, 'cu_id');
+    }
 }

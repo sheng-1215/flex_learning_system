@@ -83,6 +83,7 @@ class FunctionController extends Controller
 
         return redirect()->route('dashboard');
 
+
     }
     public function assignmentSubmit(Request $request)
     {
@@ -101,6 +102,7 @@ class FunctionController extends Controller
 
         return redirect()->route('student.assignment', ['id' => $assignment->id])
                          ->with('success', 'Assignment submitted successfully.');
+
 
     }
 
