@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string("file_path")->nullable();
             $table->string('type');
+            $table->integer('progress')->default(0);
             $table->timestamps();
         });
     }

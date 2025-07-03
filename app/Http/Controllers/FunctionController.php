@@ -78,10 +78,19 @@ class FunctionController extends Controller
         $assignment->submitted_at = now();
         $assignment->save();
 
-
         return redirect()->route('student.assignment', ['id' => $assignment->id])
                          ->with('success', 'Assignment submitted successfully.');
 
+    }
+    public function assignmentDelete($id)
+    {
+        $assignment = assignmentSubmit::findOrFail($id);
+        if ($assignment->user_id !== Auth::id()) {
+            return redirect()->back()->withErrors(['error' => 'You do not have permission to delete this assignment.']);
+        }
+
+        $assignment->delete();
+        return redirect()->route('student.assignment')->with('success', 'Assignment deleted successfully.');
     }
 
 
