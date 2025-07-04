@@ -115,6 +115,17 @@
                                     <p>Unsupported file format.</p>
                                 @endif
                                 <canvas id="pdf-container"></canvas>
+                            @else
+                                <div class="text-center py-5">
+                                    <h2>Welcome to {{ auth()->user()->enrollments->first()->course->activities->first()->title  }}</h2>
+                                    <p class="lead mt-3">
+                                        {{  auth()->user()->enrollments->first()->course->activities->first()->description  }}
+                                    </p>
+                                    <img src="{{ asset('img/welcome_learning.svg') }}" alt="Welcome" style="max-width: 300px;" class="my-4">
+                                    <p>
+                                        Ready to get started? Choose a topic and dive in!
+                                    </p>
+                                </div>
                             @endif
                         </div>
                     </div>

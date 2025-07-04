@@ -93,6 +93,14 @@ class FunctionController extends Controller
         return redirect()->route('student.assignment')->with('success', 'Assignment deleted successfully.');
     }
 
+    public function downloadAssignment(Request $request, $id)
+    {
+        
+        $assignment = assignment::findOrFail($id);
+
+        return response()->download(asset($assignment->attachment));
+    }
+
 
     public function logout(Request $request)
     {

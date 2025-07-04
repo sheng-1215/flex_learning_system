@@ -79,7 +79,7 @@
                                         <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right rounded-0 m-0">
-                                        <a href="#" class="dropdown-item">
+                                        <a href="{{ route('student.profile') }}" class="dropdown-item">
                                             <i class="fas fa-user mr-2"></i> Profile
                                         </a>
                                         <form action="{{ route('student.logoutFunction') }}" method="POST" class="dropdown-item p-0 m-0">
