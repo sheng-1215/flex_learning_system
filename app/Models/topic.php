@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\CUActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class topic extends Model
 {
@@ -22,6 +23,6 @@ class topic extends Model
 
     public function cuActivity()
     {
-        return $this->belongsTo(\App\Models\CUActivity::class, 'cu_id');
+        return $this->belongsTo(CUActivity::class);
     }
 }

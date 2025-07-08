@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\topic;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CUActivity extends Model
 {
@@ -37,8 +38,4 @@ class CUActivity extends Model
         return $this->hasMany(AssignmentSubmission::class, 'cu_id');
     }
 
-    public function topics()
-    {
-        return $this->hasMany(\App\Models\topic::class, 'cu_id');
-    }
 }

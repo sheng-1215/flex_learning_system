@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cu_id')->constrained("cu_activities")->onDelete('cascade');
             $table->string('title');
+            
             $table->string("file_path")->nullable();
             $table->string('type');
             $table->integer('progress')->default(0);

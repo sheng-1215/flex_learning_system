@@ -38,7 +38,11 @@ Route::controller(AdminController::class)->group(function() {
     Route::get('/admin/user/{user}/edit', 'editUser')->name('admin.editUser');
     Route::put('/admin/user/{user}', 'updateUser')->name('admin.updateUser');
     Route::delete('/admin/user/{user}', 'destroyUser')->name('admin.destroyUser');
-
+    Route::get('/admin/courses/{course}/cuactivities', 'viewCourseActivities')->name('admin.courseActivities');
+    Route::post('/admin/courses/cuactivities/add', 'addCourseActivity')->name('admin.addCourseActivity');
+    Route::get('/admin/cuactivities/{activity}/topic', 'viewActivitiesTopic')->name('admin.viewActivitiesTopic');
+    Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
+    
     Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
     Route::get('/admin/courses/{course}/assignments', 'viewCourseAssignments')->name('admin.assignments.view');
     Route::get('/admin/courses/{course}/assignments/add', 'addAssignmentToCourse')->name('admin.assignments.add');
