@@ -44,6 +44,10 @@ Route::controller(AdminController::class)->group(function() {
     Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
     
     Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
+    Route::get('/admin/assignments/select-cuactivity/{course}', 'selectActiviryForAssignment')->name('admin.selectActiviryForAssignment');
+    Route::get('/admin/topics/{activity}/assignments', 'viewActivityAssignments')->name('admin.activityAssignment.view');
+    Route::post('/admin/assignments/{course}/add', 'addAssignmentToActivity')->name('admin.activityAssignment.add');
+    Route::delete('/admin/cuactivities/{activity}/assignment/{assignment}/delete', 'deleteAssignmentFromActivity')->name('admin.activity.assignment.delete');
     Route::get('/admin/courses/{course}/assignments', 'viewCourseAssignments')->name('admin.assignments.view');
     Route::get('/admin/courses/{course}/assignments/add', 'addAssignmentToCourse')->name('admin.assignments.add');
     Route::post('/admin/courses/{course}/assignments/add', 'addAssignmentToCourse')->name('admin.assignments.add.post');

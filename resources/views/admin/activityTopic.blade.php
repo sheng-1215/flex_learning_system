@@ -51,37 +51,7 @@
                             <label for="title">Topic Title</label>
                             <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
                         </div>
-                        <div class="form-group">
-                            <label for="content_file">Upload Content</label>
-                            <input type="file" class="form-control-file" id="file_path" name="file_path[]" required  multiple>
-                            <div id="file-info" class="mt-2" style="display:none;">
-                                <span id="file-icon" class="mr-2"></span>
-                                <span id="file-name"></span>
-                                <span id="file-size" class="text-muted ml-2"></span>
-                            </div>
-                        </div>
-                        <script>
-                            document.getElementById('file_path').addEventListener('change', function(e) {
-                                const file = e.target.files[0];
-                                const fileInfo = document.getElementById('file-info');
-                                const fileName = document.getElementById('file-name');
-                                const fileSize = document.getElementById('file-size');
-                                const fileIcon = document.getElementById('file-icon');
-                                if (file) {
-                                    fileInfo.style.display = 'inline-block';
-                                    fileName.textContent = file.name;
-                                    fileSize.textContent = '(' + (file.size/1024).toFixed(2) + ' KB)';
-                                    // Set icon based on file type
-                                    let iconClass = 'fa-file';
-                                    if (file.type === 'application/pdf') iconClass = 'fa-file-pdf text-danger';
-                                    else if (file.type.startsWith('video/')) iconClass = 'fa-file-video text-primary';
-                                    else if (file.name.match(/\.(ppt|pptx)$/i)) iconClass = 'fa-file-powerpoint text-warning';
-                                    fileIcon.innerHTML = `<i class="fas ${iconClass}"></i>`;
-                                } else {
-                                    fileInfo.style.display = 'none';
-                                }
-                            });
-                        </script>
+                        
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select class="form-control" id="type" name="type" required>
@@ -91,7 +61,7 @@
                                 <option value="slideshow">Slideshow</option>
                             </select>
                         </div>
-                        
+                        <x-attachment :name="'file_path[]'" :label="'Upload Content'" :required="true" :multiple="true" />
                         <button type="submit" class="btn btn-primary">Add Topic</button>
                         <a href="{{ route('admin.courseActivities', ['course' => $activity->course->id]) }}" class="btn btn-secondary ml-2">back</a>
                     </form>

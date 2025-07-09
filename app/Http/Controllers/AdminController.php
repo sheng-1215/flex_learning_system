@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\assignment;
 use App\Models\User;
 use App\Models\topic;
 use App\Models\Course;
@@ -228,6 +229,8 @@ class AdminController extends Controller
         return view('admin.view_assignments', compact('course', 'assignments'));
     }
 
+    
+
     public function addAssignmentToCourse(Request $request, Course $course)
     {
         if ($request->isMethod('get')) {
@@ -252,9 +255,18 @@ class AdminController extends Controller
 
     public function selectCourseForAssignment()
     {
-        $courses = \App\Models\Course::withCount('cuActivities')->get();
+
+        $courses = Course::withCount('cuActivities')->get();
         return view('admin.select_course', compact('courses'));
     }
+
+    public function selectActiviryForAssignment(Course $course)
+    {
+        $activities = $course->cuActivities()->get();
+        return view('admin.select_cuactivity', compact('course', 'activities'));
+    }
+
+
 
     public function viewCourseActivities(Course $course)
     {
@@ -332,6 +344,12 @@ class AdminController extends Controller
         return redirect()->route('admin.courseActivities', $request->course_id)->with('success', 'CU Activity created successfully!');
     }
 
+    public function deleteAssignmentFromActivity(CUActivity $activity, assignment $assignment)
+    {
+        $assignment->delete();
+        return redirect()->route('admin.activityAssignment.view', $activity->id)->with('success', 'Assignment deleted successfully!');
+    }
+
     public function viewAssignmentTopics(CUActivity $assignment)
     {
         $topics = $assignment->topics;
@@ -360,7 +378,7 @@ class AdminController extends Controller
             }
         }
 
-        \App\Models\topic::create([
+        topic::create([
             'cu_id' => $assignment->id,
             'title' => $request->title,
             'type' => $request->type,
@@ -368,6 +386,45 @@ class AdminController extends Controller
         ]);
         return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic added successfully!');
     }
+
+    public function viewActivityAssignments(CUActivity $activity)
+    {
+        $assignments = $activity->assignments;
+        return view('admin.activity_assignment', compact('activity', 'assignments'));
+    }
+
+    public function addAssignmentToActivity(Request $request,Course $course)
+    {
+        $request->validate([
+            "assignment_name"=> 'required|string|max:255',
+            "description"=> 'nullable|string',
+            "due_date"=> 'required|date',
+            "attachment"=> 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,mp4|max:51200',
+        ]);
+
+        
+        if($request->has('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('assignments', 'public');
+            $attachmentPath = str_replace(['\\', '"'], '/', $attachmentPath);
+        }else {
+            $attachmentPath = null;
+        }
+        
+        
+        $assignment=assignment::create([
+            'cu_id' => $request->activity_id,
+            'assignment_name' => $request->assignment_name,
+            'description' => $request->description,
+            'due_date' => $request->due_date,
+            'attachment' => $attachmentPath,
+        ]);
+        
+        if($assignment){
+            return redirect()->route('admin.selectActiviryForAssignment',$course->id)->with('success', 'Assignment added successfully!');
+        }
+        return redirect()->back()->with('error', 'Failed to add assignment. Please try again.');
+    }
+    
 
     public function editTopic(\App\Models\topic $topic)
     {
