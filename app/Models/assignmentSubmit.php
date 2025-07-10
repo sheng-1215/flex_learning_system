@@ -13,4 +13,9 @@ class assignmentSubmit extends Model
     {
         return $this->belongsTo(assignment::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

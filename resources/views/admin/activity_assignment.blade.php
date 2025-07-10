@@ -6,6 +6,7 @@
     <title>Assignments for {{ $activity->title }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         body { background-color: #f0f2f5; }
         .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; }
@@ -56,9 +57,9 @@
                                     <td><a href="{{ $assignment->attachment }}" target="_blank" >attachment Link</a></td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($assignment->due_date)->format('Y-m-d') }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#topics-{{ $assignment->id }}" aria-expanded="false" aria-controls="topics-{{ $assignment->id }}">
-                                            View
-                                        </button>
+                                        <a class="btn btn-sm btn-info" href="{{ route('admin.checkAssignments', [$assignment]) }}">
+                                            check submissions
+                                        </a>
                                         <a href="{{ route('admin.assignment.edit', [$activity, $assignment]) }}" class="btn btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('admin.activity.assignment.delete', [$activity, $assignment]) }}" method="POST" style="display:inline-block;">
                                             @csrf

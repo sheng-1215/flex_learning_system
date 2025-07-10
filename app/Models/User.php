@@ -66,4 +66,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Course::class, 'enrollments', 'user_id', 'course_id')
             ->wherePivot('role', 'lecturer');
     }
+
+    public function assignment_submit()
+    {
+        return $this->hasMany(assignmentSubmit::class, 'user_id');
+    }
 }

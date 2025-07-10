@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\assignment;
+use App\Models\assignmentSubmit;
 use App\Models\User;
 use App\Models\topic;
 use App\Models\Course;
@@ -88,6 +89,48 @@ class AdminController extends Controller
         return redirect()->route('admin.courses')->with('success', 'Course deleted successfully.');
     }
 
+    public function addUserToCourse(Course $course)
+    {
+        // Get all students who are NOT enrolled in this course
+        $users = User::where('role', 'student')
+            ->whereDoesntHave('enrollments', function ($query) {
+                $query->where('role', 'student');
+            })
+            ->get();
+        $enrollments=Enrollment::where('course_id',$course->id)
+        ->whereHas('user',function($query){
+            $query->where('role','student');
+        })
+        ->get();
+        return view('admin.addUserToCourse', compact('course','users','enrollments'));
+    }
+
+    public function submitUserToCourse(Request $request, Course $course)
+    {
+        $checkenrollment=Enrollment::where('user_id',$request->user_id);
+        if($checkenrollment->where('course_id',$course->id)->where('role','student')->exists()){
+            return back()->with("error","user already enrolled in this course");
+        }
+
+        $enrollment=Enrollment::create([
+            "course_id"=>$course->id,
+            "user_id"=>$request->user_id,
+        ]);
+
+        if($enrollment){
+            return redirect()->route('admin.addUserToCourse',$course->id)->with('success', 'User enrolled successfully.');
+        }
+
+        return back()->with("error","user added failed, please try again later");;
+        
+    }
+
+    public function removeUserFromCourse(Enrollment $enrollment)
+    {
+        $enrollment->delete();
+        return redirect()->route('admin.addUserToCourse')->with('success', 'User removed successfully.');
+    }
+
     public function registerStudentView()
     {
         $courses = \App\Models\Course::all();
@@ -144,7 +187,8 @@ class AdminController extends Controller
     {
         $admins = User::where('role', 'admin')->get();
         $lecturers = User::where('role', 'lecturer')
-            ->with(['courses', 'enrollments.course' => function($q){ $q->wherePivot('role', 'lecturer'); }])
+            ->whereHas('enrollments')
+            ->with(['courses', 'enrollments.course'])
             ->get();
         $students = User::where('role', 'student')
             ->with('enrollments.course')
@@ -178,10 +222,12 @@ class AdminController extends Controller
         $user->save();
 
         // 更新学生课程
+        // dd($request->student_courses );
         if ($user->role === 'student') {
             $user->enrollments()->where('role', 'student')->delete();
             if ($request->has('student_courses')) {
                 foreach ($request->student_courses as $courseId) {
+                   
                     // 避免重复插入
                     if (!Enrollment::where('user_id', $user->id)->where('course_id', $courseId)->where('role', 'student')->exists()) {
                         Enrollment::create([
@@ -484,6 +530,39 @@ class AdminController extends Controller
     {
         $assignment->delete();
         return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment deleted successfully!');
+    }
+
+    public function checkAssignments(assignment $assignment)
+    {
+        
+        $submissions = assignmentSubmit::where('assignment_id', $assignment->id)->with('assignment')->get();
+        
+        return view('admin.checkassignment', compact('assignment','submissions'));
+    }
+
+    public function gradeAssignments(assignmentSubmit $assignmentsubmit,Request $request)
+    {
+        $request->validate([
+            'grade' => 'required|integer|min:0|max:100',
+        ]);
+
+        $assignmentsubmit->grade = $request->grade;
+        $assignmentsubmit->graded_at = now();
+        $assignmentsubmit->save();
+        return redirect()->route('admin.checkAssignments', $assignmentsubmit->assignment_id)->with('success', 'Assignment graded successfully!');
+        
+    }
+
+    public function feedbackAssignments(assignmentSubmit $assignmentsubmit,Request $request)
+    {
+        $request->validate([
+            "feedback"=>'required|max:500',
+        ]);
+
+        $assignmentsubmit->feedback = $request->feedback;
+        $assignmentsubmit->save();
+        return redirect()->route('admin.checkAssignments', $assignmentsubmit->assignment_id)->with('success', 'Assignment graded successfully!');
+
     }
 
     public function viewTopicFiles(CUActivity $assignment, \App\Models\topic $topic)

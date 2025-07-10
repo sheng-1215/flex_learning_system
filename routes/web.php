@@ -30,6 +30,9 @@ Route::controller(AdminController::class)->group(function() {
     Route::get('/admin/courses/{course}/edit', 'editCourse')->name('admin.editCourse');
     Route::put('/admin/courses/{course}', 'updateCourse')->name('admin.updateCourse');
     Route::delete('/admin/courses/{course}', 'destroyCourse')->name('admin.destroyCourse');
+    Route::get('/admin/addUserToCourse/{course}','addUserToCourse')->name('admin.addUserToCourse');
+    Route::post('/admin/addUserToCourse/{course}','submitUserToCourse')->name('admin.submitUserToCourse');
+    Route::delete('/admin/removeUserFromCourse','removeUserFromCourse')->name('admin.removeUserFromCourse');
     
     Route::get('/admin/student/register', 'registerStudentView')->name('admin.registerStudentView');
     Route::post('/admin/student/register', 'registerStudent')->name('admin.registerStudent');
@@ -56,6 +59,9 @@ Route::controller(AdminController::class)->group(function() {
     Route::put('/admin/courses/{course}/assignments/{assignment}', 'updateAssignment')->name('admin.assignment.update');
     Route::delete('/admin/courses/{course}/assignments/{assignment}', 'deleteAssignment')->name('admin.assignment.delete');
     Route::get('/admin/assignments/{assignment}/topics', 'viewAssignmentTopics')->name('admin.assignment.topics');
+    Route::get('/admin/check-assignments/{assignment}', 'checkAssignments')->name('admin.checkAssignments');
+    Route::post('/admin/grade-assignments/{assignmentsubmit}', 'gradeAssignments')->name('admin.gradeAssignments');
+    Route::post('/admin/feedback-assignments/{assignmentsubmit}', 'feedbackAssignments')->name('admin.feedbackAssignments');
     Route::get('/admin/assignments/{assignment}/topics/add', 'addTopic')->name('admin.topic.add');
     Route::post('/admin/assignments/{assignment}/topics/add', 'storeTopic')->name('admin.topic.store');
     Route::get('/admin/topics/{topic}/edit', 'editTopic')->name('admin.topic.edit');
