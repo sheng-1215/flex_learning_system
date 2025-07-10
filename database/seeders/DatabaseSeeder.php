@@ -79,11 +79,7 @@ class DatabaseSeeder extends Seeder
             'course_id' => 3, // Course 3
             'role' => 'student',
         ]);
-        Enrollment::create([
-            'user_id' => 5, // peter
-            'course_id' => 4, // Course 4
-            'role' => 'student',
-        ]);
+       
         CUActivity::factory(3)->create()->each(function ($activity) {
             $activity->course_id = Course::inRandomOrder()->first()->id;
             $activity->save();

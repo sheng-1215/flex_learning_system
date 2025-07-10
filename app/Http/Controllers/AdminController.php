@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Auth;
+use App\Models\topic;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -287,7 +288,7 @@ class AdminController extends Controller
             'cu_id' => $assignment->id,
             'title' => $request->title,
             'type' => $request->type,
-            'file_path' => $filePaths,
+            'file_path' => json_encode($filePaths),
         ]);
         return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic added successfully!');
     }

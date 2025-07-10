@@ -24,7 +24,7 @@ class FunctionController extends Controller
 
             $user = Auth::user();
             if ($user->role === 'student') {
-                return redirect()->route('index');
+                return redirect()->route('student.dashboard'); 
             } else if ($user->role === 'admin' || $user->role === 'lecturer') {
                 return redirect()->route('admin_dashboard');
             } else {
@@ -32,7 +32,7 @@ class FunctionController extends Controller
                 return back()->withErrors(['email' => 'Unknown user role.'])->onlyInput('email');
             }
 
-            return redirect()->route('student.dashboard'); 
+            
 
         }
 
