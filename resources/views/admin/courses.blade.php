@@ -98,7 +98,7 @@
                                     <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ \Carbon\Carbon::parse($course->start_date)->format('M d, Y') }}</small>
                                     <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ \Carbon\Carbon::parse($course->end_date)->format('M d, Y') }}</small>
                                 </div>
-                                <a class="h5" href="#">{{ $course->title }}</a>
+                                <a class="h5" href="{{ route('admin.courseActivities',$course->id) }}">{{ $course->title }}</a>
                                 <div class="border-top mt-4 pt-3">
                                     <div class="d-flex justify-content-between align-items-end">
                                         <div style="width:100%">

@@ -14,7 +14,7 @@
         .content { margin-left: 200px; padding: 20px; }
         .card { border-radius: 10px; }
         .page-header {
-            background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url({{ asset('img/page-header.jpg') }}) no-repeat center center;
+            background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), no-repeat center center;
             background-size: cover;
             padding: 60px 0;
             color: white;
@@ -26,7 +26,7 @@
     @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
-            <div class="page-header mb-4 text-center">
+            <div class="page-header mb-4 text-center" style="background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('{{ asset('img/page-header.jpg') }}') no-repeat center center; background-size: cover; padding: 60px 0; color: white; border-radius: 10px;">
                 <h1 class="display-4">Add Topic to: {{ $assignment->title }}</h1>
                 <a href="{{ route('admin.assignments.view', $assignment->course_id) }}" class="text-white">Back to Assignments</a>
             </div>

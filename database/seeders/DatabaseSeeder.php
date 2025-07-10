@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'peter123',
             'role' => 'student',
         ]);
+        Course::factory(6)->create();
         Course::factory(3)->create();
         
         Enrollment::create([

@@ -35,10 +35,34 @@
                         <h4>submmit assignment</h4>
                         <small>Files to submit *</small>
                         <div id="file-upload" class="mb-3">
-                            <div class="alert alert-info">
-                                <p>Upload your assignment file here. Accepted formats: PDF, DOCX, TXT.</p>
-                                <p>Maximum file size: 10MB.</p>
-                            </div>
+                            @if ($submissions->isnotEmpty())
+                                <div class="alert alert-success">
+                                    <p>Your submission has been successfully uploaded.</p>
+                                    @foreach ($submissions as $submission)
+                                    <form action="{{ route('student.assignment.delete',["id"=>$submission->id]) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                        <p>
+                                            <i class="fas fa-file-alt"></i>
+                                            <a href="{{ asset('storage/' . $submission->attachment) }}" target="_blank">{{ $submission->attachment }}</a>
+                                            <button type="submit" class="btn btn-link p-0 align-baseline text-danger" style="border: none; background: none;" title="Delete" onclick="return confirm('Are you sure you want to delete this file?')">
+                                                <i class="fas fa-times-circle fa-lg"></i>
+                                            </button>
+                                        </p>
+                                            
+                                        </form>
+                                    @endforeach
+                                    <p>Status: {{ $submission->status }}</p>
+                                    <p>Submitted at: {{ $submission->submitted_at }}</p>
+                                    
+                                </div>
+                            @else
+                                 <div class="alert alert-info">
+                                    <p>Upload your assignment file here. Accepted formats: PDF, DOCX, TXT.</p>
+                                    <p>Maximum file size: 10MB.</p>
+                                </div>
+                            @endif
+                            
 
                         </div>
 

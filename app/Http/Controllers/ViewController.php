@@ -43,7 +43,12 @@ class ViewController extends Controller
 
         if (request()->has('topic') && request()->get('topic') !== "") {
             $selectedTopic = $topics->where('id', request()->get('topic'))->first();
+            
             if ($selectedTopic) {
+                if($selectedTopic->type!="video"){
+                    $selectedTopic->progress = 100; // Assuming 100% progress for the selected topic
+                }
+                $selectedTopic->save();
                 return view('student.CUActivity_detail', compact('activity', 'topics', 'selectedTopic'));
             }
         }
@@ -62,12 +67,22 @@ class ViewController extends Controller
         
         return view('student.assignment',compact('assignments'));
     }
-    public function assignmentDetail($id)
+    public function assignmentSubmit($id)
     {
         $assignment = assignment::findOrFail($id);
         $submissions = $assignment->assignmentSubmissions;
 
         return view('student.assignmentsubmition', compact('assignment', 'submissions'));
+    }
+    public function profile_edit()
+    {   
+        $user= auth()->user();
+        return view('student.profile_edit',compact('user'));
+    }
+    
+    public function profile()
+    {
+       return view('student.profile');
     }
 
     public function login()

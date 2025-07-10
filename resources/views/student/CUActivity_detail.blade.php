@@ -58,12 +58,38 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             @if(isset($selectedTopic) && $selectedTopic->type==='video')
-                                <div class="embed-responsive embed-responsive-16by9 mb-3">
-                                    <video class="embed-responsive-item w-100" controls>
+                                <div class="ratio ratio-16x9">
+                                    <video id="topic-video" class="embed-responsive-item w-100" controls>
                                         <source src="{{ asset('asset/video/' . $selectedTopic->file_path) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const video = document.getElementById('topic-video');
+                                        let lastSentProgress = 0;
+
+                                        video.addEventListener('timeupdate', function() {
+                                            const percent = Math.floor((video.currentTime / video.duration) * 100);
+
+                                            // Only send if progress changed by at least 5%
+                                            if (Math.abs(percent - lastSentProgress) >= 5 && percent <= 100) {
+                                                lastSentProgress = percent;
+                                                fetch("{{ route('student.topic.progress.update') }}", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                    },
+                                                    body: JSON.stringify({
+                                                        topic_id: "{{ $selectedTopic->id }}",
+                                                        progress: percent
+                                                    })
+                                                });
+                                            }
+                                        });
+                                    });
+                                </script>
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='slideshow')
                                 <iframe 
                                     src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('asset/slideshow/')) }}" 
@@ -74,21 +100,32 @@
 
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='document')
                                 @php
-                                    $filePath = asset('asset/document/' . $selectedTopic->file_path);
-                                    $fileExtension = pathinfo($selectedTopic->file_path, PATHINFO_EXTENSION);
-                                    $isPdf = strtolower($fileExtension) === 'pdf';
+                                    $fileName = $selectedTopic->file_path
                                 @endphp
-                                {{-- <div class="mb-3">
+                                @if(Str::endsWith($fileName, '.pdf'))
+                                    <iframe src="{{ asset('asset/document/' . $fileName) }}" width="100%" height="600px"></iframe>
+
+                                @elseif(Str::endsWith($fileName, '.docx'))
                                     <iframe 
-                                        src="https://docs.google.com/gview?url=&embedded=true" 
-                                        style="width:100%; height:600px;" 
-                                        frameborder="0">
+                                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/files/' . $fileName)) }}" 
+                                        width="100%" height="600px">
                                     </iframe>
-                                    <a href="{{ asset('asset/document/' . $selectedTopic->file_path) }}" class="btn btn-primary mt-2" target="_blank">
-                                        <i class="fas fa-file-download"></i> Download PDF
-                                    </a>
-                                </div> --}}
+
+                                @else
+                                    <p>Unsupported file format.</p>
+                                @endif
                                 <canvas id="pdf-container"></canvas>
+                            @else
+                                <div class="text-center py-5">
+                                    <h2>Welcome to {{ auth()->user()->enrollments->first()->course->activities->first()->title  }}</h2>
+                                    <p class="lead mt-3">
+                                        {{  auth()->user()->enrollments->first()->course->activities->first()->description  }}
+                                    </p>
+                                    <img src="{{ asset('img/welcome_learning.svg') }}" alt="Welcome" style="max-width: 300px;" class="my-4">
+                                    <p>
+                                        Ready to get started? Choose a topic and dive in!
+                                    </p>
+                                </div>
                             @endif
                         </div>
                     </div>

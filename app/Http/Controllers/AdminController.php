@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Course;
+use App\Models\assignment;
 use App\Models\User;
-use App\Models\Enrollment;
-use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use App\Models\topic;
+use App\Models\Course;
 use App\Models\CUActivity;
+use App\Models\Enrollment;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -227,6 +229,8 @@ class AdminController extends Controller
         return view('admin.view_assignments', compact('course', 'assignments'));
     }
 
+    
+
     public function addAssignmentToCourse(Request $request, Course $course)
     {
         if ($request->isMethod('get')) {
@@ -251,8 +255,99 @@ class AdminController extends Controller
 
     public function selectCourseForAssignment()
     {
-        $courses = \App\Models\Course::withCount('cuActivities')->get();
+
+        $courses = Course::withCount('cuActivities')->get();
         return view('admin.select_course', compact('courses'));
+    }
+
+    public function selectActiviryForAssignment(Course $course)
+    {
+        $activities = $course->cuActivities()->get();
+        return view('admin.select_cuactivity', compact('course', 'activities'));
+    }
+
+
+
+    public function viewCourseActivities(Course $course)
+    {
+        $activities = $course->cuActivities()->with('topics')->get();
+        $topics = $activities->flatMap(function ($activity) {
+            return $activity->topics;
+        });
+        return view('admin.courseActivities ', compact('course', 'activities','topics'));
+    }
+
+    public function viewActivitiesTopic(CUActivity $activity)
+    {
+        $topics = $activity->topics;
+        return view('admin.activityTopic', compact('activity', 'topics'));
+    }
+
+    public function addTopicToActivity(Request $request)
+    {
+        if ($request->isMethod('get')) {
+            $activity = CUActivity::findOrFail($request->cu_id);
+            return view('admin.add_topic_to_activity', compact('activity'));
+        }
+        
+        $request->validate([
+            
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:slideshow,document,video',
+            'file_path' => 'required',
+            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+        ]);
+       
+
+        $filePaths = [];
+
+        if ($request->hasFile('file_path')) {
+            foreach ($request->file('file_path') as $file) {
+            $path = $file->store('topics', 'public');
+            $filePaths[] = [
+                'path' => str_replace(['\\', '"'], '/', $path),
+                'filename' => $file->getClientOriginalName(),
+            ];
+            }
+        }
+
+        $filePaths = json_encode($filePaths);
+
+        topic::create([
+            'cu_id' => $request->cu_id,
+            'title' => $request->title,
+            'type' => $request->type,
+            'file_path' => $filePaths,
+        ]);
+        return redirect()->route('admin.viewActivitiesTopic', $request->cu_id)->with('success', 'Topic added successfully!');
+    }
+
+    public function addCourseActivity(Request $request)
+    {
+        if ($request->isMethod('get')) {
+            $course = Course::findOrFail($request->course_id);
+            return view('admin.add_cu_activity', compact('course'));
+        }
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+        ]);
+
+        CUActivity::create([
+            'course_id' => $request->course_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'due_date' => $request->due_date,
+        ]);
+
+        return redirect()->route('admin.courseActivities', $request->course_id)->with('success', 'CU Activity created successfully!');
+    }
+
+    public function deleteAssignmentFromActivity(CUActivity $activity, assignment $assignment)
+    {
+        $assignment->delete();
+        return redirect()->route('admin.activityAssignment.view', $activity->id)->with('success', 'Assignment deleted successfully!');
     }
 
     public function viewAssignmentTopics(CUActivity $assignment)
@@ -283,7 +378,7 @@ class AdminController extends Controller
             }
         }
 
-        \App\Models\topic::create([
+        topic::create([
             'cu_id' => $assignment->id,
             'title' => $request->title,
             'type' => $request->type,
@@ -291,6 +386,45 @@ class AdminController extends Controller
         ]);
         return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic added successfully!');
     }
+
+    public function viewActivityAssignments(CUActivity $activity)
+    {
+        $assignments = $activity->assignments;
+        return view('admin.activity_assignment', compact('activity', 'assignments'));
+    }
+
+    public function addAssignmentToActivity(Request $request,Course $course)
+    {
+        $request->validate([
+            "assignment_name"=> 'required|string|max:255',
+            "description"=> 'nullable|string',
+            "due_date"=> 'required|date',
+            "attachment"=> 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,mp4|max:51200',
+        ]);
+
+        
+        if($request->has('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('assignments', 'public');
+            $attachmentPath = str_replace(['\\', '"'], '/', $attachmentPath);
+        }else {
+            $attachmentPath = null;
+        }
+        
+        
+        $assignment=assignment::create([
+            'cu_id' => $request->activity_id,
+            'assignment_name' => $request->assignment_name,
+            'description' => $request->description,
+            'due_date' => $request->due_date,
+            'attachment' => $attachmentPath,
+        ]);
+        
+        if($assignment){
+            return redirect()->route('admin.selectActiviryForAssignment',$course->id)->with('success', 'Assignment added successfully!');
+        }
+        return redirect()->back()->with('error', 'Failed to add assignment. Please try again.');
+    }
+    
 
     public function editTopic(\App\Models\topic $topic)
     {
