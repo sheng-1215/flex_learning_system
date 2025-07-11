@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class assignment extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'cu_id',
+        'assignment_name',
+        'description',
+        'due_date',
+        'attachment', // Changed from attachment to file_path
+    ];
     public function cuActivity()
     {
         return $this->belongsTo(CUActivity::class);

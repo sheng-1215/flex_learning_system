@@ -28,7 +28,7 @@
         <div class="container-fluid">
             <div class="page-header mb-4 text-center">
                 <h1 class="display-4">{{ $course->title }}</h1>
-                <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All Courses</a> / <span class="text-warning">Assignments</span>
+                <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All Courses</a> / <span class="text-warning">CU activity</span>
             </div>
 
             <div class="card shadow-sm">

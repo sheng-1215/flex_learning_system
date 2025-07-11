@@ -23,25 +23,57 @@
     @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
-            <div class="text-center mb-5">
-                <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Assignments</h5>
-                <h1>Select a Course to add Assignments</h1>
+            <div class="page-header mb-4 text-center">
+                <h1 class="display-4">{{ $course->title }}</h1>
+                
+                <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All Courses</a> / <span class="text-warning">CU activity</span>
             </div>
             {{-- Add Assignment Form --}}
+            <div class="card mb-4">
+                <div class="card-header">Add New Assignment</div>
+                <div class="card-body">
+                    <form id="add-assignment-form" action="{{ route('admin.activityAssignment.add',$course->id) }}" enctype="multipart/form-data" method="POST">
+                        @csrf
+                        <div class="form-group mb-2">
+                            <label for="course_id">Course</label>
+                            <select name="activity_id" id="course_id" class="form-control" required>
+                                <option value="">Select CU activity</option>
+                                @foreach($activities as $activitie)
+                                    <option value="{{ $activitie->id }}">{{ $activitie->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="title">Assignment Title</label>
+                            <input type="text" name="assignment_name" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="description">Description</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+                         <x-attachment :name="'attachment'" :label="'Upload Content'" :required="false" :multiple="false" />
+                        <div class="form-group mb-2">
+                            <label for="due_date">Due Date</label>
+                            <input type="date" name="due_date" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Assignment</button>
+                    </form>
+                </div>
+            </div>
             <div class="row" id="course-list">
-                @forelse($courses as $course)
+                @forelse($activities as $activitie)
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="course-item">
                         <div class="position-relative">
                             <img class="img-fluid" src="{{ $course->cover_image ? asset('storage/' . $course->cover_image) : asset('img/cat-'.($loop->iteration % 8 + 1).'.jpg') }}" alt="">
-                           
+                            <a href="{{ route('admin.activityAssignment.view', $activitie->id) }}" class="btn-course">View Assignments</a>
                         </div>
                         <div class="p-4">
                             <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fas fa-tasks text-primary mr-2"></i>{{ $course->cu_activities_count ?? 0 }} CU activity</small>
+                                <small class="m-0"><i class="fas fa-tasks text-primary mr-2"></i>{{ $activitie->assignments->count() ?? 0 }} Assignments</small>
                                 <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ $course->start_date->format('M d, Y') }}</small>
                             </div>
-                            <a class="h5" href="{{ route('admin.selectActiviryForAssignment', $course) }}">{{ $course->title }}</a>
+                            <a class="h5" href="{{ route('admin.activityAssignment.view', $activitie->id) }}">{{ $activitie->title }}</a>
                             <div class="border-top mt-4 pt-4">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -74,16 +106,6 @@
         </div>
     </div>
 
-    <script>
-    document.getElementById('add-assignment-form').addEventListener('submit', function(e) {
-        var courseId = document.getElementById('course_id').value;
-        if (!courseId) {
-            alert('Please select a course!');
-            e.preventDefault();
-            return false;
-        }
-        this.action = '/admin/courses/' + courseId + '/assignments/add';
-    });
-    </script>
+    
 </body>
 </html>

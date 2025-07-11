@@ -24,7 +24,7 @@ class FunctionController extends Controller
 
             $user = Auth::user();
             if ($user->role === 'student') {
-                return redirect()->route('student.dashboard'); 
+                return redirect()->route('student.dashboard');
             } else if ($user->role === 'admin' || $user->role === 'lecturer') {
                 return redirect()->route('admin_dashboard');
             } else {
@@ -83,6 +83,7 @@ class FunctionController extends Controller
 
         return redirect()->route('dashboard');
 
+
     }
     public function assignmentSubmit(Request $request)
     {
@@ -98,10 +99,28 @@ class FunctionController extends Controller
         $assignment->submitted_at = now();
         $assignment->save();
 
-
         return redirect()->route('student.assignment', ['id' => $assignment->id])
                          ->with('success', 'Assignment submitted successfully.');
 
+
+    }
+    public function assignmentDelete($id)
+    {
+        $assignment = assignmentSubmit::findOrFail($id);
+        if ($assignment->user_id !== Auth::id()) {
+            return redirect()->back()->withErrors(['error' => 'You do not have permission to delete this assignment.']);
+        }
+
+        $assignment->delete();
+        return redirect()->route('student.assignment')->with('success', 'Assignment deleted successfully.');
+    }
+
+    public function downloadAssignment(Request $request, $id)
+    {
+        
+        $assignment = assignment::findOrFail($id);
+
+        return response()->download(asset($assignment->attachment));
     }
 
 
