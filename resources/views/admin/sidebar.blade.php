@@ -8,7 +8,6 @@
         <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link{{ request()->routeIs('admin.selectCourseForAssignment') ? ' active' : '' }}"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
         
         {{-- <li><a href="{{ route('admin.checkAssignments') }}" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li> --}}
-        {{-- <li><a href="#" class="nav-link"><i class="fas fa-pen mr-2"></i>Grade Assignment</a></li> --}}
         <li>
             <form id="logout-form" action="{{ route('logoutFunction') }}" method="POST" style="display:inline;">
                 @csrf
@@ -19,38 +18,72 @@
         </li>
     </ul>
 </div>
+<div id="sidebar-backdrop" class="sidebar-backdrop" style="display:none;"></div>
 <style>
     .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
     @media (max-width: 991.98px) {
         .sidebar { left: -200px; }
         .sidebar.active { left: 0; }
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            display: block;
+        }
     }
+    .sidebar-backdrop { display: none; }
 </style>
-<!-- 移动端Menu按钮 -->
+
 <button id="menuToggleBtn" class="btn btn-warning d-lg-none"
         onclick="toggleSidebar()"
-        style="position:fixed;top:16px;left:16px;z-index:1100;border-radius:50%;width:48px;height:48px;box-shadow:0 2px 8px rgba(0,0,0,0.15);padding:0;display:flex;align-items:center;justify-content:center;">
-    <span style="font-size:1.5rem;">☰</span>
+        style="position:block;top:16px;left:16px;z-index:1100;border-radius:50%;width:48px;height:48px;box-shadow:0 2px 8px rgba(0,0,0,0.15);padding:0;display:flex;align-items:center;justify-content:center; font-size:1.5rem;">
+   ☰
 </button>
 <script>
-    function toggleSidebar() {
+    function toggleSidebar(forceClose = false) {
         const sidebar = document.querySelector('.sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const menuBtn = document.getElementById('menuToggleBtn');
+        if (forceClose) {
+            sidebar.classList.remove('active');
+            backdrop.style.display = 'none';
+            document.body.style.overflow = '';
+            menuBtn.style.display = 'flex';
+            return;
+        }
         sidebar.classList.toggle('active');
-        document.getElementById('menuToggleBtn').style.display = sidebar.classList.contains('active') ? 'none' : 'flex';
+        if (sidebar.classList.contains('active')) {
+            backdrop.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            menuBtn.style.display = 'none';
+        } else {
+            backdrop.style.display = 'none';
+            document.body.style.overflow = '';
+            menuBtn.style.display = 'flex';
+        }
     }
     document.addEventListener('DOMContentLoaded', function() {
         const sidebar = document.querySelector('.sidebar');
-        document.getElementById('menuToggleBtn').style.display = sidebar.classList.contains('active') ? 'none' : 'flex';
-
-        // 新增：点击内容区自动收起sidebar
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const menuBtn = document.getElementById('menuToggleBtn');
+        menuBtn.style.display = sidebar.classList.contains('active') ? 'none' : 'flex';
+        // 点击遮罩关闭sidebar
+        backdrop.addEventListener('click', function() {
+            toggleSidebar(true);
+        });
+        // 点击内容区关闭sidebar
         document.addEventListener('click', function(e) {
-            // 只在小屏幕且sidebar已展开时生效
             if (window.innerWidth <= 991.98 && sidebar.classList.contains('active')) {
-                // 如果点击的不是sidebar本身，也不是sidebar的子元素，也不是Menu按钮
-                if (!sidebar.contains(e.target) && e.target.id !== 'menuToggleBtn') {
-                    sidebar.classList.remove('active');
-                    document.getElementById('menuToggleBtn').style.display = 'flex';
+                if (!sidebar.contains(e.target) && e.target.id !== 'menuToggleBtn' && e.target.id !== 'sidebar-backdrop') {
+                    toggleSidebar(true);
                 }
+            }
+        });
+        // 窗口变化时自动关闭sidebar
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 991.98) {
+                toggleSidebar(true);
             }
         });
     });

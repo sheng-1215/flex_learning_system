@@ -106,7 +106,6 @@
             <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Manage Courses</a></li>
             <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
             <li><a href="#" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-pen mr-2"></i>Grade Assignment</a></li>
             <li>
                 <form id="logout-form" action="{{ route('logoutFunction') }}" method="POST" style="display:inline;">
                     @csrf
@@ -166,15 +165,6 @@
                         <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
                         <h6>Check Assignment Status</h6>
                         <p class="text-muted small">Monitor student assignment submissions.</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <a href="#" class="text-decoration-none">
-                    <div class="card p-3 text-center">
-                        <i class="fas fa-pen fa-2x text-danger mb-2"></i>
-                        <h6>Grade Assignment</h6>
-                        <p class="text-muted small">Grade and give feedback on assignments.</p>
                     </div>
                 </a>
             </div>

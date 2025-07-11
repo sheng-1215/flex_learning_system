@@ -8,15 +8,46 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #f0f2f5; }
-        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; }
+        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
         .sidebar .nav-link { color: #fff; }
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
-        .content { margin-left: 200px; padding: 20px; }
+        .content { margin-left: 200px; padding: 20px; transition: margin-left 0.3s; }
         .course-item { border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(0, 0, 0, .08); background: #fff; }
         .course-item .position-relative { height: 200px; }
         .course-item img { width: 100%; height: 100%; object-fit: cover; }
         .course-item .btn-course { position: absolute; bottom: 10px; left: 10px; background-color: #ffc107; color: #343a40; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
         .course-item .btn-course:hover { background-color: #e0a800; text-decoration: none; color: #343a40; }
+        @media (max-width: 991.98px) {
+            .content { margin-left: 0; padding: 10px; padding-top: 60px !important; }
+            .sidebar { left: -200px; }
+            .sidebar.active { left: 0; }
+        }
+        @media (max-width: 991.98px) {
+            .col-lg-4, .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+        }
+        @media (max-width: 767.98px) {
+            .col-lg-4, .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+            .course-item .position-relative { height: 160px; }
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: #ffc107;
+            color: #343a40;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        @media (min-width: 992px) {
+            .menu-toggle { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -27,14 +58,12 @@
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Assignments</h5>
                 <h1>Select a Course to add Assignments</h1>
             </div>
-            {{-- Add Assignment Form --}}
             <div class="row" id="course-list">
                 @forelse($courses as $course)
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="course-item">
                         <div class="position-relative">
                             <img class="img-fluid" src="{{ $course->cover_image ? asset('storage/' . $course->cover_image) : asset('img/cat-'.($loop->iteration % 8 + 1).'.jpg') }}" alt="">
-                           
                         </div>
                         <div class="p-4">
                             <div class="d-flex justify-content-between mb-3">
@@ -73,17 +102,10 @@
             </div>
         </div>
     </div>
-
     <script>
-    document.getElementById('add-assignment-form').addEventListener('submit', function(e) {
-        var courseId = document.getElementById('course_id').value;
-        if (!courseId) {
-            alert('Please select a course!');
-            e.preventDefault();
-            return false;
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
         }
-        this.action = '/admin/courses/' + courseId + '/assignments/add';
-    });
     </script>
 </body>
 </html>

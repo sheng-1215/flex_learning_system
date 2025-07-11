@@ -8,11 +8,35 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #f0f2f5; }
-        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; }
+        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
         .sidebar .nav-link { color: #fff; }
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
-        .content { margin-left: 200px; padding: 20px; }
-        .card { border-radius: 10px; }
+        .content { margin-left: 200px; padding: 20px; transition: margin-left 0.3s; }
+        .card { border-radius: 10px; box-shadow: 0 0 30px rgba(0, 0, 0, .08); }
+        @media (max-width: 991.98px) {
+            .content { margin-left: 0; padding: 10px; }
+            .sidebar { left: -200px; }
+            .sidebar.active { left: 0; }
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: #ffc107;
+            color: #343a40;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        @media (min-width: 992px) {
+            .menu-toggle { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -23,7 +47,6 @@
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
-
             <!-- Admins Table -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header"><h5 class="mb-0">Admins</h5></div>
@@ -69,7 +92,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Lecturers Table -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header"><h5 class="mb-0">Lecturers</h5></div>
@@ -124,7 +146,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Students Table -->
             <div class="card shadow-sm">
                 <div class="card-header"><h5 class="mb-0">Students</h5></div>
@@ -175,5 +196,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+    </script>
 </body>
 </html> 

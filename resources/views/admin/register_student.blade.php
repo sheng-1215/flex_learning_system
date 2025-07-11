@@ -35,6 +35,11 @@
         .card {
             border-radius: 10px;
         }
+        @media (max-width: 991.98px) {
+            .content { margin-left: 0; padding: 10px; padding-top: 60px !important; }
+            .sidebar { left: -200px; }
+            .sidebar.active { left: 0; }
+        }
     </style>
 </head>
 <body>

@@ -17,6 +17,11 @@
         .course-item img { width: 100%; height: 100%; object-fit: cover; }
         .course-item .btn-course { position: absolute; bottom: 10px; left: 10px; background-color: #ffc107; color: #343a40; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
         .course-item .btn-course:hover { background-color: #e0a800; text-decoration: none; color: #343a40; }
+        @media (max-width: 991.98px) {
+            .content { margin-left: 0; padding: 10px; padding-top: 60px !important; }
+            .sidebar { left: -200px; }
+            .sidebar.active { left: 0; }
+        }
     </style>
 </head>
 <body>

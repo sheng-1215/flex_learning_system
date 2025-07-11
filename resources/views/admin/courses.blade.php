@@ -22,7 +22,7 @@
         .course-meta { font-size: 1rem; color: #888; }
         .course-actions .btn { margin-left: 5px; }
         @media (max-width: 991.98px) {
-            .content { margin-left: 0; padding: 10px; }
+            .content { margin-left: 0; padding: 10px; padding-top: 60px !important; }
             .sidebar { left: -200px; }
             .sidebar.active { left: 0; }
         }

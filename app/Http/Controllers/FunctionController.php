@@ -76,7 +76,7 @@ class FunctionController extends Controller
             return redirect()->route('admin_dashboard');
         }
 
-        return redirect()->route('index');
+        return redirect()->route('dashboard');
 
         Auth::login($user);
         $request->session()->regenerate();
@@ -129,6 +129,6 @@ class FunctionController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('index');
+        return redirect()->route('dashboard');
     }
 }
