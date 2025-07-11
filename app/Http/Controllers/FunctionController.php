@@ -24,7 +24,7 @@ class FunctionController extends Controller
 
             $user = Auth::user();
             if ($user->role === 'student') {
-                return redirect()->route('index');
+                return redirect()->route('student.dashboard');
             } else if ($user->role === 'admin' || $user->role === 'lecturer') {
                 return redirect()->route('admin_dashboard');
             } else {

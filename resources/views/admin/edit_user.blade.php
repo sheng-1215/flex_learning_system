@@ -58,7 +58,7 @@
                             <label>Enrolled Course</label>
                             @foreach($courses as $course)
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" id="course_{{ $course->id }}" name="student_course" value="{{ $course->id }}" {{ (isset($enrolledCourseIds) && in_array($course->id, $enrolledCourseIds)) ? 'checked' : '' }}>
+                                    <input type="radio" class="custom-control-input" id="course_{{ $course->id }}" name="student_courses[]" value="{{ $course->id }}" {{ (isset($enrolledCourseIds) && in_array($course->id, $enrolledCourseIds)) ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="course_{{ $course->id }}">{{ $course->title }}</label>
                                 </div>
                             @endforeach

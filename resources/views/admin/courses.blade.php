@@ -123,12 +123,19 @@
                                             </div>
                                         </div>
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.editCourse', $course) }}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="{{ route('admin.editCourse', $course) }}" class="btn btn-sm btn-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                             <form action="{{ route('admin.destroyCourse', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                                <button class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </form>
+                                            <a href="{{ route('admin.addUserToCourse', $course->id) }}" class="btn btn-sm btn-success" title="Add User to Course">
+                                                <i class="fas fa-user-plus"></i> 
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
