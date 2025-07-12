@@ -42,9 +42,14 @@ Route::controller(AdminController::class)->group(function() {
     Route::put('/admin/user/{user}', 'updateUser')->name('admin.updateUser');
     Route::delete('/admin/user/{user}', 'destroyUser')->name('admin.destroyUser');
     Route::get('/admin/courses/{course}/cuactivities', 'viewCourseActivities')->name('admin.courseActivities');
+    Route::get("/admin/activities/{activity}/edit",'viewEditActivity')->name('admin.editCUActivity');
+    Route::put("/admin/activities/{activity}/edit",'EditActivity')->name('admin.activity.edit');
+    Route::delete('/admin/activities/{activity}/destroy','destroyActivity')->name('admin.destroyCUActivity');
     Route::post('/admin/courses/cuactivities/add', 'addCourseActivity')->name('admin.addCourseActivity');
     Route::get('/admin/cuactivities/{activity}/topic', 'viewActivitiesTopic')->name('admin.viewActivitiesTopic');
     Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
+    Route::delete('admin/topics/{topic}/delete','deleteActivityTopic')->name('admin.deleteActivityTopic');
+    
     
     Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
     Route::get('/admin/assignments/select-cuactivity/{course}', 'selectActiviryForAssignment')->name('admin.selectActiviryForAssignment');

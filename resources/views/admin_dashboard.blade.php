@@ -97,7 +97,7 @@
     <!-- Sidebar Toggler (Mobile) -->
     <button class="sidebar-toggler" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    {{-- <div class="sidebar" id="sidebar">
         <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
@@ -115,7 +115,8 @@
                 </form>
             </li>
         </ul>
-    </div>
+    </div> --}}
+    @include('admin.sidebar')
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">

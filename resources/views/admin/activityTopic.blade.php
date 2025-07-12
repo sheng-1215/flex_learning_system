@@ -27,7 +27,30 @@
     @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
+            
             <h2 class="mb-4">Manage Topics for CU Activity</h2>
+            @if(session('success'))
+                <x-alertbox type="success" dismissible>
+                    {{ session('success') }}
+                </x-alertbox>
+            @endif
+
+            @if(session('error'))
+                <x-alertbox type="danger" dismissible>
+                    {{ session('error') }}
+                </x-alertbox>
+            @endif
+
+            @if ($errors->any())
+                <x-alertbox type="danger" dismissible>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </x-alertbox>
+            @endif  
+            
 
             <!-- CU Activity Card -->
             <div class="activity-card p-4 mb-4">
@@ -130,16 +153,16 @@
                                         </a>
                                     @endforeach
                                     </td>
-                                    <td>{{ $topic->order }}</td>
+                                    {{-- <td>{{ $topic->order }}</td> --}}
 
-                                    {{-- <td>
-                                        <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.deleteActivityTopic', [$activity->id, $topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
+                                    <td>
+                                        {{-- <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a> --}}
+                                        <form action="{{ route('admin.deleteActivityTopic', [$topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm btn-danger">Delete</button>
                                         </form>
-                                    </td> --}}
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

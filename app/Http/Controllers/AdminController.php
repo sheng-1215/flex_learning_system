@@ -80,11 +80,13 @@ class AdminController extends Controller
 
         return redirect()->route('admin.courses')->with('success', 'Course updated successfully.');
     }
+    
 
     public function destroyCourse(Course $course)
     {
         // Before deleting the course, we must delete related enrollments
         $course->enrollments()->delete();
+        $course->activities()->delete();
         $course->delete();
 
         return redirect()->route('admin.courses')->with('success', 'Course deleted successfully.');
@@ -94,9 +96,7 @@ class AdminController extends Controller
     {
         // Get all students who are NOT enrolled in this course
         $users = User::where('role', 'student')
-            ->whereDoesntHave('enrollments', function ($query) {
-                $query->where('role', 'student');
-            })
+            ->whereDoesntHave('enrollments')
             ->get();
         $enrollments=Enrollment::where('course_id',$course->id)
         ->whereHas('user',function($query){
@@ -188,9 +188,8 @@ class AdminController extends Controller
     {
         $admins = User::where('role', 'admin')->get();
         $lecturers = User::where('role', 'lecturer')
-            ->whereHas('enrollments')
-            ->with(['courses', 'enrollments.course'])
             ->get();
+        
         $students = User::where('role', 'student')
             ->with('enrollments.course')
             ->paginate(10, ['*'], 'students_page');
@@ -202,6 +201,7 @@ class AdminController extends Controller
         $courses = Course::all();
         $enrolledCourseIds = $user->enrollments()->where('role', 'student')->pluck('course_id')->toArray();
         $lecturerCourseIds = $user->enrollments()->where('role', 'lecturer')->pluck('course_id')->toArray();
+        
         return view('admin.edit_user', compact('user', 'courses', 'enrolledCourseIds', 'lecturerCourseIds'));
     }
 
@@ -307,6 +307,8 @@ class AdminController extends Controller
         return view('admin.select_course', compact('courses'));
     }
 
+    
+
     public function selectActiviryForAssignment(Course $course)
     {
         $activities = $course->cuActivities()->get();
@@ -322,6 +324,37 @@ class AdminController extends Controller
             return $activity->topics;
         });
         return view('admin.courseActivities ', compact('course', 'activities','topics'));
+    }
+
+    public function viewEditActivity(CUActivity $activity)
+    {
+        return view('admin.editCUActivity',compact('activity'));
+    }
+
+    public function EditActivity(CUActivity $activity,Request $request)
+    {
+        $formValidation=$request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+        ]);
+        $editCU=$activity->update($formValidation);
+        if($editCU){
+            return redirect()->route('admin.courseActivities', $activity->course_id)->with('success', 'CU Activity updated successfully!');
+        }
+        return redirect()->back()->with('error', 'Failed to update CU Activity. Please try again.');
+    }
+
+    public function destroyActivity(CUActivity $activity)
+    {
+        
+        $course_id=$activity->course_id;
+
+        $activity->topics()->delete();
+        $activity->assignments()->delete();
+        $activity->delete();
+        
+        return redirect()->route('admin.courseActivities',$course_id)->with('success', 'CU Activity deleted successfully!');
     }
 
     public function viewActivitiesTopic(CUActivity $activity)
@@ -367,6 +400,12 @@ class AdminController extends Controller
             'file_path' => $filePaths,
         ]);
         return redirect()->route('admin.viewActivitiesTopic', $request->cu_id)->with('success', 'Topic added successfully!');
+    }
+
+    public function deleteActivityTopic(topic $topic)
+    {
+        $topic->delete();
+        return redirect()->route('admin.viewActivitiesTopic', $topic->cu_id)->with('success', 'Topic deleted successfully!');
     }
 
     public function addCourseActivity(Request $request)

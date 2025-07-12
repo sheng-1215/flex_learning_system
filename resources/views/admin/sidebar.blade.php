@@ -19,6 +19,8 @@
     </ul>
 </div>
 <div id="sidebar-backdrop" class="sidebar-backdrop" style="display:none;"></div>
+
+
 <style>
     .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
     @media (max-width: 991.98px) {
@@ -40,6 +42,27 @@
         style="position:block;top:16px;left:16px;z-index:1100;border-radius:50%;width:48px;height:48px;box-shadow:0 2px 8px rgba(0,0,0,0.15);padding:0;display:flex;align-items:center;justify-content:center; font-size:1.5rem;">
    ☰
 </button>
+{{-- @if(session('success'))
+    <x-alertbox type="success" dismissible>
+        {{ session('success') }}
+    </x-alertbox>
+@endif
+
+@if(session('error'))
+    <x-alertbox type="danger" dismissible>
+        {{ session('error') }}
+    </x-alertbox>
+@endif
+
+@if ($errors->any())
+    <x-alertbox type="danger" dismissible>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </x-alertbox>
+@endif --}}
 <script>
     function toggleSidebar(forceClose = false) {
         const sidebar = document.querySelector('.sidebar');
