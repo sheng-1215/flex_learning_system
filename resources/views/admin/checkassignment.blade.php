@@ -32,7 +32,8 @@
         <div class="container-fluid">
             <div class="page-header mb-4 text-center" style="background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('{{ asset('img/page-header.jpg') }}') no-repeat center center; background-size: cover; padding: 60px 0; color: white; border-radius: 10px;">
                 <h1 class="display-4">Check Assignment Submissions</h1>
-                <a href="" class="text-white">All CU Activity</a> / <span class="text-warning">CU activity</span>
+                
+                <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All CU Activity</a> / <a href="{{ route('admin.selectActiviryForAssignment', $assignment->cuActivity->course_id) }}" class="text-white">CU activity</a> / <a href="{{ route('admin.activityAssignment.view',$assignment->cu_id) }}" class="text-white">Assignments</a> / <span  class="text-warning">Assignment submmissions</span>
             </div>
             
 

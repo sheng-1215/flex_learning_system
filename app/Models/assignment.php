@@ -17,7 +17,7 @@ class assignment extends Model
     ];
     public function cuActivity()
     {
-        return $this->belongsTo(CUActivity::class);
+        return $this->belongsTo(CUActivity::class,'cu_id','id');
     }
     public function assignmentSubmissions()
     {

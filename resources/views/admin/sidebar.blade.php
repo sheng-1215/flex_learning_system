@@ -1,5 +1,5 @@
 <div class="sidebar">
-    <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
+    <h4 class="text-center mb-4"><span class="text-warning">E</span> Learning</h4>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link{{ request()->routeIs('admin_dashboard') ? ' active' : '' }}"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
         <li><a href="{{ route('admin.registerStudentView') }}" class="nav-link{{ request()->routeIs('admin.registerStudentView') ? ' active' : '' }}"><i class="fas fa-user-plus mr-2"></i>Register Account</a></li>

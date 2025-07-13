@@ -129,6 +129,6 @@ class FunctionController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('dashboard');
+        return redirect()->route('login');
     }
 }
