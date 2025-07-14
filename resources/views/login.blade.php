@@ -88,7 +88,7 @@
             </div>
             <button type="submit">Login</button>
         </form>
-        <p style="margin-top: 20px; color: #777;">Don't have an account? <a href="{{ route('register.studentVerify') }}" style="color: #007bff; text-decoration: none;">Register here</a>.</p>
+        {{-- <p style="margin-top: 20px; color: #777;">Don't have an account? <a href="{{ route('register.studentVerify') }}" style="color: #007bff; text-decoration: none;">Register here</a>.</p> --}}
     </div>
 </body>
 </html> 

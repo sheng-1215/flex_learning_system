@@ -88,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile',"profile")->name('student.profile');
         Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
         Route::get('/assignment','assignment')->name('student.assignment');
-        Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
+        Route::get('/assignmentDetail/{id}','assignmentSubmit')->name('student.assignment.detail');
         
 
     });
