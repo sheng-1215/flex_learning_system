@@ -9,10 +9,21 @@
     
     <style>
         body { background-color: #f0f2f5; }
-        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; }
+        /* Sidebar styles */
+        .sidebar {
+            height: 100vh;
+            background: #343a40;
+            color: #fff;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 60px;
+            transition: left 0.3s;
+        }
         .sidebar .nav-link { color: #fff; }
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
-        .content { margin-left: 200px; padding: 20px; }
+        .content { margin-left: 200px; padding: 20px; transition: margin-left 0.3s; }
         .card { border-radius: 10px; }
         .page-header {
             background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('/img/page-header.jpg') no-repeat center center;
@@ -21,10 +32,37 @@
             color: white;
             border-radius: 10px;
         }
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -200px;
+                width: 200px;
+                z-index: 1050;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .content {
+                margin-left: 0;
+                padding: 10px;
+            }
+            .page-header {
+                padding: 30px 0;
+                font-size: 1.5rem;
+            }
+        }
+        @media (max-width: 575.98px) {
+            .page-header h1 {
+                font-size: 1.3rem;
+            }
+            .card-header h5 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    @include('admin.sidebar')
+
+ @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
             <div class="page-header mb-4 text-center" style="background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('{{ asset('img/page-header.jpg') }}') no-repeat center center; background-size: cover; padding: 60px 0; color: white; border-radius: 10px;">
@@ -83,5 +121,13 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle for mobile
+        $(function() {
+            $('#sidebarToggle').on('click', function() {
+                $('#sidebar').toggleClass('active d-none');
+            });
+        });
+    </script>
 </body>
 </html> 

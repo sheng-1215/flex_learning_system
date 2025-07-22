@@ -94,28 +94,8 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Toggler (Mobile) -->
-    <button class="sidebar-toggler" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
-            <li><a href="{{ route('admin.registerStudentView') }}" class="nav-link"><i class="fas fa-user-plus mr-2"></i>Register Student</a></li>
-            <li><a href="{{ route('admin.users') }}" class="nav-link"><i class="fas fa-users-cog mr-2"></i>Manage Users</a></li>
-            <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Manage Courses</a></li>
-            <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li>
-            <li>
-                <form id="logout-form" action="{{ route('logoutFunction') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
-                </form>
-            </li>
-        </ul>
-    </div>
+    @include('admin.sidebar')
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">
@@ -127,8 +107,8 @@
                 <a href="{{ route('admin.registerStudentView') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
                         <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
-                        <h6>Register Student</h6>
-                        <p class="text-muted small">Add new students to the system.</p>
+                        <h6>Register Account</h6>
+                        <p class="text-muted small">Add new students and lecturers to the system.</p>
                     </div>
                 </a>
             </div>

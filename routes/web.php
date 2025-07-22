@@ -76,14 +76,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix("student")->group(function () {
     Route::controller(ViewController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('student.dashboard');
-        Route::get('/login','login')->name('login');
+        Route::get('/login','login');
         Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
         Route::get('/profile',"profile")->name('student.profile');
         Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
         Route::get('/assignment','assignment')->name('student.assignment');
         Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
-        
-        Route::get('/login','login')->name('login');
 
     });
     Route::controller(FunctionController::class)->group(function () {
