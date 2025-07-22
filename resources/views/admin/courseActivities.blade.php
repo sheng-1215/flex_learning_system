@@ -86,14 +86,22 @@
                             <div class="mb-2" style="font-size:0.98em; color:#555;">
                                 {{ Str::limit($activity->description, 80) }}
                             </div>
-                            {{-- <div class="activity-actions d-flex justify-content-end">
-                                <a href="{{ route('admin.editCUActivity', $activity) }}" class="btn btn-sm btn-primary">Edit</a>
-                                <form action="{{ route('admin.destroyCUActivity', $activity) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </div> --}}
+                            <div class="activity-actions d-flex justify-content-end">
+                                {{-- <a href="{{ route('admin.editCUActivity', $activity) }}" class="btn btn-sm btn-primary">Edit</a> --}}
+                                <a href="{{ route('admin.editCUActivity', $activity) }}" class="btn btn-sm btn-primary" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <div class="btn-group" role="group">
+                                            
+                                            <form action="{{ route('admin.destroyCUActivity', $activity) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @empty

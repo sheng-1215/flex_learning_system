@@ -69,7 +69,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Login to Flex Learning Portal</h1>
+        <h1>Login to E-Learning Portal</h1>
         <form action="{{ route('loginFunction') }}" method="POST">
             @csrf
             <div class="form-group">
@@ -88,7 +88,7 @@
             </div>
             <button type="submit">Login</button>
         </form>
-        <p style="margin-top: 20px; color: #777;">Don't have an account? <a href="{{ route('register.studentVerify') }}" style="color: #007bff; text-decoration: none;">Register here</a>.</p>
+        {{-- <p style="margin-top: 20px; color: #777;">Don't have an account? <a href="{{ route('register.studentVerify') }}" style="color: #007bff; text-decoration: none;">Register here</a>.</p> --}}
     </div>
 </body>
 </html> 
