@@ -87,6 +87,14 @@ class ViewController extends Controller
 
     public function login()
     {
+        if (auth()->check()) {
+            // 如果已登录，自动跳转到dashboard，防止死循环
+            if (auth()->user()->role === 'student') {
+                return redirect()->route('student.dashboard');
+            } else if (auth()->user()->role === 'admin' || auth()->user()->role === 'lecturer') {
+                return redirect()->route('admin_dashboard');
+            }
+        }
         return view('login');
     }
 

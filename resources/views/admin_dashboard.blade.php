@@ -94,10 +94,8 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Toggler (Mobile) -->
-    <button class="sidebar-toggler" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <!-- Sidebar -->
-    {{-- <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
         <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
@@ -115,8 +113,7 @@
                 </form>
             </li>
         </ul>
-    </div> --}}
-    @include('admin.sidebar')
+    </div>
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">
@@ -128,8 +125,8 @@
                 <a href="{{ route('admin.registerStudentView') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
                         <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
-                        <h6>Register Student</h6>
-                        <p class="text-muted small">Add new students to the system.</p>
+                        <h6>Register Account</h6>
+                        <p class="text-muted small">Add new students and lecturers to the system.</p>
                     </div>
                 </a>
             </div>

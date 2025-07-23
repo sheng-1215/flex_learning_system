@@ -153,16 +153,16 @@
                                         </a>
                                     @endforeach
                                     </td>
-                                    {{-- <td>{{ $topic->order }}</td> --}}
+                                    <td>{{ $topic->order }}</td>
 
-                                    <td>
-                                        {{-- <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a> --}}
-                                        <form action="{{ route('admin.deleteActivityTopic', [$topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
+                                    {{-- <td>
+                                        <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        <form action="{{ route('admin.deleteActivityTopic', [$activity->id, $topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm btn-danger">Delete</button>
                                         </form>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>
