@@ -55,14 +55,14 @@
                                 <tr>
                                     <td>{{ $assignment->assignment_name }}</td>
                                     <td>{{ Str::limit($assignment->description, 50) }}</td>
-                                    <td><a href="{{ $assignment->attachment }}" target="_blank" >attachment Link</a></td>
+                                    <td><a href="{{ asset($assignment->attachment) }}" target="_blank" >attachment Link</a></td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($assignment->due_date)->format('Y-m-d') }}</td>
                                     <td>
                                         <a class="btn btn-sm btn-info" href="{{ route('admin.checkAssignments', [$assignment]) }}">
                                             check submissions
                                         </a>
-                                        <a href="{{ route('admin.assignment.edit', [$activity, $assignment]) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.activity.assignment.delete', [$activity, $assignment]) }}" method="POST" style="display:inline-block;">
+                                        <a href="{{ route('admin.assignment.edit', [$activity->course_id, $assignment]) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        <form action="{{ route('admin.assignment.delete', [$activity->course_id, $assignment]) }}" method="POST" style="display:inline-block;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this assignment?')">Delete</button>

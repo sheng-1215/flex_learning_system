@@ -48,8 +48,8 @@
                         @csrf
                         @method('PUT')
                         <div class="form-group">
-                            <label for="title">Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" required value="{{ old('title', $assignment->title) }}">
+                            <label for="assignment_name">Assignment Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="assignment_name" name="assignment_name" required value="{{ old('assignment_name', $assignment->assignment_name) }}">
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
@@ -59,8 +59,10 @@
                             <label for="due_date">Due Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="due_date" name="due_date" required value="{{ old('due_date', $assignment->due_date ? \Illuminate\Support\Carbon::parse($assignment->due_date)->format('Y-m-d') : '') }}">
                         </div>
+                        
+
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Update Assignment</button>
-                        <a href="{{ route('admin.assignments.view', $course) }}" class="btn btn-secondary ml-2">Cancel</a>
+                        <a href="{{ route('admin.activityAssignment.view', $assignment->cu_id) }}" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
             </div>
