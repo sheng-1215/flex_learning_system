@@ -550,26 +550,26 @@ class AdminController extends Controller
         return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic deleted successfully!');
     }
 
-    public function editAssignment(Course $course, \App\Models\CUActivity $assignment)
+    public function editAssignment(Course $course, assignment $assignment)
     {
         return view('admin.edit_assignment', compact('course', 'assignment'));
     }
 
-    public function updateAssignment(Request $request, Course $course, \App\Models\CUActivity $assignment)
+    public function updateAssignment(Request $request, Course $course, assignment $assignment)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'assignment_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'required|date',
         ]);
-        $assignment->update($request->only(['title', 'description', 'due_date']));
-        return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment updated successfully!');
+        $assignment->update($request->only(['assignment_name', 'description', 'due_date']));
+        return redirect()->route('admin.activityAssignment.view', $assignment->cu_id)->with('success', 'Assignment updated successfully!');
     }
 
-    public function deleteAssignment(Course $course, \App\Models\CUActivity $assignment)
+    public function deleteAssignment(Course $course, assignment $assignment)
     {
         $assignment->delete();
-        return redirect()->route('admin.assignments.view', $course)->with('success', 'Assignment deleted successfully!');
+        return redirect()->route('admin.activityAssignment.view', $assignment->cu_id)->with('success', 'Assignment deleted successfully!');
     }
 
     public function checkAssignments(assignment $assignment)
