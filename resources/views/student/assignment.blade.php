@@ -60,3 +60,10 @@
         </div>
     </div>
 @endsection
+@include('student.footer')
+
+<style>
+    @media (max-width: 576px) {
+        footer { font-size: 0.95rem; padding: 12px 0; }
+    }
+</style>

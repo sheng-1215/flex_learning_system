@@ -97,80 +97,81 @@
                     <h5 class="mb-0">Topics List</h5>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-bordered table-hover topic-table mb-0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th style="width:60px;">#</th>
-                                <th>Title</th>
-                                <th>type</th>
-                                <th>attachment</th>
-                                {{-- <th style="width:100px;">Order</th> --}}
-                                <th style="width:120px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($topics as $i => $topic)
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover topic-table mb-0">
+                            <thead class="thead-light">
                                 <tr>
-                                    <td>{{ $i+1 }}</td>
-                                    <td>{{ $topic->title }}</td>
-                                    <td>{{ $topic->type }}</td>
-                                    <td>
-                                    @php
-                                        
-                                        $filepath=json_decode($topic->file_path, true);
-                                        // dd($filepath);
-                                    @endphp
-                                    @foreach($filepath as $newattach)
+                                    <th style="width:60px;">#</th>
+                                    <th>Title</th>
+                                    <th>type</th>
+                                    <th>attachment</th>
+                                    {{-- <th style="width:100px;">Order</th> --}}
+                                    <th style="width:120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($topics as $i => $topic)
+                                    <tr>
+                                        <td>{{ $i+1 }}</td>
+                                        <td>{{ $topic->title }}</td>
+                                        <td>{{ $topic->type }}</td>
+                                        <td style="min-width: 180px;">
                                         @php
-                                            $ext = pathinfo($newattach["path"], PATHINFO_EXTENSION);
-                                            $icon = 'fa-file';
-                                            $iconColor = '';
-                                            if ($topic->type === 'document') {
-                                                if (in_array($ext, ['pdf'])) {
-                                                    $icon = 'fa-file-pdf';
-                                                    $iconColor = 'text-danger';
-                                                } elseif (in_array($ext, ['doc', 'docx'])) {
-                                                    $icon = 'fa-file-word';
-                                                    $iconColor = 'text-primary';
-                                                } else {
-                                                    $icon = 'fa-file-alt';
-                                                }
-                                            } elseif ($topic->type === 'video') {
-                                                $icon = 'fa-file-video';
-                                                $iconColor = 'text-primary';
-                                            } elseif ($topic->type === 'slideshow') {
-                                                if (in_array($ext, ['ppt', 'pptx'])) {
-                                                    $icon = 'fa-file-powerpoint';
-                                                    $iconColor = 'text-warning';
-                                                } else {
-                                                    $icon = 'fa-file';
-                                                }
-                                            }
+                                            $filepath=json_decode($topic->file_path, true);
                                         @endphp
-                                        <a href="{{ asset('storage/' . $newattach["path"]) }}" target="_blank" class="btn btn-sm btn-info mb-1">
-                                            <i class="fas {{ $icon }} {{ $iconColor }}"></i>
-                                            {{ $newattach["filename"] }}
-                                        </a>
-                                    @endforeach
-                                    </td>
-                                    <td>{{ $topic->order }}</td>
-
-                                    {{-- <td>
-                                        <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.deleteActivityTopic', [$activity->id, $topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">Delete</button>
-                                        </form>
-                                    </td> --}}
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No topics found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                        @foreach($filepath as $newattach)
+                                            @php
+                                                $ext = pathinfo($newattach["path"], PATHINFO_EXTENSION);
+                                                $icon = 'fa-file';
+                                                $iconColor = '';
+                                                if ($topic->type === 'document') {
+                                                    if (in_array($ext, ['pdf'])) {
+                                                        $icon = 'fa-file-pdf';
+                                                        $iconColor = 'text-danger';
+                                                    } elseif (in_array($ext, ['doc', 'docx'])) {
+                                                        $icon = 'fa-file-word';
+                                                        $iconColor = 'text-primary';
+                                                    } else {
+                                                        $icon = 'fa-file-alt';
+                                                    }
+                                                } elseif ($topic->type === 'video') {
+                                                    $icon = 'fa-file-video';
+                                                    $iconColor = 'text-primary';
+                                                } elseif ($topic->type === 'slideshow') {
+                                                    if (in_array($ext, ['ppt', 'pptx'])) {
+                                                        $icon = 'fa-file-powerpoint';
+                                                        $iconColor = 'text-warning';
+                                                    } else {
+                                                        $icon = 'fa-file';
+                                                    }
+                                                }
+                                            @endphp
+                                            <a href="{{ asset('storage/' . $newattach["path"]) }}" target="_blank"
+                                               class="btn btn-sm btn-info mb-1 text-truncate d-inline-block"
+                                               style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                <i class="fas {{ $icon }} {{ $iconColor }}"></i>
+                                                {{ $newattach["filename"] }}
+                                            </a>
+                                        @endforeach
+                                        </td>
+                                        <td>{{ $topic->order }}</td>
+                                        {{-- <td>
+                                            <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a>
+                                            <form action="{{ route('admin.deleteActivityTopic', [$activity->id, $topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                            </form>
+                                        </td> --}}
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No topics found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

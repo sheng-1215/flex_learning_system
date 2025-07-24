@@ -178,3 +178,27 @@
 </script>
 
 @endsection
+@include('student.footer')
+<style>
+@media (max-width: 576px) {
+    .container, .card, .row, .col, .form-group, .btn, .table-responsive, .table {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .form-control, .btn {
+        font-size: 1rem;
+    }
+    h2, h3, h4, h5 {
+        font-size: 1.1rem;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    .table {
+        font-size: 0.95rem;
+    }
+}
+</style>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container-fluid py-2">
-        <div class="container py-1">
+        <div class="container py-1" style="padding-left: 10px; padding-right: 10px;">
             <div class="heading mb-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -25,10 +25,12 @@
                         <br>
                         
                         @if($assignment->attachment)
-                            <a href="{{ asset('asset/assignment/' . $assignment->attachment) }}"  target="_blank">
-                                <i class="fas fa-file-download"></i> Download
-                                 {{ $assignment->attachment }}
-                            </a>
+                            <div style="max-width:90vw; overflow-x:auto; display:inline-block; vertical-align:middle;">
+                                <a href="{{ asset('asset/assignment/' . $assignment->attachment) }}"  target="_blank" style="display:inline-block; max-width:100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color:#e67e22;">
+                                    <i class="fas fa-file-download"></i> Download
+                                    <span style="vertical-align:middle;">{{ $assignment->attachment }}</span>
+                                </a>
+                            </div>
                         @endif
                     </div>
                     <div class="mb-3">
@@ -42,13 +44,17 @@
                                     <form action="{{ route('student.assignment.delete',["id"=>$submission->id]) }}" method="post">
                                             @csrf
                                             @method('DELETE')
-                                        <p>
-                                            <i class="fas fa-file-alt"></i>
-                                            <a href="{{ asset('storage/' . $submission->attachment) }}" target="_blank">{{ $submission->attachment }}</a>
-                                            <button type="submit" class="btn btn-link p-0 align-baseline text-danger" style="border: none; background: none;" title="Delete" onclick="return confirm('Are you sure you want to delete this file?')">
+                                        <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                            <i class="fas fa-file-alt mr-1"></i>
+                                            <div style="max-width: 70vw; overflow-x: auto; display: inline-block; vertical-align: middle;">
+                                                <a href="{{ asset('storage/' . $submission->attachment) }}" target="_blank" class="file-link text-break" style="display:inline-block; max-width: 100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color: #e67e22;">
+                                                    {{ $submission->attachment }}
+                                                </a>
+                                            </div>
+                                            <button type="submit" class="btn btn-link p-0 align-baseline text-danger ml-2" style="border: none; background: none;" title="Delete" onclick="return confirm('Are you sure you want to delete this file?')">
                                                 <i class="fas fa-times-circle fa-lg"></i>
                                             </button>
-                                        </p>
+                                        </div>
                                             
                                         </form>
                                     @endforeach
@@ -84,3 +90,40 @@
                 
     
 @endsection
+@include('student.footer')
+<style>
+@media (max-width: 576px) {
+    .container, .container-fluid, .row, .col-md-12, .form-group, .btn, .alert {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .container, .container-fluid {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+    .form-control, .btn {
+        font-size: 1rem;
+    }
+    h3, h4, h5 {
+        font-size: 1.1rem;
+    }
+    .breadcrumb {
+        font-size: 0.95rem;
+        flex-wrap: wrap;
+    }
+    .alert {
+        font-size: 0.98rem;
+        padding: 10px 8px;
+    }
+    .file-link {
+        max-width: 88vw;
+        overflow-x: auto;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+</style>

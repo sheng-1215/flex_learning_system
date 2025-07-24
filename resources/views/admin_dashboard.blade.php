@@ -94,26 +94,7 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h4 class="text-center mb-4"><span class="text-warning">Flex</span> Learning</h4>
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"><a href="{{ route('admin_dashboard') }}" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
-            <li><a href="{{ route('admin.registerStudentView') }}" class="nav-link"><i class="fas fa-user-plus mr-2"></i>Register Student</a></li>
-            <li><a href="{{ route('admin.users') }}" class="nav-link"><i class="fas fa-users-cog mr-2"></i>Manage Users</a></li>
-            <li><a href="{{ route('admin.courses') }}" class="nav-link"><i class="fas fa-book mr-2"></i>Manage Courses</a></li>
-            <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li>
-            <li>
-                <form id="logout-form" action="{{ route('logoutFunction') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
-                </form>
-            </li>
-        </ul>
-    </div>
+@include('admin.sidebar')
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">
@@ -158,7 +139,7 @@
                 </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="#" class="text-decoration-none">
+                <a href="{{ route('admin.checkAssignmentsStatus') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
                         <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
                         <h6>Check Assignment Status</h6>

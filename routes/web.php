@@ -51,7 +51,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
         Route::delete('admin/topics/{topic}/delete','deleteActivityTopic')->name('admin.deleteActivityTopic');
         
-        
         Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
         Route::get('/admin/assignments/select-cuactivity/{course}', 'selectActiviryForAssignment')->name('admin.selectActiviryForAssignment');
         Route::get('/admin/topics/{activity}/assignments', 'viewActivityAssignments')->name('admin.activityAssignment.view');
@@ -74,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/admin/topics/{topic}', 'updateTopic')->name('admin.topic.update');
         Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.topic.delete');
         Route::get('/admin/assignments/{assignment}/topics/{topic}/files', 'viewTopicFiles')->name('admin.topic.files');
+        Route::get('/admin/check-assignments/activities', 'showCheckAssignments')->name('admin.checkAssignmentsStatus');
     });
 });
 
@@ -83,14 +83,14 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix("student")->group(function () {
     Route::controller(ViewController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('student.dashboard');
-        Route::get('/login','login')->name('login');
+        Route::get('/login','login');
+       
         Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
         Route::get('/profile',"profile")->name('student.profile');
         Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
         Route::get('/assignment','assignment')->name('student.assignment');
         Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
-        
-        Route::get('/login','login')->name('login');
+        Route::get('/assignmentDetail/{id}','assignmentSubmit')->name('student.assignment.detail');
 
     });
     Route::controller(FunctionController::class)->group(function () {

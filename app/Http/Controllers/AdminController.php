@@ -610,4 +610,10 @@ class AdminController extends Controller
         $files = is_array($topic->file_path) ? $topic->file_path : (json_decode($topic->file_path, true) ?: [$topic->file_path]);
         return view('admin.topic_files', compact('assignment', 'topic', 'files'));
     }
+
+    public function showCheckAssignments()
+    {
+        $activities = \App\Models\CUActivity::with('course')->get();
+        return view('admin.check_assignments_activities', compact('activities'));
+    }
 }

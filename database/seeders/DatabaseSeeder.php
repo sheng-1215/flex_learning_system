@@ -50,29 +50,46 @@ class DatabaseSeeder extends Seeder
         Course::factory(6)->create();
         Course::factory(3)->create();
         
-        Enrollment::create([
-            'user_id' => 1, // alex
-            'course_id' => 1, // Course 1
-        ]);
-        Enrollment::create([
-            'user_id' => 2, // alex
-            'course_id' => 1, // Course 1
-        ]);
-        Enrollment::create([
-            'user_id' => 3, // alex
-            'course_id' => 2, // Course 2
-            'role' => 'student',
-        ]);
-        Enrollment::create([
-            'user_id' => 4, // jane
-            'course_id' => 3, // Course 3
-            'role' => 'student',
-        ]);
-        Enrollment::create([
-            'user_id' => 5, // peter
-            'course_id' => 4, // Course 4
-            'role' => 'student',
-        ]);
+        // 获取所有用户和课程ID
+        $userIds = User::pluck('id')->toArray();
+        $courseIds = Course::pluck('id')->toArray();
+
+        // 只在user和course都存在时插入enrollment
+        if(count($userIds) > 0 && count($courseIds) > 0) {
+            Enrollment::create([
+                'user_id' => $userIds[0],
+                'course_id' => $courseIds[0],
+                'role' => 'student',
+            ]);
+        }
+        if(count($userIds) > 1 && count($courseIds) > 0) {
+            Enrollment::create([
+                'user_id' => $userIds[1],
+                'course_id' => $courseIds[0],
+                'role' => 'student',
+            ]);
+        }
+        if(count($userIds) > 2 && count($courseIds) > 1) {
+            Enrollment::create([
+                'user_id' => $userIds[2],
+                'course_id' => $courseIds[1],
+                'role' => 'student',
+            ]);
+        }
+        if(count($userIds) > 3 && count($courseIds) > 2) {
+            Enrollment::create([
+                'user_id' => $userIds[3],
+                'course_id' => $courseIds[2],
+                'role' => 'student',
+            ]);
+        }
+        if(count($userIds) > 4 && count($courseIds) > 3) {
+            Enrollment::create([
+                'user_id' => $userIds[4],
+                'course_id' => $courseIds[3],
+                'role' => 'student',
+            ]);
+        }
         CUActivity::factory(3)->create()->each(function ($activity) {
             $activity->course_id = Course::inRandomOrder()->first()->id;
             $activity->save();

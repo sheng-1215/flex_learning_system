@@ -6,8 +6,12 @@
         <li><a href="{{ route('admin.users') }}" class="nav-link{{ request()->routeIs('admin.users') ? ' active' : '' }}"><i class="fas fa-users-cog mr-2"></i>Manage Users</a></li>
         <li><a href="{{ route('admin.courses') }}" class="nav-link{{ request()->routeIs('admin.courses') ? ' active' : '' }}"><i class="fas fa-book mr-2"></i>Manage Courses</a></li>
         <li><a href="{{ route('admin.selectCourseForAssignment') }}" class="nav-link{{ request()->routeIs('admin.selectCourseForAssignment') ? ' active' : '' }}"><i class="fas fa-tasks mr-2"></i>Add Assignment</a></li>
-        
-        {{-- <li><a href="{{ route('admin.checkAssignments') }}" class="nav-link"><i class="fas fa-clipboard-check mr-2"></i>Check Assignment Status</a></li> --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.checkAssignmentsStatus') }}">
+                <i class="fas fa-clipboard-check"></i> Check Assignment Status
+            </a>
+        </li>
+    
         <li>
             <form id="logout-form" action="{{ route('logoutFunction') }}" method="POST" style="display:inline;">
                 @csrf
@@ -22,10 +26,10 @@
 
 
 <style>
-    .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
+    .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s, width 0.3s; z-index: 1000; }
     @media (max-width: 991.98px) {
-        .sidebar { left: -200px; }
-        .sidebar.active { left: 0; }
+        .sidebar { left: 0; width: 0; overflow: hidden; }
+        .sidebar.active { width: 200px; left: 0; overflow-y: auto; }
         .sidebar-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
