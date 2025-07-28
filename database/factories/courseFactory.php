@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\course>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Course>
  */
-class courseFactory extends Factory
+class CourseFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -52,8 +52,8 @@ class courseFactory extends Factory
         return [
             'title' => $this->faker->randomElement($courseTitles),
             'cover_image' => $this->faker->randomElement($coverImages),
-            'start_date'=> fake()->date(),
-            'end_date'=> fake()->date(),
+            'start_date' => fake()->date(),
+            'end_date' => fake()->date(),
             'created_by' => 1, // Assuming the creator's ID is 1, adjust as necessary
         ];
     }
