@@ -90,8 +90,8 @@
                                 </div>
                             @endforeach
                         </div>
-                            <div class="form-group" id="lecturer-courses-section" style="display:none;">
-                                <label>Assign Responsible Course (for Lecturer)</label>
+                        <div class="form-group" id="lecturer-courses-section" style="display:none;">
+                            <label>Assign Responsible Course (for Lecturer)</label>
                             @foreach($courses as $course)
                                 <div class="custom-control custom-radio">
                                     <input type="radio" class="custom-control-input" id="lecturer_course_{{ $course->id }}" name="lecturer_course" value="{{ $course->id }}">
@@ -126,4 +126,4 @@
         });
     </script>
 </body>
-</html> 
+</html>

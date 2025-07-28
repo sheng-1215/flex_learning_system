@@ -7,14 +7,11 @@ use App\Http\Controllers\ViewController;
 use App\Http\Controllers\FunctionController;
 use App\Http\Controllers\AdminController;
 
-
-
 Route::controller(ViewController::class)->group(function () {
     Route::get('/','login')->name('login');
     Route::get('/register','register')->name('register');
     Route::get('/admin_dashboard', 'adminDashboard')->name('admin_dashboard');
     Route::get('/register/studentVerify','register_studentVerify')->name('register.studentVerify');
-
 });
 
 Route::controller(FunctionController::class)->group(function () {
@@ -77,8 +74,6 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-
-
 Route::middleware(['auth'])->group(function () {
     Route::prefix("student")->group(function () {
     Route::controller(ViewController::class)->group(function () {
@@ -90,7 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/assignment','assignment')->name('student.assignment');
         Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
         Route::get('/assignmentDetail/{id}','assignmentSubmit')->name('student.assignment.detail');
-
     });
     Route::controller(FunctionController::class)->group(function () {
         Route::post('/login', 'login')->name('student.loginFunction');
@@ -98,13 +92,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
         Route::get('/downloadAssignment/{id}', 'downloadAssignment')->name('student.assignment.download');
         Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
-        
     });
 
     Route::controller(ajaxController::class)->group(function () {
         Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update');
     });
-
-    // Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
-});
+    });
 });
