@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redirect;
 
 class FunctionController extends Controller
 {
@@ -32,8 +34,6 @@ class FunctionController extends Controller
                 return back()->withErrors(['email' => 'Unknown user role.'])->onlyInput('email');
             }
 
-            
-
         }
 
         return back()->withErrors([
@@ -43,20 +43,45 @@ class FunctionController extends Controller
 
     public function register_studentVerify(Request $request)
     {
-        // dd($request->ic);
-        $authCheck= Http::get("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
         
+        // $authCheck= Http::get("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");        
         // dd("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
-        if($authCheck->json()['status'] == 200){
-            $json=$authCheck->json()['data'];
-            return view('register', [
-                'name' => $json['name'],
-                'email' => $json['email'],
-            ]);
+        $student_registration=DB::connection('second_db')->table('student')->where("ic",$request->ic)->first();
+
+        
+        if($student_registration){
+            return redirect()->route("register.verifyForm",$student_registration->id);
         }
         return back()->withErrors([
             'ic' => 'The provided IC does not match our records.',
         ])->onlyInput('ic');
+    }
+
+    public function verifyForm(Request $request,$id)
+    {
+        $student=DB::connection('second_db')->table('student')->find($id);
+        $student_login=DB::connection('second_db')->table('student_login')->where("student_ic",$student->ic)->first();
+        
+        
+        // dd($student_login->password,$request->password);
+        if($student_login && Hash::check($request->password,$student_login->password)){
+            $User = User::where('email', $student->s_email)->first();
+            if (!$User) {
+                $User = User::create([
+                    "name" => $student->s_name,
+                    "email" => $student->s_email,
+                    "password" => Hash::make($request->password),
+                    "role" => "student",
+                ]);
+            }
+            
+            Auth::login($User);
+            $request->session()->regenerate();
+            return redirect()->route('student.dashboard');
+        }
+        return back()->withErrors([
+            'password' => 'The provided password does not match our student portal.',
+        ])->onlyInput('password');
     }
 
     public function register(Request $request)

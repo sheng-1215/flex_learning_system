@@ -12,6 +12,10 @@ Route::controller(ViewController::class)->group(function () {
     Route::get('/register','register')->name('register');
     Route::get('/admin_dashboard', 'adminDashboard')->name('admin_dashboard');
     Route::get('/register/studentVerify','register_studentVerify')->name('register.studentVerify');
+    Route::get('/studentVerifyForm/{id}','studentVerifyForm')->name('register.verifyForm');
+    Route::get('/verifyStudent','verifyStudent')->name("VerifyStudent");
+    
+    
 });
 
 Route::controller(FunctionController::class)->group(function () {
@@ -19,10 +23,12 @@ Route::controller(FunctionController::class)->group(function () {
     Route::post('/register', 'register')->name('registerFunction');
     Route::post('/logout', 'logout')->name('logoutFunction');
     Route::post('/register/studentVerify','register_studentVerify')->name('register.studentVerify.function');
+    Route::post('/register/studentVerifyForm/{id}','verifyForm')->name('register.verifyForm.function');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(checkauth::class)->group(function () {
     Route::controller(AdminController::class)->group(function() {
+        Route::get("/admin/importStudent/{id}", 'importStudent')->name('admin.importStudent');
         Route::get('/admin/courses', 'courses')->name('admin.courses');
         Route::post('/admin/courses', 'addCourse')->name('admin.addCourse');
         Route::get('/admin/courses/{course}/edit', 'editCourse')->name('admin.editCourse');
@@ -31,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/addUserToCourse/{course}','addUserToCourse')->name('admin.addUserToCourse');
         Route::post('/admin/addUserToCourse/{course}','submitUserToCourse')->name('admin.submitUserToCourse');
         Route::delete('/admin/removeUserFromCourse','removeUserFromCourse')->name('admin.removeUserFromCourse');
+
         
         Route::get('/admin/student/register', 'registerStudentView')->name('admin.registerStudentView');
         Route::post('/admin/student/register', 'registerStudent')->name('admin.registerStudent');
@@ -74,28 +81,27 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(checkauth::class)->group(function () {
     Route::prefix("student")->group(function () {
-    Route::controller(ViewController::class)->group(function () {
-        Route::get('/dashboard', 'dashboard')->name('student.dashboard');
-        Route::get('/login','login');
-        Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
-        Route::get('/profile',"profile")->name('student.profile');
-        Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
-        Route::get('/assignment','assignment')->name('student.assignment');
-        Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
-        Route::get('/assignmentDetail/{id}','assignmentSubmit')->name('student.assignment.detail');
-    });
-    Route::controller(FunctionController::class)->group(function () {
-        Route::post('/login', 'login')->name('student.loginFunction');
-        Route::post('/logout', 'logout')->name('student.logoutFunction');
-        Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
-        Route::get('/downloadAssignment/{id}', 'downloadAssignment')->name('student.assignment.download');
-        Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
-    });
+        Route::controller(ViewController::class)->group(function () {
+            Route::get('/dashboard', 'dashboard')->name('student.dashboard');
+            Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
+            Route::get('/profile',"profile")->name('student.profile');
+            Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
+            Route::get('/assignment','assignment')->name('student.assignment');
+            Route::get('/assignmentDetail/{id}','assignmentDetail')->name('student.assignment.detail');
+            Route::get('/assignmentDetail/{id}','assignmentSubmit')->name('student.assignment.detail');
+        });
+        Route::controller(FunctionController::class)->group(function () {
+            Route::post('/login', 'login')->name('student.loginFunction');
+            Route::post('/logout', 'logout')->name('student.logoutFunction');
+            Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
+            Route::get('/downloadAssignment/{id}', 'downloadAssignment')->name('student.assignment.download');
+            Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
+        });
 
-    Route::controller(ajaxController::class)->group(function () {
-        Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update');
-    });
+        Route::controller(ajaxController::class)->group(function () {
+            Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update');
+        });
     });
 });

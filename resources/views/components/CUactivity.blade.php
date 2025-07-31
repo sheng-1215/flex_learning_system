@@ -1,11 +1,11 @@
-@props(['activitie'])
+@props(['activitie','studentCount'])
 
 <div class="col-lg-4 col-md-6 mb-4">
     <div class="rounded overflow-hidden mb-2">
         {{-- <img class="img-fluid" src="{{ $image ?? 'img/course-1.jpg' }}" alt=""> --}}
         <div class="bg-secondary p-4">
             <div class="d-flex justify-content-between mb-3">
-                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>{{ $students ?? 25 }} Students</small>
+                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>{{ $studentCount[0] ?? 25 }} Students</small>
                 <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ $activitie->due_date ?? '01h 30m' }}</small>
             </div>
             <a class="h5" href="{{ route('student.CUActivity',$activitie->id) ?? '#' }}">{{ $activitie->title ?? 'Web design & development courses for beginner' }}</a>

@@ -10,7 +10,7 @@
             <div class="row">
                 
                 @foreach ($activities as $activitie)
-                    <x-CUactivity :activitie="$activitie" />
+                    <x-CUactivity :activitie="$activitie" :studentCount="$studentCount" />
                 @endforeach 
             </div>
         </div>

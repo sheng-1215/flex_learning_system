@@ -188,9 +188,49 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-center">
-                        {{ $students->appends(request()->except('students_page'))->links() }}
+                        {{ $students->appends(request()->except('students_page'))->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
+            </div>
+            <br>
+            <div class="card shadow-sm">
+                <div class="card-header"><h5 class="mb-0">Student unregistration from student Portal</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>password</th>
+                                    <th>Register</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                @forelse($paginated as $studentPortal)
+                                <form action="{{ route('admin.importStudent', $studentPortal->id) }}" method="POST">
+                                    @csrf
+                                <tr>
+                                    <td>{{ $studentPortal->s_name }}</td>
+                                    <td>{{ $studentPortal->s_email }}</td>
+                                    <td><input type="password" name="password" class="form-control" /></td>
+                                    <td>  
+                                        <button type="submit" class="btn btn-primary">Import</button>                                    
+                                    </td>
+                                </tr>
+                                
+                                 </form>
+                                @empty
+                                <tr><td colspan="4" class="text-center">No student registrations found.</td></tr>
+                                @endforelse
+                            
+                            </tbody>
+                        </table>
+                       <div class="d-flex justify-content-center">
+                        {{ $paginated->links('pagination::bootstrap-4') }}
+                    </div>
+                    </div>
             </div>
         </div>
     </div>

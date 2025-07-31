@@ -3,7 +3,7 @@
     <div class="container-fluid py-2">
         <div class="container py-1">
             <div class="card mb-4">
-                <div class="card-header text-white" style="background: url('{{ asset('img/technology.jpeg') }}') center center / cover no-repeat; height: 200px; position: relative;">
+                <div class="card-header text-white" style="background: url('{{ asset(auth()->user()->enrollments->first()->course->cover_image) ?? asset('img/no-cover.ppg') }}') center center / cover no-repeat; height: 200px; position: relative;">
                     <h2 class="position-absolute bottom-0 start-0 m-3">{{ auth()->user()->enrollments->first()->course->title }}</h2>
                 </div>
             </div>

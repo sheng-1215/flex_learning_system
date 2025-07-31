@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assignment;
-use App\Models\assignmentSubmit;
 use App\Models\User;
 use App\Models\topic;
 use App\Models\Course;
+use App\Models\assignment;
 use App\Models\CUActivity;
 use App\Models\Enrollment;
-
 use Illuminate\Http\Request;
+
+use App\Models\assignmentSubmit;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AdminController extends Controller
 {
@@ -22,6 +23,32 @@ class AdminController extends Controller
     {
         $courses = Course::with(['enrollments.user'])->get();
         return view('admin.courses', ['courses' => $courses]);
+    }
+
+    public function importStudent($id,Request $request)
+    {
+        $student = DB::connection('second_db')->table('student')->where('id', $id)->first();
+        if (!$student->s_email || !$student->ic) {
+            return redirect()->back()->with('error', 'Student email not found.');
+        }
+        // Check if the student already exists in the main database
+        $existingUser = User::where('email', $student->s_email)->first();
+        if ($existingUser) {
+            return redirect()->back()->with('error', 'Student already exists in the system.');
+        }
+        // Create a new user in the main database
+        $student_login= DB::connection('second_db')->table('student_login')->where('ic', $student->ic)->first();
+        if($student_login && Hash::check($request->password, $student_login->password)){
+            $user = User::create([
+                'name' => $student->s_name,
+                'email' => $student->s_email,
+                'password' => Hash::make($request->password),
+                'role' => 'student',
+            ]);
+            return redirect()->route('admin.users')->with('success', 'Student imported successfully.');
+        }
+        
+        return redirect()->back()->with('error', 'Invalid password. Please try again.');
     }
 
     public function addCourse(Request $request)
@@ -184,7 +211,25 @@ class AdminController extends Controller
         $students = User::where('role', 'student')
             ->with('enrollments.course')
             ->paginate(10, ['*'], 'students_page');
-        return view('admin.users', compact('admins', 'lecturers', 'students'));
+         $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
+        $filtered=$studentPortals->flatMap(function($student) {
+            $user= User::where('email', $student->s_email)->first();
+            if(!$user){
+                return [$student];
+            }
+            return [];
+        });
+        $page = request()->get('page', 1);
+        $perPage = 10;
+        $paginated = new LengthAwarePaginator(
+            $filtered->forPage($page, $perPage),
+            $filtered->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+        
+        return view('admin.users', compact('admins', 'lecturers', 'students', 'paginated'));
     }
 
     public function editUser(User $user)

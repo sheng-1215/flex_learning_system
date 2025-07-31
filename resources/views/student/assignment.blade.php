@@ -14,6 +14,11 @@
                         <th>Evaluation status</th>
                     </thead>
                     <tbody>
+                        @if($assignments->isEmpty())
+                            <tr>
+                                <td colspan="4" class="text-center">No assignments available.</td>
+                            </tr>
+                        @endif
                         @foreach ($assignments as $assignment)
                             <tr>
                                 <td>

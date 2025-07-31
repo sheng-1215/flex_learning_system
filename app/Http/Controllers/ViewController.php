@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assignment;
 use App\Models\Course;
+use App\Models\assignment;
 use App\Models\CUActivity;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class ViewController extends Controller
@@ -24,16 +27,18 @@ class ViewController extends Controller
         $activities=$course->flatMap(function ($course) {
             return $course->activities;
         });
-
         
+        $studentCount= $course->map(function ($course) {
+            return $course->enrollments->count();
+        });
         
         if(auth()->user()->is_admin){
             return redirect()->route('admin.dashboard');
         }
         if($authstatus->isEmpty()){
-            return redirect()->route('index')->with('error', 'You are not enrolled in any courses.');
+            return redirect()->route('login')->with('error', 'You are not enrolled in any courses.');
         }
-        return view('student.dashboard',compact('course','activities'));
+        return view('student.dashboard',compact('course','activities','studentCount'));
     }
 
     public function CUActivity($id)
@@ -53,6 +58,23 @@ class ViewController extends Controller
             }
         }
         return view('student.CUActivity_detail', compact('activity', 'topics'));
+    }
+
+    public function verifyStudent(Request $request)
+    {
+        $student_registration = DB::connection('second_db')->table('student')->where("ic",$request->ic)->first();
+        $user=User::where('email', $student_registration->s_email)->first();
+        if ($user) {
+            Auth::login($user);
+            return redirect()->route('student.dashboard')->with('success', 'Student verified and logged in successfully.');
+        }
+        return redirect()->route('register.verifyForm',$student_registration->id)->with('error', 'Your are not register yet, please register following the instruction.');
+    }
+    public function studentVerifyForm($id)
+    {
+        $student_registration=DB::connection('second_db')->table('student')->find($id);
+        
+        return view('verifyForm',compact('student_registration'));
     }
 
     public function assignment()
@@ -87,14 +109,6 @@ class ViewController extends Controller
 
     public function login()
     {
-        if (auth()->check()) {
-            // 如果已登录，自动跳转到dashboard，防止死循环
-            if (auth()->user()->role === 'student') {
-                return redirect()->route('student.dashboard');
-            } else if (auth()->user()->role === 'admin' || auth()->user()->role === 'lecturer') {
-                return redirect()->route('admin_dashboard');
-            }
-        }
         return view('login');
     }
 
