@@ -211,7 +211,8 @@ class AdminController extends Controller
         $students = User::where('role', 'student')
             ->with('enrollments.course')
             ->paginate(10, ['*'], 'students_page');
-         $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
+        $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
+        
         $filtered=$studentPortals->flatMap(function($student) {
             $user= User::where('email', $student->s_email)->first();
             if(!$user){

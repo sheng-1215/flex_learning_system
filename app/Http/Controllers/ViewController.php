@@ -51,7 +51,7 @@ class ViewController extends Controller
             
             if ($selectedTopic) {
                 if($selectedTopic->type!="video"){
-                    $selectedTopic->progress = 100; // Assuming 100% progress for the selected topic
+                    $selectedTopic->progress = 100;
                 }
                 $selectedTopic->save();
                 return view('student.CUActivity_detail', compact('activity', 'topics', 'selectedTopic'));

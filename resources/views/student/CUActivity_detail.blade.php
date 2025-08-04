@@ -16,8 +16,8 @@
                             <ul class="list-group list-group-flush">
                                 @foreach ($topics as $topic)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <a href="{{ route('student.CUActivity', ['id'=>'1','topic' => $topic->id]) }}" class="text-decoration-none text-dark flex-grow-1">
-                                            {{ strtoupper($topic->title) }}
+                                        <a href="{{ route('student.CUActivity', [$activity->id,'topic' => $topic->id]) }}" class="text-decoration-none text-dark flex-grow-1">
+                                            {{ strtoupper($topic->title) }} 
                                         </a>
 
                                         {{-- Progress circle --}}

@@ -28,7 +28,7 @@ Route::controller(FunctionController::class)->group(function () {
 
 Route::middleware(checkauth::class)->group(function () {
     Route::controller(AdminController::class)->group(function() {
-        Route::get("/admin/importStudent/{id}", 'importStudent')->name('admin.importStudent');
+        Route::post("/admin/importStudent/{id}", 'importStudent')->name('admin.importStudent');
         Route::get('/admin/courses', 'courses')->name('admin.courses');
         Route::post('/admin/courses', 'addCourse')->name('admin.addCourse');
         Route::get('/admin/courses/{course}/edit', 'editCourse')->name('admin.editCourse');
