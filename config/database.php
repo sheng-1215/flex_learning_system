@@ -63,11 +63,17 @@ return [
             ]) : [],
         ],
         'second_db' => [
-            'driver' => 'sqlite',
-            'url' => env('DATABASE_URL'),
-            'database' => env('DB_DATABASE', database_path('second_db.sqlite')),
+            'driver' => env('DB_SECOND_CONNECTION', 'mysql'),
+            'host' => env('DB_SECOND_HOST', '127.0.0.1'),
+            'port' => env('DB_SECOND_PORT', '3306'),
+            'database' => env('DB_SECOND_DATABASE', 'forge'),
+            'username' => env('DB_SECOND_USERNAME', 'forge'),
+            'password' => env('DB_SECOND_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'strict' => true,
+            'engine' => null,
         ],
 
         'pgsql' => [

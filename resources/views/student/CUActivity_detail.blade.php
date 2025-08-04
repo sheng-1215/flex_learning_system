@@ -59,8 +59,12 @@
                         <div class="card-body">
                             @if(isset($selectedTopic) && $selectedTopic->type==='video')
                                 <div class="ratio ratio-16x9">
+                                     @php
+                                        $videoPath= json_decode($selectedTopic->file_path);        
+                                    @endphp
                                     <video id="topic-video" class="embed-responsive-item w-100" controls>
-                                        <source src="{{ asset('asset/video/' . $selectedTopic->file_path) }}" type="video/mp4">
+                                       
+                                        <source src="{{ asset('storage/'.$videoPath[0]->path) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
