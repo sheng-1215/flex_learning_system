@@ -22,7 +22,7 @@
                         @foreach ($assignments as $assignment)
                             <tr>
                                 <td>
-                                    <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}"  >
+                                    <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}" >
                                         {{ $assignment->assignment_name }}
                                     </a>
                                     <br>
@@ -30,7 +30,7 @@
                                     <small  class="text-muted">Due Date: {{ $assignment->due_date }}</small>
                                     <h6>Attachment</h6>
                                     @if($assignment->attachment)
-                                        <a href="{{ asset( $assignment->attachment) }}" class="btn btn-primary" target="_blank">
+                                        <a href="{{ asset('storage/'.$assignment->attachment) }}" class="btn btn-primary" target="_blank">
                                             <i class="fas fa-file-download"></i> Download
                                         </a>
                                     @else

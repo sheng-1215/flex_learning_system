@@ -26,7 +26,7 @@
                         
                         @if($assignment->attachment)
                             <div style="max-width:90vw; overflow-x:auto; display:inline-block; vertical-align:middle;">
-                                <a href="{{ asset('asset/assignment/' . $assignment->attachment) }}"  target="_blank" style="display:inline-block; max-width:100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color:#e67e22;">
+                                <a href="{{ asset('storage/' . $assignment->attachment) }}"  target="_blank" style="display:inline-block; max-width:100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color:#e67e22;">
                                     <i class="fas fa-file-download"></i> Download
                                     <span style="vertical-align:middle;">{{ $assignment->attachment }}</span>
                                 </a>
@@ -41,7 +41,7 @@
                                 <div class="alert alert-success">
                                     <p>Your submission has been successfully uploaded.</p>
                                     @foreach ($submissions as $submission)
-                                    <form action="{{ route('student.assignment.delete',["id"=>$submission->id]) }}" method="post">
+                                    <form action="{{ route('student.assignment.delete',['id'=>$submission->id]) }}" method="post">
                                             @csrf
                                             @method('DELETE')
                                         <div style="display: flex; align-items: center; flex-wrap: wrap;">
