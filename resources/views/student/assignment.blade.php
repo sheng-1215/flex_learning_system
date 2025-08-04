@@ -22,7 +22,7 @@
                         @foreach ($assignments as $assignment)
                             <tr>
                                 <td>
-                                    <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}"  >
+                                    <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}" >
                                         {{ $assignment->assignment_name }}
                                     </a>
                                     <br>

@@ -41,7 +41,7 @@
                                 <div class="alert alert-success">
                                     <p>Your submission has been successfully uploaded.</p>
                                     @foreach ($submissions as $submission)
-                                    <form action="{{ route('student.assignment.delete',["id"=>$submission->id]) }}" method="post">
+                                    <form action="{{ route('student.assignment.delete',['id'=>$submission->id]) }}" method="post">
                                             @csrf
                                             @method('DELETE')
                                         <div style="display: flex; align-items: center; flex-wrap: wrap;">

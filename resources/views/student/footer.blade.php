@@ -1,6 +1,6 @@
 <footer class="bg-dark text-white text-center py-3 w-100 fixed-bottom" style="position:fixed;left:0;bottom:0;z-index:1030;">
     <div class="container">
-        <small>© 2024 E-Learning System. All rights reserved.</small>
+        <small>© 2025 E-Learning System. All rights reserved.</small>
     </div>
 </footer>
 <style>
