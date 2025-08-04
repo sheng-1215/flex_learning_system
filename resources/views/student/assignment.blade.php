@@ -30,7 +30,7 @@
                                     <small  class="text-muted">Due Date: {{ $assignment->due_date }}</small>
                                     <h6>Attachment</h6>
                                     @if($assignment->attachment)
-                                        <a href="{{ asset( $assignment->attachment) }}" class="btn btn-primary" target="_blank">
+                                        <a href="{{ route('student.assignment.download',$assignment->id) }}" class="btn btn-primary" target="_blank">
                                             <i class="fas fa-file-download"></i> Download
                                         </a>
                                     @else
