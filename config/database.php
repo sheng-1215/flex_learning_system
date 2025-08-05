@@ -71,9 +71,13 @@ return [
             'password' => env('DB_SECOND_PASSWORD', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => env('DB_DATABASE', database_path('second_db.sqlite')),
             'prefix' => '',
             'strict' => true,
             'engine' => null,
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
         'pgsql' => [
