@@ -392,7 +392,7 @@ class AdminController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|in:slideshow,document,video',
             'file_path' => 'required',
-            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,pptx,doc,docx,xls,xlsx,txt,mp4|max:51200',
         ]);
        
         $filePaths = [];
@@ -420,6 +420,19 @@ class AdminController extends Controller
     {
         $topic->delete();
         return redirect()->route('admin.viewActivitiesTopic', $topic->cu_id)->with('success', 'Topic deleted successfully!');
+    }
+
+    public function downloadTopic(topic $topic)
+    {
+        $filePaths = json_decode($topic->file_path, true);
+        if (is_array($filePaths) && count($filePaths) > 0) {
+            $firstFilePath = $filePaths[0]['path'] ?? null;
+            $fileName = $filePaths[0]['filename'] ?? null;
+            if ($firstFilePath && $fileName) {
+                return response()->download(public_path('storage/' . $firstFilePath), $fileName);
+            }
+        }
+        return redirect()->back()->with('error', 'No file found for this topic.');
     }
 
     public function addCourseActivity(Request $request)
@@ -467,7 +480,7 @@ class AdminController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|in:slide,document,video',
             'file_path' => 'required',
-            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pptx,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
         ]);
 
         $filePaths = [];
@@ -535,7 +548,7 @@ class AdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:slide,document,video',
-            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,pptx,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
         ]);
 
         $data = [

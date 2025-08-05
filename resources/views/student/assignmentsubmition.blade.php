@@ -26,9 +26,9 @@
                         
                         @if($assignment->attachment)
                             <div style="max-width:90vw; overflow-x:auto; display:inline-block; vertical-align:middle;">
-                                <a href="{{ asset('storage/' . $assignment->attachment) }}"  target="_blank" style="display:inline-block; max-width:100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color:#e67e22;">
-                                    <i class="fas fa-file-download"></i> Download
-                                    <span style="vertical-align:middle;">{{ $assignment->attachment }}</span>
+                                <a href="{{ route('student.assignment.download',$assignment->id) }}"  target="_blank" style="display:inline-block; max-width:100%; white-space:nowrap; overflow-x:auto; text-overflow:ellipsis; color:#e67e22;">
+                                    <i class="fas fa-file-download"></i> 
+                                    <span style="vertical-align:middle;">{{ $assignment->assignment_name.".".pathinfo($assignment->attachment,PATHINFO_EXTENSION) }}</span>
                                 </a>
                             </div>
                         @endif

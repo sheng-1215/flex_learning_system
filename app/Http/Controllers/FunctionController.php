@@ -83,7 +83,7 @@ class FunctionController extends Controller
             'password' => 'The provided password does not match our student portal.',
         ])->onlyInput('password');
     }
-
+    
     public function register(Request $request)
     {
         $form = $request->validate([
@@ -140,14 +140,12 @@ class FunctionController extends Controller
         return redirect()->route('student.assignment')->with('success', 'Assignment deleted successfully.');
     }
 
-    public function downloadAssignment(Request $request, $id)
+    public function downloadAssignment($id)
     {
-        
         $assignment = assignment::findOrFail($id);
-
-        return response()->download(asset($assignment->attachment));
+        return response()->download(public_path('storage/'.$assignment->attachment), $assignment->assignment_name. '.' . pathinfo($assignment->attachment, PATHINFO_EXTENSION));
     }
-
+   
 
     public function logout(Request $request)
     {

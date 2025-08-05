@@ -104,14 +104,15 @@
 
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='document')
                                 @php
-                                    $fileName = $selectedTopic->file_path
+                                    $fileName = json_decode($selectedTopic->file_path);
+                                    $fileName = $fileName[0]->path ?? '';
                                 @endphp
                                 @if(Str::endsWith($fileName, '.pdf'))
-                                    <iframe src="{{ asset('asset/document/' . $fileName) }}" width="100%" height="600px"></iframe>
+                                    <iframe src="{{ asset('storage/' . $fileName) }}" width="100%" height="600px"></iframe>
 
                                 @elseif(Str::endsWith($fileName, '.docx'))
                                     <iframe 
-                                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/files/' . $fileName)) }}" 
+                                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $fileName)) }}" 
                                         width="100%" height="600px">
                                     </iframe>
 

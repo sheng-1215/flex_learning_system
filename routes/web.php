@@ -55,6 +55,9 @@ Route::middleware(checkauth::class)->group(function () {
         Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
         Route::delete('admin/topics/{topic}/delete','deleteActivityTopic')->name('admin.deleteActivityTopic');
         
+        Route::get("/admin/topics/{topic}/download", 'downloadTopic')->name('admin.downloadTopic');
+
+        
         Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
         Route::get('/admin/assignments/select-cuactivity/{course}', 'selectActiviryForAssignment')->name('admin.selectActiviryForAssignment');
         Route::get('/admin/topics/{activity}/assignments', 'viewActivityAssignments')->name('admin.activityAssignment.view');
@@ -98,6 +101,7 @@ Route::middleware(checkauth::class)->group(function () {
             Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
             Route::get('/downloadAssignment/{id}', 'downloadAssignment')->name('student.assignment.download');
             Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
+            
         });
 
         Route::controller(ajaxController::class)->group(function () {

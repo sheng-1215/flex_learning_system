@@ -146,7 +146,7 @@
                                                     }
                                                 }
                                             @endphp
-                                            <a href="{{ asset('storage/' . $newattach["path"]) }}" target="_blank"
+                                            <a href="{{ route('admin.downloadTopic',$topic->id) }}" target="_blank"
                                                class="btn btn-sm btn-info mb-1 text-truncate d-inline-block"
                                                style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                 <i class="fas {{ $icon }} {{ $iconColor }}"></i>

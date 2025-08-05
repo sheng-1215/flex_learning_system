@@ -96,6 +96,8 @@ class ViewController extends Controller
 
         return view('student.assignmentsubmition', compact('assignment', 'submissions'));
     }
+
+    
     public function profile_edit()
     {   
         $user= auth()->user();

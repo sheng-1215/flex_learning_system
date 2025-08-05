@@ -33,17 +33,15 @@
                                         </a>
                                     </div>
                                     <br>
-                                    <small class="text-muted">Due Date: {{ $assignment->due_date }}</small>
-                                    <div class="mt-1">
-                                        <h6 class="font-weight-bold text-primary">Attachment</h6>
-                                        @if($assignment->attachment)
-                                            <a href="{{ asset('storage/' . $assignment->attachment) }}" class="btn btn-primary btn-sm" target="_blank">
-                                                <i class="fas fa-file-download"></i> Download
-                                            </a>
-                                        @else
-                                            <span class="text-muted">No attachment</span>
-                                        @endif
-                                    </div>
+                                    <small  class="text-muted">Due Date: {{ $assignment->due_date }}</small>
+                                    <h6>Attachment</h6>
+                                    @if($assignment->attachment)
+                                        <a href="{{ asset('storage/'.$assignment->attachment) }}" class="btn btn-primary" target="_blank">
+                                            <i class="fas fa-file-download"></i> Download
+                                        </a>
+                                    @else
+                                        <span class="text-muted">No attachment</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($assignment->assignmentSubmissions->isNotEmpty())
