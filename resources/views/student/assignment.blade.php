@@ -12,13 +12,14 @@
                             <th>Assignment</th>
                             <th>Completion Status</th>
                             <th>Score</th>
+                            <th>Feedback</th>
                             <th>Evaluation Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if($assignments->isEmpty())
                             <tr>
-                                <td colspan="4" class="text-center text-muted">No assignments available.</td>
+                                <td colspan="5" class="text-center text-muted">No assignments available.</td>
                             </tr>
                         @endif
                         @foreach ($assignments as $assignment)
@@ -28,37 +29,48 @@
                                         <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}" class="text-decoration-none text-dark font-weight-bold">
                                             {{ $assignment->assignment_name }}
                                         </a>
-                                        <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}" class="text-success submit-icon" data-toggle="tooltip" title="Submit Assignment">
+                                        <a href="{{ route('student.assignment.detail', ['id' => $assignment->id]) }}" class="submit-icon text-success" data-toggle="tooltip" title="Submit Assignment">
                                             <i class="fas fa-upload"></i>
                                         </a>
                                     </div>
                                     <br>
-                                    <small  class="text-muted">Due Date: {{ $assignment->due_date }}</small>
+                                    <small class="text-muted">Due Date: {{ $assignment->due_date }}</small>
                                     <h6>Attachment</h6>
                                     @if($assignment->attachment)
-                                        <a href="{{ asset('storage/'.$assignment->attachment) }}" class="btn btn-primary" target="_blank">
+                                        <a href="{{ asset('storage/'.$assignment->attachment) }}" class="btn btn-primary btn-sm" target="_blank">
                                             <i class="fas fa-file-download"></i> Download
                                         </a>
                                     @else
                                         <span class="text-muted">No attachment</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if($assignment->assignmentSubmissions->isNotEmpty())
                                         <span class="badge bg-success">{{ $assignment->assignmentSubmissions->count() }} document submitted</span>
                                     @else
                                         <span class="badge bg-warning">0 documents submitted</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if($assignment->assignmentSubmissions->isNotEmpty())
-                                        {{ $assignment->assignmentSubmissions->first()->grade ?? 'N/A' }}
+                                        {{ $assignment->assignmentSubmissions->first()->grade ?? ' - ' }}
                                     @else
                                         N/A
                                     @endif
                                 </td>
-                                <td>
-                                    <span class="badge bg-secondary">Pending</span>
+                                <td class="text-center">
+                                    @if($assignment->assignmentSubmissions->isNotEmpty())
+                                        {{ $assignment->assignmentSubmissions->first()->feedback ?? ' - ' }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($assignment->assignmentSubmissions->isNotEmpty())
+                                        <span class="badge bg-secondary">{{ $assignment->assignmentSubmissions->first()->status }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">Pending</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
