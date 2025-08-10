@@ -93,7 +93,7 @@
                                 <tr>
                                     <td>{{ $assignment->assignment_name }}</td>
                                     <td>{{ Str::limit($assignment->description, 50) }}</td>
-                                    <td><a href="{{ asset($assignment->attachment) }}" target="_blank" >attachment Link</a></td>
+                                    <td><a href="{{ asset('storage/'.$assignment->attachment) }}" target="_blank" >attachment Link</a></td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($assignment->due_date)->format('Y-m-d') }}</td>
                                     <td>
                                         <a class="btn btn-sm btn-info" href="{{ route('admin.checkAssignments', [$assignment]) }}">
