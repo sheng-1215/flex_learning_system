@@ -101,7 +101,6 @@ Route::middleware(checkauth::class)->group(function () {
             Route::post('/assignmentSubmit/{id}', 'assignmentSubmit')->name('student.assignment.submit');
             Route::get('/downloadAssignment/{id}', 'downloadAssignment')->name('student.assignment.download');
             Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
-            
         });
 
         Route::controller(ajaxController::class)->group(function () {
