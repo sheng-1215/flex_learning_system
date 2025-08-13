@@ -139,7 +139,7 @@
                 </a>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="{{ route('admin.checkAssignmentsStatus') }}" class="text-decoration-none">
+                <a href="{{ route('admin.checkassignmentsStatus') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
                         <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
                         <h6>Check Assignment Status</h6>

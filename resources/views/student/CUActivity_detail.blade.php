@@ -60,11 +60,10 @@
                             @if(isset($selectedTopic) && $selectedTopic->type==='video')
                                 <div class="ratio ratio-16x9">
                                      @php
-                                        $videoPath= json_decode($selectedTopic->file_path);        
+                                        $videoPath = json_decode($selectedTopic->file_path);        
                                     @endphp
                                     <video id="topic-video" class="embed-responsive-item w-100" controls>
-                                       
-                                        <source src="{{ asset('storage/'.$videoPath[0]->path) }}" type="video/mp4">
+                                        <source src="{{ asset('storage/' . $videoPath[0]->path) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
@@ -95,13 +94,50 @@
                                     });
                                 </script>
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='slideshow')
-                                <iframe 
-                                    src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('asset/slideshow/')) }}" 
-                                    width="100%" 
-                                    height="500px" 
-                                    frameborder="0">
-                                </iframe>
+                                @php
+                                    $slidePaths = json_decode($selectedTopic->file_path);
+                                    $slides = [];
+                                    if (is_array($slidePaths)) {
+                                        foreach ($slidePaths as $path) {
+                                            $slides[] = asset('storage/' . $path->path);
+                                        }
+                                    }
+                                @endphp
+                                <div id="slideshow-container" style="text-align: center;">
+                                    <img id="slideshow-image" src="{{ $slides[0] ?? '' }}" style="max-height: 500px; max-width: 100%;">
+                                    <div style="margin-top: 10px;">
+                                        <button id="prev-slide" class="btn btn-outline-primary me-2">Previous</button>
+                                        <button id="next-slide" class="btn btn-primary">Next</button>
+                                    </div>
+                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const slides = <?php echo json_encode($slides); ?>;
+                                        let currentSlide = 0;
 
+                                        const image = document.getElementById('slideshow-image');
+                                        const prevButton = document.getElementById('prev-slide');
+                                        const nextButton = document.getElementById('next-slide');
+
+                                        function showSlide(index) {
+                                            if (index >= slides.length) currentSlide = 0;
+                                            if (index < 0) currentSlide = slides.length - 1;
+                                            image.src = slides[currentSlide];
+                                        }
+
+                                        prevButton.addEventListener('click', () => {
+                                            currentSlide--;
+                                            showSlide(currentSlide);
+                                        });
+
+                                        nextButton.addEventListener('click', () => {
+                                            currentSlide++;
+                                            showSlide(currentSlide);
+                                        });
+
+                                        showSlide(currentSlide);
+                                    });
+                                </script>
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='document')
                                 @php
                                     $fileName = json_decode($selectedTopic->file_path);
@@ -109,22 +145,20 @@
                                 @endphp
                                 @if(Str::endsWith($fileName, '.pdf'))
                                     <iframe src="{{ asset('storage/' . $fileName) }}" width="100%" height="600px"></iframe>
-
                                 @elseif(Str::endsWith($fileName, '.docx'))
                                     <iframe 
                                         src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $fileName)) }}" 
                                         width="100%" height="600px">
                                     </iframe>
-
                                 @else
                                     <p>Unsupported file format.</p>
                                 @endif
                                 <canvas id="pdf-container"></canvas>
                             @else
                                 <div class="text-center py-5">
-                                    <h2>Welcome to {{ auth()->user()->enrollments->first()->course->activities->first()->title  }}</h2>
+                                    <h2>Welcome to {{ auth()->user()->enrollments->first()->course->activities->first()->title }}</h2>
                                     <p class="lead mt-3">
-                                        {{  auth()->user()->enrollments->first()->course->activities->first()->description  }}
+                                        {{ auth()->user()->enrollments->first()->course->activities->first()->description }}
                                     </p>
                                     <img src="{{ asset('img/welcome_learning.svg') }}" alt="Welcome" style="max-width: 300px;" class="my-4">
                                     <p>
@@ -136,52 +170,48 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const url = "{{ $filePath ?? '' }}";
+        console.log("PDF URL:", url);
 
-   
-
-<script>
-    const url = "{{ $filePath ?? '' }}";
-    console.log("PDF URL:", url);
-
-    if (!url) {
-        console.error("No PDF file path provided.");
-    }
-
-    const loadingTask = pdfjsLib.getDocument(url);
-
-    loadingTask.promise.then(pdf => {
-        console.log(`PDF loaded with ${pdf.numPages} pages.`);
-
-        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-            pdf.getPage(pageNumber).then(page => {
-                const scale = 1.5;
-                const viewport = page.getViewport({ scale });
-
-                const canvas = document.createElement("canvas");
-                const context = canvas.getContext("2d");
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                page.render(renderContext);
-
-                // Append each canvas to container
-                document.getElementById("pdf-container").appendChild(canvas);
-            });
+        if (!url) {
+            console.error("No PDF file path provided.");
         }
-    }).catch(error => {
-        console.error("Error loading PDF:", error);
-    });
-</script>
 
+        const loadingTask = pdfjsLib.getDocument(url);
+
+        loadingTask.promise.then(pdf => {
+            console.log(`PDF loaded with ${pdf.numPages} pages.`);
+
+            for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                pdf.getPage(pageNumber).then(page => {
+                    const scale = 1.5;
+                    const viewport = page.getViewport({ scale });
+
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+
+                    page.render(renderContext);
+
+                    // Append each canvas to container
+                    document.getElementById("pdf-container").appendChild(canvas);
+                });
+            }
+        }).catch(error => {
+            console.error("Error loading PDF:", error);
+        });
+    </script>
 @endsection
 @include('student.footer')
 <style>
@@ -205,5 +235,14 @@
     .table {
         font-size: 0.95rem;
     }
+}
+#slideshow-container .btn {
+    border-radius: 5px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#slideshow-container .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 </style>

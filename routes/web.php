@@ -80,7 +80,7 @@ Route::middleware(checkauth::class)->group(function () {
         Route::put('/admin/topics/{topic}', 'updateTopic')->name('admin.topic.update');
         Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.topic.delete');
         Route::get('/admin/assignments/{assignment}/topics/{topic}/files', 'viewTopicFiles')->name('admin.topic.files');
-        Route::get('/admin/check-assignments/activities', 'showCheckAssignments')->name('admin.checkAssignmentsStatus');
+        Route::get('/admin/check-assignments/activities', 'showCheckAssignments')->name('admin.checkassignmentsStatus');
     });
 });
 

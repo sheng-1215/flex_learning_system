@@ -9,7 +9,7 @@
 .env
 .env.backup
 .env.production
-.phpunit.result.cache
+.phpunit.result.cacheW
 Homestead.json
 Homestead.yaml
 auth.json
