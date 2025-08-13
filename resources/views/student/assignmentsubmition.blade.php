@@ -20,6 +20,9 @@
                     <div class="mb-3">
                         <p>Due Date: {{ $assignment->due_date }}</p>
                     </div>
+                    <div class="mb-3">
+                        <p>{{ $assignment->description }}</p>
+                    </div>
                     <div class="md-3">
                         <small>Attachment:</small>
                         <br>
