@@ -6,6 +6,7 @@
     <title>Select Course</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background-color: #f0f2f5; }
         .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; }
@@ -17,6 +18,7 @@
         .course-item img { width: 100%; height: 100%; object-fit: cover; }
         .course-item .btn-course { position: absolute; bottom: 10px; left: 10px; background-color: #ffc107; color: #343a40; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
         .course-item .btn-course:hover { background-color: #e0a800; text-decoration: none; color: #343a40; }
+        .alert-custom { position: relative; top: 0; width: 100%; margin-bottom: 20px; }
         @media (max-width: 991.98px) {
             .content { margin-left: 0; padding: 10px; padding-top: 60px !important; }
             .sidebar { left: -200px; }
@@ -28,19 +30,29 @@
     @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
-            <div  class="page-header mb-4 text-center" style="background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('{{ asset('img/page-header.jpg') }}') no-repeat center center; background-size: cover; padding: 60px 0; color: white; border-radius: 10px;">
+            <!-- Display success or error messages -->
+            @if (session('success'))
+                <div class="alert alert-success alert-custom">
+                    {{ session('success') }}
+                </div>
+            @elseif (session('error'))
+                <div class="alert alert-danger alert-custom">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div class="page-header mb-4 text-center" style="background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('{{ asset('img/page-header.jpg') }}') no-repeat center center; background-size: cover; padding: 60px 0; color: white; border-radius: 10px;">
                 <h1 class="display-4">{{ $course->title }}</h1>
-                
                 <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All Courses</a> / <span class="text-warning">CU activity</span>
             </div>
             {{-- Add Assignment Form --}}
             <div class="card mb-4">
                 <div class="card-header">Add New Assignment</div>
                 <div class="card-body">
-                    <form id="add-assignment-form" action="{{ route('admin.activityAssignment.add',$course->id) }}" enctype="multipart/form-data" method="POST">
+                    <form id="add-assignment-form" action="{{ route('admin.activityAssignment.add', $course->id) }}" enctype="multipart/form-data" method="POST">
                         @csrf
                         <div class="form-group mb-2">
-                            <label for="course_id">Course</label>
+                            <label for="course_id">CU Activity</label>
                             <select name="activity_id" id="course_id" class="form-control" required>
                                 <option value="">Select CU activity</option>
                                 @foreach($activities as $activitie)
@@ -56,7 +68,7 @@
                             <label for="description">Description</label>
                             <textarea name="description" class="form-control"></textarea>
                         </div>
-                         <x-attachment :name="'attachment'" :label="'Upload Content'" :required="false" :multiple="false" />
+                        <x-attachment :name="'attachment'" :label="'Upload Content'" :required="false" :multiple="false" />
                         <div class="form-group mb-2">
                             <label for="due_date">Due Date</label>
                             <input type="date" name="due_date" class="form-control" required>
@@ -110,7 +122,5 @@
             </div>
         </div>
     </div>
-
-    
 </body>
 </html>

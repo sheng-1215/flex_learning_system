@@ -381,39 +381,32 @@ class AdminController extends Controller
         return view('admin.activityTopic', compact('activity', 'topics'));
     }
 
-    public function addTopicToActivity(Request $request)
+    public function addTopicToActivity(CUActivity $activity, Request $request)
     {
-        if ($request->isMethod('get')) {
-            $activity = CUActivity::findOrFail($request->cu_id);
-            return view('admin.add_topic_to_activity', compact('activity'));
-        }
-        
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:slideshow,document,video',
-            'file_path' => 'required',
-            'file_path.*' => 'file|mimes:jpg,jpeg,png,webp,gif,pdf,pptx,doc,docx,xls,xlsx,txt,mp4|max:51200',
+            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,ppt,pptx,mp4|max:10240', // 10MB max per file
         ]);
-       
-        $filePaths = [];
-        if ($request->hasFile('file_path')) {
-            foreach ($request->file('file_path') as $file) {
-                $path = $file->store('topics', 'public');
-                $filePaths[] = [
-                    'path' => str_replace(['\\', '"'], '/', $path),
-                    'filename' => $file->getClientOriginalName(),
-                ];
-            }
-        }
-        $filePaths = json_encode($filePaths);
+        // dd($request->all());
+        $topic = new topic();
+        $topic->cu_id = $activity->id;
+        // dd($activity);
+        $topic->title = $request->title;
+        $topic->type = $request->type;
 
-        topic::create([
-            'cu_id' => $request->cu_id,
-            'title' => $request->title,
-            'type' => $request->type,
-            'file_path' => $filePaths,
-        ]);
-        return redirect()->route('admin.viewActivitiesTopic', $request->cu_id)->with('success', 'Topic added successfully!');
+        if ($request->hasFile('file_path')) {
+            $filePaths = [];
+            foreach ($request->file('file_path') as $file) {
+                $path = $file->store('topic_files/' . $activity->id, 'public');
+                $filePaths[] = ['path' => $path, 'filename' => $file->getClientOriginalName()];
+            }
+            $topic->file_path = json_encode($filePaths);
+        }
+
+        $topic->save();
+
+        return redirect()->route('admin.viewActivitiesTopic', $activity->id)->with('success', 'Topic added successfully!');
     }
 
     public function deleteActivityTopic(topic $topic)

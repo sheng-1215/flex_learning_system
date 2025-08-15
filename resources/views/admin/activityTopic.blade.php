@@ -100,7 +100,7 @@
                     <h5 class="mb-0"><i class="fas fa-plus mr-2"></i>Add New Topic</h5>
                 </div>
                 <div class="card-body">
-                <form action="{{ route('admin.addTopicToActivity', ['cu_id'=>$activity->id]) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.addTopicToActivity', [$activity->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="title">Topic Title <span class="text-danger">*</span></label>

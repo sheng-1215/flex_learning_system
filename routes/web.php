@@ -52,7 +52,7 @@ Route::middleware(checkauth::class)->group(function () {
         Route::delete('/admin/activities/{activity}/destroy','destroyActivity')->name('admin.destroyCUActivity');
         Route::post('/admin/courses/cuactivities/add', 'addCourseActivity')->name('admin.addCourseActivity');
         Route::get('/admin/cuactivities/{activity}/topic', 'viewActivitiesTopic')->name('admin.viewActivitiesTopic');
-        Route::post("/admin/topic/add", 'addTopicToActivity')->name('admin.addTopicToActivity');
+        Route::post("/admin/topic/add/{activity}", 'addTopicToActivity')->name('admin.addTopicToActivity');
         Route::delete('admin/topics/{topic}/delete','deleteActivityTopic')->name('admin.deleteActivityTopic');
         
         Route::get("/admin/topics/{topic}/download", 'downloadTopic')->name('admin.downloadTopic');

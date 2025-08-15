@@ -85,7 +85,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="password">password</label>
-                    <input type="text" id="password" name="password" value="" required autofocus>
+                    <input type="password" id="password" name="password" value="" required autofocus>
                     @error('password')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
