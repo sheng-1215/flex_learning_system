@@ -46,6 +46,14 @@
                 font-size: 16px;
                 box-sizing: border-box;
             }
+            input[type="password"] {
+                width: calc(100% - 20px);
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
             button[type="submit"] {
                 background-color: #28a745;
                 color: white;
