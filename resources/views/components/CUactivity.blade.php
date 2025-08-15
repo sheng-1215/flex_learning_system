@@ -26,7 +26,7 @@
                     <div class="mt-2 text-muted small">
                         <p class="mb-1">Total Topics: <span class="font-weight-bold text-dark">{{ $totalTopics }}</span></p>
                         <p class="mb-1">Video: <span class="font-weight-bold text-dark">{{ $videoCount }}</span></p>
-                        <p class="mb-1">Slideshow: <span class="font-weight-bold text-dark">{{ $videoCount }}</span></p>
+                        <p class="mb-1">Slideshow: <span class="font-weight-bold text-dark">{{ $slideshowCount }}</span></p>
                         <p class="mb-1">Document: <span class="font-weight-bold text-dark">{{ $documentCount }}</span></p>
                     </div>
                 @endif

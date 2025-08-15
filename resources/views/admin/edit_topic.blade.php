@@ -54,13 +54,13 @@
                         <div class="form-group">
                             <label for="type">Type <span class="text-danger">*</span></label>
                             <select class="form-control" id="type" name="type" required>
-                                <option value="slideshow"{{ old('type', $topic->type) == 'slideshow' ? ' selected' : '' }}>Slideshow (Picture/PPT)</option>
+                                <option value="slideshow"{{ old('type', $topic->type) == 'slideshow' ? ' selected' : '' }}>Slideshow (Picture)</option>
                                 <option value="document"{{ old('type', $topic->type) == 'document' ? ' selected' : '' }}>Document (file)</option>
                                 <option value="video"{{ old('type', $topic->type) == 'video' ? ' selected' : '' }}>Video (mp4)</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="file_path">File</label>
+                            <label for="file_path">Upload Content</label>
                             @if($topic->file_path)
                                 <div class="mb-2">
                                     @php
@@ -71,7 +71,10 @@
                                     @endforeach
                                 </div>
                             @endif
-                            <input type="file" class="form-control" id="file_path" name="file_path[]" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.mp4">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="file_path" name="file_path[]" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.mp4">
+                                <label class="custom-file-label" for="file_path">Choose file(s)</label>
+                            </div>
                             <small class="form-text text-muted">Leave blank to keep the current file(s).</small>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Update Topic</button>
@@ -83,5 +86,12 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Custom file input label update
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName || 'Choose file(s)');
+        });
+    </script>
 </body>
 </html>
