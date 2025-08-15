@@ -160,7 +160,7 @@
                                     <p class="lead mt-3">
                                         {{ auth()->user()->enrollments->first()->course->activities->first()->description }}
                                     </p>
-                                    <img src="{{ asset('img/welcome_learning.svg') }}" alt="Welcome" style="max-width: 300px;" class="my-4">
+                                   
                                     <p>
                                         Ready to get started? Choose a topic and dive in!
                                     </p>
