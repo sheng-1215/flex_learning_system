@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp5\htdocs\flex_learning_system\resources\views\admin\activityTopic.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,72 +8,104 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f0f2f5; }
-        .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
-        .sidebar .nav-link { color: #fff; }
-        .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
-        .content { margin-left: 200px; padding: 20px; transition: margin-left 0.3s; }
-        .activity-card { border-radius: 10px; box-shadow: 0 0 30px rgba(0, 0, 0, .08); background: #fff; }
-        .topic-table th, .topic-table td { vertical-align: middle; }
-        @media (max-width: 991.98px) {
-            .content { margin-left: 0; padding: 10px; }
-            .sidebar { left: -200px; }
-            .sidebar.active { left: 0; }
-        }
-    </style>
+    body { background-color: #f0f2f5; }
+    .sidebar { height: 100vh; background: #343a40; color: #fff; width: 200px; position: fixed; top: 0; left: 0; padding-top: 60px; overflow-y: auto; transition: left 0.3s; z-index: 1000; }
+    .sidebar .nav-link { color: #fff; }
+    .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
+    .content { margin-left: 200px; padding: 20px; transition: margin-left 0.3s; }
+    .activity-card { border-radius: 10px; box-shadow: 0 0 30px rgba(0, 0, 0, .08); background: #fff; }
+    .activity-title-header {
+        color: #fff;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 15px 20px;
+        font-weight: 600;
+    }
+    .activity-title-header h4 {
+        margin: 0;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    .activity-title-header .far {
+        font-size: 1.2rem;
+        margin-right: 10px;
+    }
+    .topic-table th, .topic-table td { vertical-align: middle; }
+    @media (max-width: 991.98px) {
+        .content { margin-left: 0; padding: 10px; }
+        .sidebar { left: -200px; }
+        .sidebar.active { left: 0; }
+        .activity-title-header h4 { font-size: 1.2rem; }
+        .activity-title-header .far { font-size: 1rem; }
+    }
+</style>
 </head>
 <body>
     @include('admin.sidebar')
     <div class="content">
         <div class="container-fluid">
+            <h2 class="mb-4 text-dark font-weight-bold">Manage Topics for CU Activity</h2>
             
-            <h2 class="mb-4">Manage Topics for CU Activity</h2>
             @if(session('success'))
-                <x-alertbox type="success" dismissible>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
-                </x-alertbox>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             @endif
 
             @if(session('error'))
-                <x-alertbox type="danger" dismissible>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
-                </x-alertbox>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             @endif
 
             @if ($errors->any())
-                <x-alertbox type="danger" dismissible>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </x-alertbox>
-            @endif  
-            
-
-            <!-- CU Activity Card -->
-            <div class="activity-card p-4 mb-4">
-                <h4 class="mb-2">{{ $activity->title }}</h4>
-                <div class="mb-2 text-muted">
-                    <i class="far fa-calendar-alt mr-1"></i>
-                    Due on {{ $activity->due_date }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="mb-2">{{ $activity->description }}</div>
-            </div>
+            @endif  
+
+            <div class="card activity-card mb-4">
+    <div class="card-header activity-title-header">
+        <h4 class="mb-0 text-primary d-flex align-items-center">
+            <i class="far fa-clipboard mr-2"></i>
+            {{ $activity->title }}
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="mb-3 text-muted">
+            <i class="far fa-calendar-alt mr-2"></i>
+            Due on {{ $activity->due_date }}
+        </div>
+        <p class="mb-0">{{ $activity->description }}</p>
+    </div>
+</div>
 
             <!-- Add Topic Form -->
-            <div class="card shadow-sm mb-4">
+            <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0">Add New Topic</h5>
+                    <h5 class="mb-0"><i class="fas fa-plus mr-2"></i>Add New Topic</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.addTopicToActivity', ['cu_id'=>$activity->id]) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.addTopicToActivity', ['cu_id'=>$activity->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="title">Topic Title</label>
-                            <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
+                            <label for="title">Topic Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" required placeholder="Enter topic title">
                         </div>
-                        
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select class="form-control" id="type" name="type" required>
@@ -84,9 +115,16 @@
                                 <option value="slideshow">Slideshow</option>
                             </select>
                         </div>
-                        <x-attachment :name="'file_path[]'" :label="'Upload Content'" :required="true" :multiple="true" />
-                        <button type="submit" class="btn btn-primary">Add Topic</button>
-                        <a href="{{ route('admin.courseActivities', ['course' => $activity->course->id]) }}" class="btn btn-secondary ml-2">back</a>
+                        <div class="form-group">
+                            <label for="file_path">Upload Content</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="file_path" name="file_path[]" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.mp4">
+                                <label class="custom-file-label" for="file_path">Choose file(s)</label>
+                            </div>
+                            <small class="form-text text-muted">Supported formats: jpg, jpeg, png, webp, gif, pdf, doc, docx, xls, xlsx, txt, ppt, pptx, mp4</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Add Topic</button>
+                        <a href="{{ route('admin.courseActivities', ['course' => $activity->course_id]) }}" class="btn btn-secondary ml-2">Back to CU Activities</a>
                     </form>
                 </div>
             </div>
@@ -94,30 +132,29 @@
             <!-- Topics Table -->
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Topics List</h5>
+                    <h5 class="mb-0"><i class="fas fa-list mr-2"></i>Topics List</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover topic-table mb-0">
-                            <thead class="thead-light">
+                        <table class="table table-striped table-hover topic-table mb-0">
+                            <thead>
                                 <tr>
-                                    <th style="width:60px;">#</th>
+                                    <th>#</th>
                                     <th>Title</th>
-                                    <th>type</th>
-                                    <th>attachment</th>
-                                    {{-- <th style="width:100px;">Order</th> --}}
-                                    <th style="width:120px;">Actions</th>
+                                    <th>Type</th>
+                                    <th>Attachment</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($topics as $i => $topic)
-                                    <tr>
-                                        <td>{{ $i+1 }}</td>
-                                        <td>{{ $topic->title }}</td>
-                                        <td>{{ $topic->type }}</td>
-                                        <td style="min-width: 180px;">
+                                @forelse($topics as $key => $topic)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $topic->title }}</td>
+                                    <td>{{ $topic->type }}</td>
+                                    <td style="min-width: 180px;">
                                         @php
-                                            $filepath=json_decode($topic->file_path, true);
+                                            $filepath = json_decode($topic->file_path, true);
                                         @endphp
                                         @foreach($filepath as $newattach)
                                             @php
@@ -146,27 +183,26 @@
                                                     }
                                                 }
                                             @endphp
-                                            <a href="{{ route('admin.downloadTopic',$topic->id) }}" target="_blank"
+                                            <a href="{{ route('admin.downloadTopic', $topic->id) }}" target="_blank"
                                                class="btn btn-sm btn-info mb-1 text-truncate d-inline-block"
                                                style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                <i class="fas {{ $icon }} {{ $iconColor }}"></i>
+                                                <i class="fas {{ $icon }} {{ $iconColor }} mr-1"></i>
                                                 {{ $newattach["filename"] }}
                                             </a>
                                         @endforeach
-                                        </td>
-                                        <td>{{ $topic->order }}</td>
-                                        {{-- <td>
-                                            <a href="{{ route('admin.editActivityTopic', [$activity->id, $topic->id]) }}" class="btn btn-sm btn-primary">Edit</a>
-                                            <form action="{{ route('admin.deleteActivityTopic', [$activity->id, $topic->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-sm btn-danger">Delete</button>
-                                            </form>
-                                        </td> --}}
-                                    </tr>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.topic.edit', $topic->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit mr-1"></i>Edit</a>
+                                        <form action="{{ route('admin.topic.delete', $topic->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this topic?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash mr-1"></i>Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No topics found.</td>
+                                        <td colspan="5" class="text-center text-muted py-4">No topics found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -183,6 +219,11 @@
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
         }
+        // Custom file input label update
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
     </script>
 </body>
 </html>

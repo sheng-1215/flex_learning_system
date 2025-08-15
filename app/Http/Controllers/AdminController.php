@@ -539,15 +539,15 @@ class AdminController extends Controller
 
     public function editTopic(\App\Models\topic $topic)
     {
-        $assignment = $topic->cuActivity;
+        $assignment = $topic->cuActivity; // This is CUActivity (activity)
         return view('admin.edit_topic', compact('assignment', 'topic'));
     }
 
-    public function updateTopic(Request $request, \App\Models\topic $topic)
+    public function updateTopic(Request $request, CUActivity $assignment, \App\Models\topic $topic)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|in:slide,document,video',
+            'type' => 'required|in:slideshow,document,video',
             'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,pptx,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
         ]);
 
@@ -555,24 +555,28 @@ class AdminController extends Controller
             'title' => $request->title,
             'type' => $request->type,
         ];
+
         if ($request->hasFile('file_path')) {
             $filePaths = [];
             foreach ($request->file('file_path') as $file) {
                 $path = $file->store('topics', 'public');
-                $filePaths[] = str_replace(['\\', '"'], '/', $path);
+                $filePaths[] = [
+                    'path' => str_replace(['\\', '"'], '/', $path),
+                    'filename' => $file->getClientOriginalName(),
+                ];
             }
-            $data['file_path'] = $filePaths;
+            $data['file_path'] = json_encode($filePaths);
         }
+
         $topic->update($data);
-        $assignment = $topic->cuActivity;
-        return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic updated successfully!');
+        return redirect()->route('admin.viewActivitiesTopic', $assignment->id)->with('success', 'Topic updated successfully!');
     }
 
     public function deleteTopic(\App\Models\topic $topic)
     {
         $assignment = $topic->cuActivity;
         $topic->delete();
-        return redirect()->route('admin.assignments.view', $assignment->course_id)->with('success', 'Topic deleted successfully!');
+        return redirect()->route('admin.viewActivitiesTopic', $assignment->id)->with('success', 'Topic deleted successfully!');
     }
 
     public function editAssignment(Course $course, assignment $assignment)

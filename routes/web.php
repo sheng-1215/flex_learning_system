@@ -77,7 +77,8 @@ Route::middleware(checkauth::class)->group(function () {
         Route::get('/admin/assignments/{assignment}/topics/add', 'addTopic')->name('admin.topic.add');
         Route::post('/admin/assignments/{assignment}/topics/add', 'storeTopic')->name('admin.topic.store');
         Route::get('/admin/topics/{topic}/edit', 'editTopic')->name('admin.topic.edit');
-        Route::put('/admin/topics/{topic}', 'updateTopic')->name('admin.topic.update');
+        // Route::put('/admin/topics/{topic}', 'updateTopic')->name('admin.topic.update');
+        Route::put('/admin/topics/{assignment}/{topic}', 'updateTopic')->name('admin.topic.update');
         Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.topic.delete');
         Route::get('/admin/assignments/{assignment}/topics/{topic}/files', 'viewTopicFiles')->name('admin.topic.files');
         Route::get('/admin/check-assignments/activities', 'showCheckAssignments')->name('admin.checkassignmentsStatus');
