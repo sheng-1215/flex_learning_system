@@ -38,6 +38,26 @@ class Course extends Model
         return $this->hasMany(Enrollment::class, 'course_id');
     }
 
+    public function studentEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)->where('role', 'student');
+    }
+
+    public function lecturerEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)->where('role', 'lecturer');
+    }
+
+    public function getStudentCountAttribute()
+    {
+        return $this->enrollments()->where('role', 'student')->count();
+    }
+
+    public function getLecturerCountAttribute()
+    {
+        return $this->enrollments()->where('role', 'lecturer')->count();
+    }
+
     public function activities()
     {
         return $this->hasMany(CUActivity::class);

@@ -6,18 +6,26 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class checkauth
+class StudentMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check()) {
             return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
         }
+
+        $user = auth()->user();
+        if ($user->role !== 'student') {
+            return redirect()->route('login')->with('error', 'Access denied. Student privileges required.');
+        }
+
         return $next($request);
     }
 }

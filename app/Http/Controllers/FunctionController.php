@@ -136,8 +136,11 @@ class FunctionController extends Controller
             return redirect()->back()->withErrors(['error' => 'You do not have permission to delete this assignment.']);
         }
 
+        $assignmentId = $assignment->assignment_id;
         $assignment->delete();
-        return redirect()->route('student.assignment')->with('success', 'Assignment deleted successfully.');
+        // Redirect back to the assignment detail page with success message
+        return redirect()->route('student.assignment.detail', ['id' => $assignmentId])
+            ->with('success', 'Assignment deleted successfully.');
     }
 
     public function downloadAssignment($id)

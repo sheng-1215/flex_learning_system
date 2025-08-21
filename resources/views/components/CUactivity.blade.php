@@ -19,7 +19,7 @@
             <div class="card-body course-info p-2">
                 <h5 class="card-title text-primary font-weight-bold mb-1">{{ $activitie->title ?? 'Web Design & Development' }}</h5>
                 <div class="d-flex justify-content-between text-muted small mb-2">
-                    <span><i class="fas fa-users text-warning"></i> {{ $studentCount[0] ?? 25 }} Students</span>
+                    <span><i class="fas fa-users text-warning"></i> {{ $studentCount[0] ?? 0 }} Students</span>
                     <span><i class="far fa-clock text-warning"></i> {{ $activitie->due_date ?? '2025-06-30' }}</span>
                 </div>
                 @if($totalTopics > 0)

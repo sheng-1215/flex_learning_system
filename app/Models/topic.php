@@ -25,4 +25,23 @@ class topic extends Model
     {
         return $this->belongsTo(\App\Models\CUActivity::class, 'cu_id');
     }
+
+    public function progress()
+    {
+        return $this->hasMany(TopicProgress::class);
+    }
+
+    public function getUserProgress($userId)
+    {
+        return $this->progress()->where('user_id', $userId)->first();
+    }
+
+    public function getProgressAttribute($value)
+    {
+        if (auth()->check()) {
+            $userProgress = $this->getUserProgress(auth()->id());
+            return $userProgress ? $userProgress->progress : 0;
+        }
+        return $value;
+    }
 }

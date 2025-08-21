@@ -21,34 +21,50 @@ class AdminController extends Controller
 {
     public function courses()
     {
-        $courses = Course::with(['enrollments.user'])->get();
+        $courses = Course::with(['enrollments.user', 'enrollments' => function($query) {
+            $query->where('role', 'student');
+        }])->orderByDesc('created_at')->get();
         return view('admin.courses', ['courses' => $courses]);
     }
 
     public function importStudent($id,Request $request)
     {
         $student = DB::connection('second_db')->table('student')->where('id', $id)->first();
-        if (!$student->s_email || !$student->ic) {
+        if (!$student || !$student->s_email || !$student->ic) {
             return redirect()->back()->with('error', 'Student email not found.');
         }
-        // Check if the student already exists in the main database
-        $existingUser = User::where('email', $student->s_email)->first();
-        if ($existingUser) {
-            return redirect()->back()->with('error', 'Student already exists in the system.');
-        }
-        // Create a new user in the main database
-        $student_login= DB::connection('second_db')->table('student_login')->where('ic', $student->ic)->first();
-        if($student_login && Hash::check($request->password, $student_login->password)){
-            $user = User::create([
-                'name' => $student->s_name,
-                'email' => $student->s_email,
-                'password' => Hash::make($request->password),
-                'role' => 'student',
-            ]);
-            return redirect()->route('admin.users')->with('success', 'Student imported successfully.');
-        }
+        // Validate new password provided by admin (set, not verified against portal)
+        $request->validate([
+            'password' => ['required','string','min:2'],
+        ]);
         
-        return redirect()->back()->with('error', 'Invalid password. Please try again.');
+        // 1) Reset/Set password in the school portal db (second_db.sqlite)
+        $now = now()->format('Y-m-d H:i:s');
+        DB::connection('second_db')->table('student_login')
+            ->updateOrInsert(
+                ['student_ic' => $student->ic],
+                [
+                    'password' => Hash::make($request->password),
+                    'status' => 'ACTIVE',
+                    'date_update' => $now,
+                ]
+            );
+
+        // Create or update a user in the main database with the admin-provided password
+        $user = User::firstOrNew(['email' => $student->s_email]);
+        $isNew = !$user->exists;
+        $user->name = $student->s_name;
+        $user->password = Hash::make($request->password);
+        $user->role = 'student';
+        $user->save();
+
+        $successMessage = $isNew
+            ? ($user->name . ' this student register successfully')
+            : ($user->name . ' this student password reset successfully');
+        return redirect()->route('admin.users')->with([
+            'success' => $successMessage,
+            'success_role' => 'student',
+        ]);
     }
 
     public function addCourse(Request $request)
@@ -65,7 +81,7 @@ class AdminController extends Controller
             $coverPath = $request->file('cover_image')->store('covers', 'public');
         }
 
-        Course::create([
+        $course = Course::create([
             'title' => $request->title,
             'cover_image' => $coverPath,
             'start_date' => $request->start_date,
@@ -73,7 +89,7 @@ class AdminController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-        return redirect()->route('admin.courses')->with('success', 'Course added successfully.');
+        return redirect()->route('admin.courses')->with('success', $course->title . ' added successfully.');
     }
 
     public function editCourse(Course $course)
@@ -125,7 +141,12 @@ class AdminController extends Controller
                 $query->where('role', 'student');
             })
             ->get();
-        return view('admin.addUserToCourse', compact('course', 'users', 'enrollments'));
+        
+        // 获取学生和讲师数量
+        $studentCount = $course->student_count;
+        $lecturerCount = $course->lecturer_count;
+        
+        return view('admin.addUserToCourse', compact('course', 'users', 'enrollments', 'studentCount', 'lecturerCount'));
     }
 
     public function submitUserToCourse(Request $request, Course $course)
@@ -141,7 +162,7 @@ class AdminController extends Controller
         ]);
 
         if ($enrollment) {
-            return redirect()->route('admin.addUserToCourse', $course->id)->with('success', 'User enrolled successfully.');
+            return redirect()->route('admin.addUserToCourse', $course->id)->with('success', 'Student added successfully.');
         }
 
         return back()->with("error", "User added failed, please try again later");
@@ -149,8 +170,9 @@ class AdminController extends Controller
 
     public function removeUserFromCourse(Enrollment $enrollment)
     {
+        $courseId = $enrollment->course_id;
         $enrollment->delete();
-        return redirect()->route('admin.addUserToCourse')->with('success', 'User removed successfully.');
+        return redirect()->route('admin.addUserToCourse', $courseId)->with('success', 'Student removed successfully.');
     }
 
     public function registerStudentView()
@@ -199,17 +221,24 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->route('admin.editUser', $user)->with('success', 'Account registered successfully!');
+        // Redirect to Manage Users with a tailored success message and role for targeted scrolling
+        $successMessage = $user->name . ' this ' . $user->role . ' register successfully';
+        return redirect()->route('admin.users')->with([
+            'success' => $successMessage,
+            'success_role' => $user->role,
+        ]);
     }
 
     public function users()
     {
-        $admins = User::where('role', 'admin')->get();
+        $admins = User::where('role', 'admin')->orderByDesc('created_at')->get();
         $lecturers = User::where('role', 'lecturer')
+            ->orderByDesc('created_at')
             ->get();
         
         $students = User::where('role', 'student')
             ->with('enrollments.course')
+            ->orderByDesc('created_at')
             ->paginate(10, ['*'], 'students_page');
         $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
         
@@ -288,14 +317,24 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->route('admin.users')->with('success', 'User updated successfully.');
+        $successMessage = $user->name . ' this ' . $user->role . ' updated successfully';
+        return redirect()->route('admin.users')->with([
+            'success' => $successMessage,
+            'success_role' => $user->role,
+        ]);
     }
 
     public function destroyUser(User $user)
     {
+        $role = $user->role;
+        $name = $user->name;
         $user->enrollments()->delete();
         $user->delete();
-        return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
+        $successMessage = $name . ' this ' . $role . ' deleted successfully';
+        return redirect()->route('admin.users')->with([
+            'success' => $successMessage,
+            'success_role' => $role,
+        ]);
     }
 
     public function viewCourseAssignments(Course $course)
@@ -340,7 +379,7 @@ class AdminController extends Controller
 
     public function viewCourseActivities(Course $course)
     {
-        $activities = $course->cuActivities()->with('topics')->get();
+        $activities = $course->cuActivities()->with('topics')->orderByDesc('created_at')->get();
         $topics = $activities->flatMap(function ($activity) {
             return $activity->topics;
         });
@@ -406,7 +445,8 @@ class AdminController extends Controller
 
         $topic->save();
 
-        return redirect()->route('admin.viewActivitiesTopic', $activity->id)->with('success', 'Topic added successfully!');
+        return redirect()->route('admin.viewActivitiesTopic', $activity->id)
+            ->with('success', $topic->title . ' added successfully.');
     }
 
     public function deleteActivityTopic(topic $topic)
@@ -440,14 +480,15 @@ class AdminController extends Controller
             'due_date' => 'required|date',
         ]);
 
-        CUActivity::create([
+        $createdActivity = CUActivity::create([
             'course_id' => $request->course_id,
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('admin.courseActivities', $request->course_id)->with('success', 'CU Activity created successfully!');
+        return redirect()->route('admin.courseActivities', $request->course_id)
+            ->with('success', $createdActivity->title . ' added successfully.');
     }
 
     public function deleteAssignmentFromActivity(CUActivity $activity, assignment $assignment)
@@ -495,7 +536,7 @@ class AdminController extends Controller
 
     public function viewActivityAssignments(CUActivity $activity)
     {
-        $assignments = $activity->assignments;
+        $assignments = $activity->assignments()->orderByDesc('created_at')->get();
         return view('admin.activity_assignment', compact('activity', 'assignments'));
     }
 
@@ -524,7 +565,8 @@ class AdminController extends Controller
         ]);
         
         if ($assignment) {
-            return redirect()->route('admin.selectActiviryForAssignment', $course->id)->with('success', 'Assignment added successfully!');
+            return redirect()->route('admin.activityAssignment.view', $assignment->cu_id)
+                ->with('success', $assignment->assignment_name . ' added successfully.');
         }
         return redirect()->back()->with('error', 'Failed to add assignment. Please try again.');
     }
@@ -629,9 +671,138 @@ class AdminController extends Controller
         return view('admin.topic_files', compact('assignment', 'topic', 'files'));
     }
 
-    public function showCheckAssignments()
+    public function assignmentStatusOverview()
     {
-        $activities = \App\Models\CUActivity::with('course')->get();
-        return view('admin.check_assignments_activities', compact('activities'));
+        try {
+            // 获取所有CU Activities及其相关数据
+            $activities = \App\Models\CUActivity::with(['course', 'assignments.assignmentSubmissions'])
+                ->get()
+                ->map(function ($activity) {
+                    // 计算每个activity的assignment统计
+                    $totalAssignments = $activity->assignments->count();
+                    $totalSubmissions = 0;
+                    
+                    // 计算总提交数
+                    foreach ($activity->assignments as $assignment) {
+                        $totalSubmissions += $assignment->assignmentSubmissions->count();
+                    }
+                    
+                    // 获取已注册的学生数量
+                    $enrolledStudents = \App\Models\Enrollment::where('course_id', $activity->course_id)
+                        ->where('role', 'student')
+                        ->count();
+                    
+                    // 计算统计信息
+                    $totalExpectedSubmissions = $enrolledStudents * $totalAssignments;
+                    $submittedCount = $totalSubmissions;
+                    $notSubmittedCount = max(0, $totalExpectedSubmissions - $submittedCount);
+                    $progressPercentage = $totalExpectedSubmissions > 0 ? 
+                        round(($submittedCount / $totalExpectedSubmissions) * 100, 1) : 0;
+                    
+                    $activity->stats = [
+                        'total_assignments' => $totalAssignments,
+                        'total_submissions' => $totalSubmissions,
+                        'submitted_count' => $submittedCount,
+                        'not_submitted_count' => $notSubmittedCount,
+                        'enrolled_students' => $enrolledStudents,
+                        'total_expected_submissions' => $totalExpectedSubmissions,
+                        'progress_percentage' => $progressPercentage
+                    ];
+                    
+                    return $activity;
+                });
+                
+            return view('admin.assignment_status_overview', compact('activities'));
+        } catch (\Exception $e) {
+            // 如果出错，返回空数据
+            return view('admin.assignment_status_overview', ['activities' => collect([])]);
+        }
+    }
+
+    public function testCheckAssignments()
+    {
+        try {
+            // 最简单的测试版本
+            $activities = \App\Models\CUActivity::all();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Test successful',
+                'activities_count' => $activities->count(),
+                'activities' => $activities->map(function($activity) {
+                    return [
+                        'id' => $activity->id,
+                        'title' => $activity->title,
+                        'course_id' => $activity->course_id
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    public function showActivityAssignmentStatus(CUActivity $activity)
+    {
+        try {
+            // 获取该Activity的所有Assignments及其提交状态
+            $assignments = $activity->assignments()->with(['assignmentSubmissions.user'])->get();
+            
+            // 获取已注册的学生
+            $enrolledStudents = \App\Models\Enrollment::where('course_id', $activity->course_id)
+                ->where('role', 'student')
+                ->with('user')
+                ->get();
+            
+            // 为每个Assignment计算详细统计
+            $assignments = $assignments->map(function ($assignment) use ($enrolledStudents) {
+                $submissions = $assignment->assignmentSubmissions;
+                $submittedStudents = $submissions->pluck('user_id')->toArray();
+                
+                $assignment->stats = [
+                    'total_submissions' => $submissions->count(),
+                    'enrolled_students' => $enrolledStudents->count(),
+                    'submitted_count' => $submissions->count(),
+                    'not_submitted_count' => max(0, $enrolledStudents->count() - $submissions->count()),
+                    'progress_percentage' => $enrolledStudents->count() > 0 ? 
+                        round(($submissions->count() / $enrolledStudents->count()) * 100, 1) : 0
+                ];
+                
+                // 标记哪些学生已提交，哪些未提交
+                $assignment->studentStatus = $enrolledStudents->map(function ($student) use ($submittedStudents, $assignment) {
+                    return [
+                        'student' => $student->user,
+                        'has_submitted' => in_array($student->user_id, $submittedStudents),
+                        'submission' => $assignment->assignmentSubmissions()
+                            ->where('user_id', $student->user_id)
+                            ->first()
+                    ];
+                });
+                
+                return $assignment;
+            });
+            
+            return view('admin.activity_assignment_status', compact('activity', 'assignments', 'enrolledStudents'));
+        } catch (\Exception $e) {
+            // 如果出错，返回错误页面
+            return back()->with('error', 'Error loading assignment status: ' . $e->getMessage());
+        }
+    }
+
+    public function getAssignmentStats()
+    {
+        $stats = [
+            'total_activities' => \App\Models\CUActivity::count(),
+            'total_assignments' => \App\Models\assignment::count(),
+            'total_submissions' => \App\Models\assignmentSubmit::count(),
+            'total_courses' => \App\Models\Course::count(),
+            'total_students' => \App\Models\Enrollment::where('role', 'student')->count(),
+        ];
+        
+        return response()->json($stats);
     }
 }

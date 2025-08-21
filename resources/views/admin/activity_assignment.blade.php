@@ -71,7 +71,10 @@
                 <a href="{{ route('admin.selectCourseForAssignment') }}" class="text-white">All CU Activity</a> / <a href="{{ route('admin.selectActiviryForAssignment', [$activity->course_id]) }}" class="text-white">CU activity</a> / <span class="text-warning">Assignments</span>
             </div>
 
-            <div class="card shadow-sm">
+            @if(session('success'))
+                <div id="assignments-success" class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            <div id="assignments-section" class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Assignments</h5>
                     {{-- <a href="{{ route('admin.assignments.add') }}" class="btn btn-warning"><i class="fas fa-plus mr-2"></i>Add New Assignment</a> --}}
@@ -129,6 +132,13 @@
                 $('#sidebar').toggleClass('active d-none');
             });
         });
+        // Scroll to success alert after adding assignments
+        (function(){
+            var successEl = document.getElementById('assignments-success');
+            if(successEl){
+                successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
 </body>
 </html> 

@@ -2,6 +2,14 @@
 @section('content')
     <div class="container-fluid py-2 bg-light">
         <div class="container py-2">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
             <div class="heading mb-2">
                 <h2 class="text-center text-primary font-weight-bold">Assignments</h2>
             </div>

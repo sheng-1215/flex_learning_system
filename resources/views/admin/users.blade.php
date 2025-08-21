@@ -44,11 +44,8 @@
     <div class="content">
         <div class="container-fluid">
             <h2 class="mb-4">Manage Users</h2>
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
             <!-- Admins Table -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4" id="admins-section">
                 <div class="card-header"><h5 class="mb-0">Admins</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -93,7 +90,10 @@
                 </div>
             </div>
             <!-- Lecturers Table -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4" id="lecturers-section">
+                @if(session('success') && session('success_role') === 'lecturer')
+                    <div id="lecturers-success" class="alert alert-success m-3">{{ session('success') }}</div>
+                @endif
                 <div class="card-header"><h5 class="mb-0">Lecturers</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -147,7 +147,10 @@
                 </div>
             </div>
             <!-- Students Table -->
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" id="students-section">
+                @if(session('success') && session('success_role') === 'student')
+                    <div id="students-success" class="alert alert-success m-3">{{ session('success') }}</div>
+                @endif
                 <div class="card-header"><h5 class="mb-0">Students</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -196,6 +199,9 @@
             <div class="card shadow-sm">
                 <div class="card-header"><h5 class="mb-0">Student unregistration from student Portal</h5></div>
                 <div class="card-body">
+                    @if(session('error'))
+                        <div id="portal-error" class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -240,6 +246,21 @@
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
         }
+        // Scroll to role-specific success placement
+        (function(){
+            var role = "{{ session('success_role') }}";
+            var targetEl = null;
+            if(role === 'student') targetEl = document.getElementById('students-success') || document.getElementById('students-section');
+            else if(role === 'lecturer') targetEl = document.getElementById('lecturers-success') || document.getElementById('lecturers-section');
+            else if(role) targetEl = document.getElementById('admins-section');
+            if(targetEl){
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            var err = document.getElementById('portal-error');
+            if(err){
+                err.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
 </body>
 </html>

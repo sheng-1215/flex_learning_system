@@ -98,7 +98,7 @@
     <!-- Content -->
     <div class="content" id="mainContent">
         <div class="welcome">
-            <h2>Welcome to the Control Panel - {{ Auth::user()->name }}</h2>
+            <h2>Welcome to the Control Panel - {{ Auth::user()->name ?? 'User' }}</h2>
             <p class="text-muted">Manage courses, students, assignments and more from this dashboard.</p>
         </div>
         <div class="row dashboard-cards">
@@ -141,9 +141,9 @@
             <div class="col-lg-4 col-md-6">
                 <a href="{{ route('admin.checkassignmentsStatus') }}" class="text-decoration-none">
                     <div class="card p-3 text-center">
-                        <i class="fas fa-clipboard-check fa-2x text-secondary mb-2"></i>
-                        <h6>Check Assignment Status</h6>
-                        <p class="text-muted small">Monitor student assignment submissions.</p>
+                        <i class="fas fa-chart-bar fa-2x text-success mb-2"></i>
+                        <h6>Assignment Status</h6>
+                        <p class="text-muted small">View comprehensive assignment progress and statistics.</p>
                     </div>
                 </a>
             </div>

@@ -43,10 +43,6 @@
         <div class="container-fluid">
             <h2 class="mb-4">Manage Courses</h2>
 
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
             <div class="card shadow-sm mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Add New Course</h5>
@@ -82,10 +78,13 @@
                 </div>
             </div>
 
-            <div class="container mt-5">
+            <div class="container mt-5" id="existing-courses">
                 <div class="text-center mb-4">
                     <h3 style="font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; letter-spacing: 2px; color: #343a40;">Existing Courses</h3>
                 </div>
+                @if(session('success'))
+                <div id="courses-success" class="alert alert-success">{{ session('success') }}</div>
+                @endif
                 <div class="row">
                     @forelse($courses as $course)
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -96,6 +95,7 @@
                             <div class="p-4">
                                 <div class="d-flex justify-content-between mb-3">
                                     <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ \Carbon\Carbon::parse($course->start_date)->format('M d, Y') }}</small>
+                                    <small class="m-0"><i class="fas fa-users text-success mr-2"></i>{{ $course->student_count ?? 0 }} Students</small>
                                     <small class="m-0"><i class="far fa-calendar-alt text-primary mr-2"></i>{{ \Carbon\Carbon::parse($course->end_date)->format('M d, Y') }}</small>
                                 </div>
                                 <a class="h5" href="{{ route('admin.courseActivities',$course->id) }}">{{ $course->title }}</a>
@@ -183,6 +183,15 @@
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
         }
+    </script>
+    <script>
+        // If success message exists, scroll it into view for the user
+        (function(){
+            var successEl = document.getElementById('courses-success');
+            if(successEl){
+                successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
     <!-- 检查并移除多余的Menu按钮，只保留一个主按钮用于触发Offcanvas sidebar -->
 </body>

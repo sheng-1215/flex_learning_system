@@ -83,21 +83,33 @@
                         </div>
                         <div class="form-group" id="student-courses-section">
                             <label>Assign Course (for Student)</label>
-                            @foreach($courses as $course)
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" id="student_course_{{ $course->id }}" name="student_course" value="{{ $course->id }}">
-                                    <label class="custom-control-label" for="student_course_{{ $course->id }}">{{ $course->title }}</label>
+                            @if($courses->isEmpty())
+                                <div class="alert alert-success ">
+                                    No courses available yet. Please <a href="{{ route('admin.courses') }}" class="alert-link">create a course</a> first.
                                 </div>
-                            @endforeach
+                            @else
+                                @foreach($courses as $course)
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="student_course_{{ $course->id }}" name="student_course" value="{{ $course->id }}">
+                                        <label class="custom-control-label" for="student_course_{{ $course->id }}">{{ $course->title }}</label>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                         <div class="form-group" id="lecturer-courses-section" style="display:none;">
                             <label>Assign Responsible Course (for Lecturer)</label>
-                            @foreach($courses as $course)
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" id="lecturer_course_{{ $course->id }}" name="lecturer_course" value="{{ $course->id }}">
-                                    <label class="custom-control-label" for="lecturer_course_{{ $course->id }}">{{ $course->title }}</label>
+                            @if($courses->isEmpty())
+                                <div class="alert alert-success">
+                                    No courses available yet. Please <a href="{{ route('admin.courses') }}" class="alert-link">create a course</a> first.
                                 </div>
-                            @endforeach
+                            @else
+                                @foreach($courses as $course)
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="lecturer_course_{{ $course->id }}" name="lecturer_course" value="{{ $course->id }}">
+                                        <label class="custom-control-label" for="lecturer_course_{{ $course->id }}">{{ $course->title }}</label>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>

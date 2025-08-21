@@ -15,7 +15,7 @@
                             <hr>
                             <ul class="list-group list-group-flush">
                                 @foreach ($topics as $topic)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" data-topic-id="{{ $topic->id }}">
                                         <a href="{{ route('student.CUActivity', [$activity->id,'topic' => $topic->id]) }}" class="text-decoration-none text-dark flex-grow-1">
                                             {{ strtoupper($topic->title) }} 
                                         </a>
@@ -71,12 +71,38 @@
                                     document.addEventListener('DOMContentLoaded', function() {
                                         const video = document.getElementById('topic-video');
                                         let lastSentProgress = 0;
+                                        let isProgressLoaded = false;
 
+                                        // Load saved progress when video loads
+                                        video.addEventListener('loadedmetadata', function() {
+                                            if (!isProgressLoaded) {
+                                                fetch("{{ route('student.topic.progress.get') }}?topic_id={{ $selectedTopic->id }}", {
+                                                    method: "GET",
+                                                    headers: {
+                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                    }
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success && data.progress > 0) {
+                                                        const savedTime = (data.progress / 100) * video.duration;
+                                                        video.currentTime = savedTime;
+                                                        lastSentProgress = data.progress;
+                                                        console.log('Restored progress:', data.progress + '%');
+                                                    }
+                                                })
+                                                .catch(error => console.error('Error loading progress:', error));
+                                                
+                                                isProgressLoaded = true;
+                                            }
+                                        });
+
+                                        // Update progress more frequently (every 1% change)
                                         video.addEventListener('timeupdate', function() {
                                             const percent = Math.floor((video.currentTime / video.duration) * 100);
 
-                                            // Only send if progress changed by at least 5%
-                                            if (Math.abs(percent - lastSentProgress) >= 5 && percent <= 100) {
+                                            // Send progress update every 1% change
+                                            if (Math.abs(percent - lastSentProgress) >= 1 && percent <= 100) {
                                                 lastSentProgress = percent;
                                                 fetch("{{ route('student.topic.progress.update') }}", {
                                                     method: "POST",
@@ -88,10 +114,82 @@
                                                         topic_id: "{{ $selectedTopic->id }}",
                                                         progress: percent
                                                     })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        // Update progress circle in sidebar
+                                                        updateProgressCircle({{ $selectedTopic->id }}, data.progress);
+                                                    }
+                                                })
+                                                .catch(error => console.error('Error updating progress:', error));
+                                            }
+                                        });
+
+                                        // Save progress when video ends
+                                        video.addEventListener('ended', function() {
+                                            fetch("{{ route('student.topic.progress.update') }}", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                },
+                                                body: JSON.stringify({
+                                                    topic_id: "{{ $selectedTopic->id }}",
+                                                    progress: 100
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    updateProgressCircle({{ $selectedTopic->id }}, 100);
+                                                }
+                                            });
+                                        });
+
+                                        // Save progress when page is about to unload
+                                        window.addEventListener('beforeunload', function() {
+                                            const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
+                                            if (currentPercent > lastSentProgress) {
+                                                // Send final progress update using FormData
+                                                const formData = new FormData();
+                                                formData.append('topic_id', "{{ $selectedTopic->id }}");
+                                                formData.append('progress', currentPercent);
+                                                formData.append('_token', "{{ csrf_token() }}");
+                                                
+                                                navigator.sendBeacon("{{ route('student.topic.progress.update') }}", formData);
+                                            }
+                                        });
+
+                                        // Save progress when video is paused
+                                        video.addEventListener('pause', function() {
+                                            const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
+                                            if (currentPercent > lastSentProgress) {
+                                                fetch("{{ route('student.topic.progress.update') }}", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                    },
+                                                    body: JSON.stringify({
+                                                        topic_id: "{{ $selectedTopic->id }}",
+                                                        progress: currentPercent
+                                                    })
                                                 });
                                             }
                                         });
                                     });
+
+                                    // Function to update progress circle in sidebar
+                                    function updateProgressCircle(topicId, progress) {
+                                        const progressCircle = document.querySelector(`[data-topic-id="${topicId}"] .circle`);
+                                        const progressText = document.querySelector(`[data-topic-id="${topicId}"] .percentage`);
+                                        
+                                        if (progressCircle && progressText) {
+                                            progressCircle.setAttribute('stroke-dasharray', `${progress}, 100`);
+                                            progressText.textContent = progress + '%';
+                                        }
+                                    }
                                 </script>
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='slideshow')
                                 @php
@@ -156,14 +254,13 @@
                                 <canvas id="pdf-container"></canvas>
                             @else
                                 <div class="text-center py-5">
-                                    <h2>Welcome to {{ auth()->user()->enrollments->first()->course->activities->first()->title }}</h2>
-                                    <p class="lead mt-3">
-                                        {{ auth()->user()->enrollments->first()->course->activities->first()->description }}
-                                    </p>
-                                    <img src="{{ asset('img/welcome_learning.svg') }}" alt="Welcome" style="max-width: 300px;" class="my-4">
-                                    <p>
-                                        Ready to get started? Choose a topic and dive in!
-                                    </p>
+                                    <h2>Welcome to {{ $activity->title }}</h2>
+                                    <p class="lead mt-3">{{ $activity->description }}</p>
+                                    <div class="d-inline-block mt-4 p-3 border rounded bg-light left-panel-hint">
+                                        <i class="fas fa-hand-point-left text-primary me-2"></i>
+                                        <span class="fw-semibold">Start here:</span>
+                                        <span class="text-muted">Select a topic from the left panel to begin.</span>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -244,5 +341,8 @@
 #slideshow-container .btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.left-panel-hint {
+    box-shadow: 0 2px 6px rgba(13,110,253,0.08);
 }
 </style>

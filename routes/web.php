@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\checkauth;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\StudentMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ajaxController;
 use App\Http\Controllers\ViewController;
@@ -10,12 +12,14 @@ use App\Http\Controllers\AdminController;
 Route::controller(ViewController::class)->group(function () {
     Route::get('/','login')->name('login');
     Route::get('/register','register')->name('register');
-    Route::get('/admin_dashboard', 'adminDashboard')->name('admin_dashboard');
     Route::get('/register/studentVerify','register_studentVerify')->name('register.studentVerify');
     Route::get('/studentVerifyForm/{id}','studentVerifyForm')->name('register.verifyForm');
     Route::get('/verifyStudent','verifyStudent')->name("VerifyStudent");
-    
-    
+});
+
+// Admin Dashboard - Protected by AdminMiddleware
+Route::middleware(['admin'])->group(function () {
+    Route::get('/admin_dashboard', [ViewController::class, 'adminDashboard'])->name('admin_dashboard');
 });
 
 Route::controller(FunctionController::class)->group(function () {
@@ -26,7 +30,7 @@ Route::controller(FunctionController::class)->group(function () {
     Route::post('/register/studentVerifyForm/{id}','verifyForm')->name('register.verifyForm.function');
 });
 
-Route::middleware(checkauth::class)->group(function () {
+Route::middleware(['admin'])->group(function () {
     Route::controller(AdminController::class)->group(function() {
         Route::post("/admin/importStudent/{id}", 'importStudent')->name('admin.importStudent');
         Route::get('/admin/courses', 'courses')->name('admin.courses');
@@ -36,7 +40,7 @@ Route::middleware(checkauth::class)->group(function () {
         Route::delete('/admin/courses/{course}', 'destroyCourse')->name('admin.destroyCourse');
         Route::get('/admin/addUserToCourse/{course}','addUserToCourse')->name('admin.addUserToCourse');
         Route::post('/admin/addUserToCourse/{course}','submitUserToCourse')->name('admin.submitUserToCourse');
-        Route::delete('/admin/removeUserFromCourse','removeUserFromCourse')->name('admin.removeUserFromCourse');
+        Route::delete('/admin/removeUserFromCourse/{enrollment}','removeUserFromCourse')->name('admin.removeUserFromCourse');
 
         
         Route::get('/admin/student/register', 'registerStudentView')->name('admin.registerStudentView');
@@ -81,11 +85,14 @@ Route::middleware(checkauth::class)->group(function () {
         Route::put('/admin/topics/{assignment}/{topic}', 'updateTopic')->name('admin.topic.update');
         Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.topic.delete');
         Route::get('/admin/assignments/{assignment}/topics/{topic}/files', 'viewTopicFiles')->name('admin.topic.files');
-        Route::get('/admin/check-assignments/activities', 'showCheckAssignments')->name('admin.checkassignmentsStatus');
+        Route::get('/admin/assignment-status', 'assignmentStatusOverview')->name('admin.checkassignmentsStatus');
+        Route::get('/admin/check-assignments/activities/{activity}/details', 'showActivityAssignmentStatus')->name('admin.activityAssignmentStatus');
+        Route::get('/admin/assignment-stats', 'getAssignmentStats')->name('admin.assignmentStats');
+        Route::get('/admin/test-check-assignments', 'testCheckAssignments')->name('admin.testCheckAssignments');
     });
 });
 
-Route::middleware(checkauth::class)->group(function () {
+Route::middleware(['student'])->group(function () {
     Route::prefix("student")->group(function () {
         Route::controller(ViewController::class)->group(function () {
             Route::get('/dashboard', 'dashboard')->name('student.dashboard');
@@ -106,6 +113,7 @@ Route::middleware(checkauth::class)->group(function () {
 
         Route::controller(ajaxController::class)->group(function () {
             Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update');
+            Route::get('/topic_progress/get', 'get_topic_progress')->name('student.topic.progress.get');
         });
     });
 });

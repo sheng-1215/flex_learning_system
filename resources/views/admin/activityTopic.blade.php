@@ -47,14 +47,7 @@
         <div class="container-fluid">
             <h2 class="mb-4 text-dark font-weight-bold">Manage Topics for CU Activity</h2>
             
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
+            
 
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -130,7 +123,15 @@
             </div>
 
             <!-- Topics Table -->
-            <div class="card">
+            <div id="topics-section" class="card">
+                @if(session('success'))
+                    <div id="topics-success" class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 <div class="card-header">
                     <h5 class="mb-0"><i class="fas fa-list mr-2"></i>Topics List</h5>
                 </div>
@@ -224,6 +225,13 @@
             let fileName = $(this).val().split('\\').pop();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
         });
+        // Scroll to success message in topics section if present
+        (function(){
+            var successEl = document.getElementById('topics-success');
+            if(successEl){
+                successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
 </body>
 </html>

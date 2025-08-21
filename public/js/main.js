@@ -1,21 +1,40 @@
 (function ($) {
     "use strict";
     
-    // Dropdown on mouse hover
+    // Dropdown on mouse hover (no click toggling to avoid flicker)
     $(document).ready(function () {
-        function toggleNavbarMethod() {
+        function bindNavbarHover() {
+            var $dropdowns = $('.navbar .dropdown');
+            // cleanup previous bindings
+            $dropdowns.off('mouseenter mouseleave');
+            $dropdowns.find('> .dropdown-toggle').off('click.navhover');
+
             if ($(window).width() > 992) {
-                $('.navbar .dropdown').on('mouseover', function () {
-                    $('.dropdown-toggle', this).trigger('click');
-                }).on('mouseout', function () {
-                    $('.dropdown-toggle', this).trigger('click').blur();
+                $dropdowns.on('mouseenter', function () {
+                    var $dd = $(this);
+                    $dd.addClass('show');
+                    $dd.find('> .dropdown-toggle').attr('aria-expanded', true);
+                    $dd.find('> .dropdown-menu').addClass('show');
+                }).on('mouseleave', function () {
+                    var $dd = $(this);
+                    $dd.removeClass('show');
+                    $dd.find('> .dropdown-toggle').attr('aria-expanded', false);
+                    $dd.find('> .dropdown-menu').removeClass('show');
+                });
+
+                // Prevent click on the toggle from re-toggling while in desktop hover mode
+                $dropdowns.find('> .dropdown-toggle').on('click.navhover', function (e) {
+                    e.preventDefault();
                 });
             } else {
-                $('.navbar .dropdown').off('mouseover').off('mouseout');
+                // Mobile: let Bootstrap handle click behavior
+                $dropdowns.removeClass('show')
+                    .find('> .dropdown-toggle').attr('aria-expanded', false).end()
+                    .find('> .dropdown-menu').removeClass('show');
             }
         }
-        toggleNavbarMethod();
-        $(window).resize(toggleNavbarMethod);
+        bindNavbarHover();
+        $(window).on('resize', bindNavbarHover);
     });
     
     

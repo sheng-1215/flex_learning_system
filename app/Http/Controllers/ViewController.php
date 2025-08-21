@@ -29,7 +29,7 @@ class ViewController extends Controller
         });
         
         $studentCount= $course->map(function ($course) {
-            return $course->enrollments->count();
+            return $course->student_count;
         });
         
         if(auth()->user()->is_admin){
@@ -50,10 +50,18 @@ class ViewController extends Controller
             $selectedTopic = $topics->where('id', request()->get('topic'))->first();
             
             if ($selectedTopic) {
-                if($selectedTopic->type!="video"){
-                    $selectedTopic->progress = 100;
+                // For non-video topics, mark as completed
+                if($selectedTopic->type != "video"){
+                    $userId = auth()->id();
+                    $topicProgress = \App\Models\TopicProgress::firstOrNew([
+                        'user_id' => $userId,
+                        'topic_id' => $selectedTopic->id,
+                    ]);
+                    $topicProgress->progress = 100;
+                    $topicProgress->last_watched_at = now();
+                    $topicProgress->save();
                 }
-                $selectedTopic->save();
+                
                 return view('student.CUActivity_detail', compact('activity', 'topics', 'selectedTopic'));
             }
         }
@@ -87,12 +95,22 @@ class ViewController extends Controller
             return $activity->assignments;
         });
         
+        // Ensure each assignment only carries the current student's submissions
+        $userId = auth()->id();
+        $assignments->each(function ($assignment) use ($userId) {
+            $assignment->setRelation(
+                'assignmentSubmissions',
+                $assignment->assignmentSubmissions()->where('user_id', $userId)->get()
+            );
+        });
+        
         return view('student.assignment',compact('assignments'));
     }
     public function assignmentSubmit($id)
     {
         $assignment = assignment::findOrFail($id);
-        $submissions = $assignment->assignmentSubmissions;
+        // Only show the current student's submissions for this assignment
+        $submissions = $assignment->assignmentSubmissions()->where('user_id', auth()->id())->get();
 
         return view('student.assignmentsubmition', compact('assignment', 'submissions'));
     }

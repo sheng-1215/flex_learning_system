@@ -31,10 +31,6 @@
         <div class="container-fluid">
             <h2 class="mb-4">Manage CU Activities</h2>
 
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
             <div class="card shadow-sm mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Add New CU Activity</h5>
@@ -64,11 +60,14 @@
                 </div>
             </div>
 
-            <div class="container mt-5">
+            <div class="container mt-5" id="existing-activities">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 style="font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; letter-spacing: 2px; color: #343a40;">Existing CU Activities</h3>
                    
                 </div>
+                @if(session('success'))
+                <div id="activities-success" class="alert alert-success">{{ session('success') }}</div>
+                @endif
                 
                 <div class="row">
                     @forelse($activities as $activity)
@@ -135,6 +134,15 @@
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
         }
+    </script>
+    <script>
+        // Auto-scroll to success alert when present
+        (function(){
+            var successEl = document.getElementById('activities-success');
+            if(successEl){
+                successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
 </body>
 
