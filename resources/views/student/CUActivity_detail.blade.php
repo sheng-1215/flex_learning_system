@@ -72,122 +72,256 @@
                                         const video = document.getElementById('topic-video');
                                         let lastSentProgress = 0;
                                         let isProgressLoaded = false;
+                                        let isVideoReady = false;
+                                        let retryCount = 0;
+                                        const maxRetries = 3;
 
-                                        // Load saved progress when video loads
+                                        // Debug logging
+                                        console.log('Video progress tracking initialized for topic: {{ $selectedTopic->id }}');
+                                        console.log('CSRF Token:', "{{ csrf_token() }}");
+                                        console.log('Progress update route:', "{{ route('student.topic.progress.update') }}");
+                                        console.log('Progress get route:', "{{ route('student.topic.progress.get') }}");
+                                        
+                                        // Update debug panel
+                                        if (typeof logToDebugPanel === 'function') {
+                                            logToDebugPanel('video', 'Initializing video progress tracking...');
+                                            logToDebugPanel('status', 'Initializing...');
+                                        }
+
+                                        // Check if video element exists
+                                        if (!video) {
+                                            console.error('Video element not found!');
+                                            return;
+                                        }
+
+                                        // Wait for video to be ready
                                         video.addEventListener('loadedmetadata', function() {
+                                            console.log('Video metadata loaded. Duration:', video.duration);
+                                            isVideoReady = true;
+                                            
+                                            if (typeof logToDebugPanel === 'function') {
+                                                logToDebugPanel('video', `Video ready - Duration: ${video.duration}s`);
+                                                logToDebugPanel('status', 'Video loaded, loading saved progress...');
+                                            }
+                                            
                                             if (!isProgressLoaded) {
-                                                fetch("{{ route('student.topic.progress.get') }}?topic_id={{ $selectedTopic->id }}", {
-                                                    method: "GET",
-                                                    headers: {
-                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                                    }
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success && data.progress > 0) {
-                                                        const savedTime = (data.progress / 100) * video.duration;
-                                                        video.currentTime = savedTime;
-                                                        lastSentProgress = data.progress;
-                                                        console.log('Restored progress:', data.progress + '%');
-                                                    }
-                                                })
-                                                .catch(error => console.error('Error loading progress:', error));
-                                                
+                                                loadSavedProgress();
                                                 isProgressLoaded = true;
                                             }
                                         });
 
+                                        // Also check for canplay event
+                                        video.addEventListener('canplay', function() {
+                                            console.log('Video can start playing');
+                                            if (!isVideoReady) {
+                                                isVideoReady = true;
+                                                if (typeof logToDebugPanel === 'function') {
+                                                    logToDebugPanel('video', 'Video can start playing');
+                                                }
+                                                if (!isProgressLoaded) {
+                                                    loadSavedProgress();
+                                                    isProgressLoaded = true;
+                                                }
+                                            }
+                                        });
+
+                                        // Load saved progress function
+                                        function loadSavedProgress() {
+                                            console.log('Loading saved progress...');
+                                            if (typeof logToDebugPanel === 'function') {
+                                                logToDebugPanel('status', 'Loading saved progress...');
+                                            }
+                                            fetch("{{ route('student.topic.progress.get') }}?topic_id={{ $selectedTopic->id }}", {
+                                                method: "GET",
+                                                headers: {
+                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                                    "Accept": "application/json",
+                                                    "Content-Type": "application/json"
+                                                },
+                                                credentials: 'same-origin'
+                                            })
+                                            .then(response => {
+                                                console.log('Progress get response status:', response.status);
+                                                if (!response.ok) {
+                                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                                                }
+                                                return response.json();
+                                            })
+                                            .then(data => {
+                                                console.log('Progress data received:', data);
+                                                if (data.success && data.progress > 0 && video.duration) {
+                                                    const savedTime = (data.progress / 100) * video.duration;
+                                                    video.currentTime = savedTime;
+                                                    lastSentProgress = data.progress;
+                                                    console.log('Restored progress:', data.progress + '% at time:', savedTime);
+                                                    
+                                                    if (typeof logToDebugPanel === 'function') {
+                                                        logToDebugPanel('status', `Progress restored: ${data.progress}%`);
+                                                        logToDebugPanel('update', `Restored to ${data.progress}% at ${savedTime.toFixed(1)}s`);
+                                                    }
+                                                    
+                                                    // Update progress circle immediately
+                                                    updateProgressCircle({{ $selectedTopic->id }}, data.progress);
+                                                } else {
+                                                    if (typeof logToDebugPanel === 'function') {
+                                                        logToDebugPanel('status', 'No saved progress found');
+                                                    }
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error loading progress:', error);
+                                                if (typeof logToDebugPanel === 'function') {
+                                                    logToDebugPanel('error', `Error loading progress: ${error.message}`);
+                                                }
+                                                retryLoadProgress();
+                                            });
+                                        }
+
+                                        // Retry loading progress
+                                        function retryLoadProgress() {
+                                            if (retryCount < maxRetries) {
+                                                retryCount++;
+                                                console.log(`Retrying to load progress (attempt ${retryCount}/${maxRetries})...`);
+                                                if (typeof logToDebugPanel === 'function') {
+                                                    logToDebugPanel('status', `Retrying to load progress (attempt ${retryCount}/${maxRetries})...`);
+                                                }
+                                                setTimeout(loadSavedProgress, 1000 * retryCount);
+                                            } else {
+                                                if (typeof logToDebugPanel === 'function') {
+                                                    logToDebugPanel('error', 'Failed to load progress after all retries');
+                                                }
+                                            }
+                                        }
+
+                                        // Update progress function with retry mechanism
+                                        function updateProgress(percent) {
+                                            if (!isVideoReady || percent < 0 || percent > 100) {
+                                                return;
+                                            }
+
+                                            console.log('Updating progress to:', percent + '%');
+                                            if (typeof logToDebugPanel === 'function') {
+                                                logToDebugPanel('status', `Updating progress to ${percent}%...`);
+                                            }
+                                            
+                                            fetch("{{ route('student.topic.progress.update') }}", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                                    "Accept": "application/json"
+                                                },
+                                                credentials: 'same-origin',
+                                                body: JSON.stringify({
+                                                    topic_id: "{{ $selectedTopic->id }}",
+                                                    progress: percent
+                                                })
+                                            })
+                                            .then(response => {
+                                                console.log('Progress update response status:', response.status);
+                                                if (!response.ok) {
+                                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                                                }
+                                                return response.json();
+                                            })
+                                            .then(data => {
+                                                console.log('Progress update success:', data);
+                                                if (data.success) {
+                                                    lastSentProgress = percent;
+                                                    if (typeof logToDebugPanel === 'function') {
+                                                        logToDebugPanel('status', `Progress updated successfully to ${percent}%`);
+                                                        logToDebugPanel('update', `Updated to ${percent}% at ${new Date().toLocaleTimeString()}`);
+                                                    }
+                                                    // Update progress circle in sidebar
+                                                    updateProgressCircle({{ $selectedTopic->id }}, data.progress);
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error updating progress:', error);
+                                                if (typeof logToDebugPanel === 'function') {
+                                                    logToDebugPanel('error', `Error updating progress: ${error.message}`);
+                                                }
+                                                // Don't update lastSentProgress on error to allow retry
+                                            });
+                                        }
+
                                         // Update progress more frequently (every 1% change)
                                         video.addEventListener('timeupdate', function() {
+                                            if (!isVideoReady || !video.duration) {
+                                                return;
+                                            }
+
                                             const percent = Math.floor((video.currentTime / video.duration) * 100);
 
                                             // Send progress update every 1% change
                                             if (Math.abs(percent - lastSentProgress) >= 1 && percent <= 100) {
-                                                lastSentProgress = percent;
-                                                fetch("{{ route('student.topic.progress.update') }}", {
-                                                    method: "POST",
-                                                    headers: {
-                                                        "Content-Type": "application/json",
-                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                                    },
-                                                    body: JSON.stringify({
-                                                        topic_id: "{{ $selectedTopic->id }}",
-                                                        progress: percent
-                                                    })
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        // Update progress circle in sidebar
-                                                        updateProgressCircle({{ $selectedTopic->id }}, data.progress);
-                                                    }
-                                                })
-                                                .catch(error => console.error('Error updating progress:', error));
+                                                updateProgress(percent);
                                             }
                                         });
 
                                         // Save progress when video ends
                                         video.addEventListener('ended', function() {
-                                            fetch("{{ route('student.topic.progress.update') }}", {
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                                },
-                                                body: JSON.stringify({
-                                                    topic_id: "{{ $selectedTopic->id }}",
-                                                    progress: 100
-                                                })
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                if (data.success) {
-                                                    updateProgressCircle({{ $selectedTopic->id }}, 100);
-                                                }
-                                            });
+                                            console.log('Video ended, marking as 100% complete');
+                                            updateProgress(100);
                                         });
 
                                         // Save progress when page is about to unload
                                         window.addEventListener('beforeunload', function() {
-                                            const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
-                                            if (currentPercent > lastSentProgress) {
-                                                // Send final progress update using FormData
-                                                const formData = new FormData();
-                                                formData.append('topic_id', "{{ $selectedTopic->id }}");
-                                                formData.append('progress', currentPercent);
-                                                formData.append('_token', "{{ csrf_token() }}");
-                                                
-                                                navigator.sendBeacon("{{ route('student.topic.progress.update') }}", formData);
+                                            if (isVideoReady && video.duration) {
+                                                const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
+                                                if (currentPercent > lastSentProgress) {
+                                                    console.log('Saving final progress before unload:', currentPercent + '%');
+                                                    // Send final progress update using FormData
+                                                    const formData = new FormData();
+                                                    formData.append('topic_id', "{{ $selectedTopic->id }}");
+                                                    formData.append('progress', currentPercent);
+                                                    formData.append('_token', "{{ csrf_token() }}");
+                                                    
+                                                    navigator.sendBeacon("{{ route('student.topic.progress.update') }}", formData);
+                                                }
                                             }
                                         });
 
                                         // Save progress when video is paused
                                         video.addEventListener('pause', function() {
-                                            const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
-                                            if (currentPercent > lastSentProgress) {
-                                                fetch("{{ route('student.topic.progress.update') }}", {
-                                                    method: "POST",
-                                                    headers: {
-                                                        "Content-Type": "application/json",
-                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                                    },
-                                                    body: JSON.stringify({
-                                                        topic_id: "{{ $selectedTopic->id }}",
-                                                        progress: currentPercent
-                                                    })
-                                                });
+                                            if (isVideoReady && video.duration) {
+                                                const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
+                                                if (currentPercent > lastSentProgress) {
+                                                    console.log('Saving progress on pause:', currentPercent + '%');
+                                                    updateProgress(currentPercent);
+                                                }
                                             }
+                                        });
+
+                                        // Handle video errors
+                                        video.addEventListener('error', function(e) {
+                                            console.error('Video error occurred:', e);
+                                            console.error('Video error details:', video.error);
+                                        });
+
+                                        // Handle video load start
+                                        video.addEventListener('loadstart', function() {
+                                            console.log('Video loading started');
+                                        });
+
+                                        // Handle video can play through
+                                        video.addEventListener('canplaythrough', function() {
+                                            console.log('Video can play through without buffering');
                                         });
                                     });
 
                                     // Function to update progress circle in sidebar
                                     function updateProgressCircle(topicId, progress) {
+                                        console.log('Updating progress circle for topic', topicId, 'to', progress + '%');
                                         const progressCircle = document.querySelector(`[data-topic-id="${topicId}"] .circle`);
                                         const progressText = document.querySelector(`[data-topic-id="${topicId}"] .percentage`);
                                         
                                         if (progressCircle && progressText) {
                                             progressCircle.setAttribute('stroke-dasharray', `${progress}, 100`);
                                             progressText.textContent = progress + '%';
+                                            console.log('Progress circle updated successfully');
+                                        } else {
+                                            console.warn('Progress circle elements not found for topic:', topicId);
                                         }
                                     }
                                 </script>
@@ -271,6 +405,107 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {{-- Debug Panel for Video Progress --}}
+    @if(isset($selectedTopic) && $selectedTopic->type==='video')
+    <div class="container-fluid mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-bug text-warning"></i> 
+                    Video Progress Debug Panel 
+                    <button class="btn btn-sm btn-outline-secondary float-end" onclick="toggleDebugPanel()">
+                        Toggle Debug
+                    </button>
+                </h6>
+            </div>
+            <div class="card-body" id="debug-panel" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Video Status:</h6>
+                        <div id="video-status" class="text-muted">Loading...</div>
+                        
+                        <h6 class="mt-3">Progress Tracking:</h6>
+                        <div id="progress-status" class="text-muted">Waiting...</div>
+                        
+                        <h6 class="mt-3">Last Update:</h6>
+                        <div id="last-update" class="text-muted">None</div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Network Requests:</h6>
+                        <div id="network-logs" class="text-muted small" style="max-height: 200px; overflow-y: auto;">
+                            No requests yet...
+                        </div>
+                        
+                        <h6 class="mt-3">Errors:</h6>
+                        <div id="error-logs" class="text-danger small" style="max-height: 150px; overflow-y: auto;">
+                            No errors...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Debug panel functionality
+        function toggleDebugPanel() {
+            const panel = document.getElementById('debug-panel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Debug logging functions
+        function logToDebugPanel(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            switch(type) {
+                case 'network':
+                    const networkLogs = document.getElementById('network-logs');
+                    networkLogs.innerHTML += logEntry + '<br>';
+                    networkLogs.scrollTop = networkLogs.scrollHeight;
+                    break;
+                case 'error':
+                    const errorLogs = document.getElementById('error-logs');
+                    errorLogs.innerHTML += logEntry + '<br>';
+                    errorLogs.scrollTop = errorLogs.scrollHeight;
+                    break;
+                case 'status':
+                    document.getElementById('progress-status').innerHTML = message;
+                    break;
+                case 'video':
+                    document.getElementById('video-status').innerHTML = message;
+                    break;
+                case 'update':
+                    document.getElementById('last-update').innerHTML = message;
+                    break;
+            }
+        }
+        
+        // Override console methods to also log to debug panel
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('progress')) {
+                logToDebugPanel('network', args.join(' '));
+            }
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logToDebugPanel('error', args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            logToDebugPanel('error', args.join(' '));
+        };
+    </script>
+    @endif
+    
     <script>
         const url = "{{ $filePath ?? '' }}";
         console.log("PDF URL:", url);

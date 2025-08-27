@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'student' => \App\Http\Middleware\StudentMiddleware::class,
         'checkauth' => \App\Http\Middleware\checkauth::class,
+        'video.progress' => \App\Http\Middleware\VideoProgressMiddleware::class,
     ];
 }
