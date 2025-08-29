@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(assignmentSubmit::class, 'user_id');
     }
+
+    public function topicProgress()
+    {
+        return $this->hasMany(TopicProgress::class);
+    }
 }
