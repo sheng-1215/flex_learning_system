@@ -62,7 +62,7 @@
                                      @php
                                         $videoPath = json_decode($selectedTopic->file_path);        
                                     @endphp
-                                    <video id="topic-video" class="embed-responsive-item w-100" controls>
+                                    <video id="topic-video" class="embed-responsive-item w-100" controls controlsList="nodownload noplaybackrate" disablepictureinpicture>
                                         <source src="{{ asset('storage/' . $videoPath[0]->path) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
@@ -79,8 +79,6 @@
                                         // Debug logging
                                         console.log('Video progress tracking initialized for topic: {{ $selectedTopic->id }}');
                                         console.log('CSRF Token:', "{{ csrf_token() }}");
-                                        console.log('Progress update route:', "{{ route('student.topic.progress.update') }}");
-                                        console.log('Progress get route:', "{{ route('student.topic.progress.get') }}");
                                         
                                         // Update debug panel
                                         if (typeof logToDebugPanel === 'function') {
@@ -94,6 +92,19 @@
                                             return;
                                         }
 
+                                        // Prevent skipping forward
+                                        let lastAllowedTime = 0;
+                                        video.addEventListener('seeking', function() {
+                                            if (video.currentTime > lastAllowedTime + 0.5) {
+                                                video.currentTime = lastAllowedTime;
+                                            }
+                                        });
+                                        video.addEventListener('timeupdate', function() {
+                                            if (video.currentTime > lastAllowedTime) {
+                                                lastAllowedTime = video.currentTime;
+                                            }
+                                        });
+
                                         // Wait for video to be ready
                                         video.addEventListener('loadedmetadata', function() {
                                             console.log('Video metadata loaded. Duration:', video.duration);
@@ -104,10 +115,8 @@
                                                 logToDebugPanel('status', 'Video loaded, loading saved progress...');
                                             }
                                             
-                                            if (!isProgressLoaded) {
-                                                loadSavedProgress();
-                                                isProgressLoaded = true;
-                                            }
+                                            // No server progress to load
+                                            // No server progress to load
                                         });
 
                                         // Also check for canplay event
@@ -125,95 +134,15 @@
                                             }
                                         });
 
-                                        // Load saved progress function
-                                        function loadSavedProgress() {
-                                            console.log('Loading saved progress...');
-                                            if (typeof logToDebugPanel === 'function') {
-                                                logToDebugPanel('status', 'Loading saved progress...');
-                                            }
-                                            fetch("{{ route('student.topic.progress.get') }}?topic_id={{ $selectedTopic->id }}", {
-                                                method: "GET",
-                                                headers: {
-                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                                    "Accept": "application/json",
-                                                    "Content-Type": "application/json"
-                                                },
-                                                credentials: 'same-origin'
-                                            })
-                                            .then(response => {
-                                                console.log('Progress get response status:', response.status);
-                                                if (!response.ok) {
-                                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                                                }
-                                                return response.json();
-                                            })
-                                            .then(data => {
-                                                console.log('Progress data received:', data);
-                                                if (data.success && data.progress > 0 && video.duration) {
-                                                    const savedTime = (data.progress / 100) * video.duration;
-                                                    video.currentTime = savedTime;
-                                                    lastSentProgress = data.progress;
-                                                    console.log('Restored progress:', data.progress + '% at time:', savedTime);
-                                                    
-                                                    // Update progress circle immediately
-                                                    updateProgressCircle({{ $selectedTopic->id }}, data.progress);
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error('Error loading progress:', error);
-                                                retryLoadProgress();
-                                            });
-                                        }
+                                        // Removed server-based saved progress fetching
 
-                                        // Retry loading progress
-                                        function retryLoadProgress() {
-                                            if (retryCount < maxRetries) {
-                                                retryCount++;
-                                                console.log(`Retrying to load progress (attempt ${retryCount}/${maxRetries})...`);
-                                                setTimeout(loadSavedProgress, 1000 * retryCount);
-                                            }
-                                        }
-
-                                        // Update progress function (called only on ended or refresh-triggered 100%)
+                                        // Update progress UI only (no server request)
                                         function updateProgress(percent) {
                                             if (!isVideoReady || percent < 0 || percent > 100) {
                                                 return;
                                             }
-
-                                            console.log('Updating progress to:', percent + '%');
-                                            
-                                            fetch("{{ route('student.topic.progress.update') }}", {
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                                    "Accept": "application/json"
-                                                },
-                                                credentials: 'same-origin',
-                                                body: JSON.stringify({
-                                                    topic_id: "{{ $selectedTopic->id }}",
-                                                    progress: percent
-                                                })
-                                            })
-                                            .then(response => {
-                                                console.log('Progress update response status:', response.status);
-                                                if (!response.ok) {
-                                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                                                }
-                                                return response.json();
-                                            })
-                                            .then(data => {
-                                                console.log('Progress update success:', data);
-                                                if (data.success) {
-                                                    lastSentProgress = percent;
-                                                    // Update progress circle in sidebar
-                                                    updateProgressCircle({{ $selectedTopic->id }}, data.progress);
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error('Error updating progress:', error);
-                                                // Don't update lastSentProgress on error to allow retry
-                                            });
+                                            lastSentProgress = percent;
+                                            updateProgressCircle({{ $selectedTopic->id }}, percent);
                                         }
 
                                         // --- Simple session-based completion logic ---

@@ -4,7 +4,6 @@ use App\Http\Middleware\checkauth;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudentMiddleware;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ajaxController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\FunctionController;
 use App\Http\Controllers\AdminController;
@@ -114,10 +113,7 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/assignmentDelete/{id}', 'assignmentDelete')->name('student.assignment.delete');
             });
 
-        Route::controller(ajaxController::class)->group(function () {
-            Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update')->middleware('video.progress');
-            Route::get('/topic_progress/get', 'get_topic_progress')->name('student.topic.progress.get')->middleware('video.progress');
-        });
+        // Removed video progress AJAX endpoints
     });
 });
 });
