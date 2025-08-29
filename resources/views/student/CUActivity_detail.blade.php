@@ -239,7 +239,7 @@
                                             .catch(error => {
                                                 console.error('Error updating progress:', error);
                                                 if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('error', `Error updating progress: ${error.message}`);
+                                                    logToDebugPanel('error', `Error updatingaaa progress: ${error.message}`);
                                                 }
                                                 // Don't update lastSentProgress on error to allow retry
                                             });
