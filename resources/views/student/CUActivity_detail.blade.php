@@ -155,24 +155,12 @@
                                                     lastSentProgress = data.progress;
                                                     console.log('Restored progress:', data.progress + '% at time:', savedTime);
                                                     
-                                                    if (typeof logToDebugPanel === 'function') {
-                                                        logToDebugPanel('status', `Progress restored: ${data.progress}%`);
-                                                        logToDebugPanel('update', `Restored to ${data.progress}% at ${savedTime.toFixed(1)}s`);
-                                                    }
-                                                    
                                                     // Update progress circle immediately
                                                     updateProgressCircle({{ $selectedTopic->id }}, data.progress);
-                                                } else {
-                                                    if (typeof logToDebugPanel === 'function') {
-                                                        logToDebugPanel('status', 'No saved progress found');
-                                                    }
                                                 }
                                             })
                                             .catch(error => {
                                                 console.error('Error loading progress:', error);
-                                                if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('error', `Error loading progress: ${error.message}`);
-                                                }
                                                 retryLoadProgress();
                                             });
                                         }
@@ -182,14 +170,7 @@
                                             if (retryCount < maxRetries) {
                                                 retryCount++;
                                                 console.log(`Retrying to load progress (attempt ${retryCount}/${maxRetries})...`);
-                                                if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('status', `Retrying to load progress (attempt ${retryCount}/${maxRetries})...`);
-                                                }
                                                 setTimeout(loadSavedProgress, 1000 * retryCount);
-                                            } else {
-                                                if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('error', 'Failed to load progress after all retries');
-                                                }
                                             }
                                         }
 
@@ -200,9 +181,6 @@
                                             }
 
                                             console.log('Updating progress to:', percent + '%');
-                                            if (typeof logToDebugPanel === 'function') {
-                                                logToDebugPanel('status', `Updating progress to ${percent}%...`);
-                                            }
                                             
                                             fetch("{{ route('student.topic.progress.update') }}", {
                                                 method: "POST",
@@ -228,19 +206,12 @@
                                                 console.log('Progress update success:', data);
                                                 if (data.success) {
                                                     lastSentProgress = percent;
-                                                    if (typeof logToDebugPanel === 'function') {
-                                                        logToDebugPanel('status', `Progress updated successfully to ${percent}%`);
-                                                        logToDebugPanel('update', `Updated to ${percent}% at ${new Date().toLocaleTimeString()}`);
-                                                    }
                                                     // Update progress circle in sidebar
                                                     updateProgressCircle({{ $selectedTopic->id }}, data.progress);
                                                 }
                                             })
                                             .catch(error => {
                                                 console.error('Error updating progress:', error);
-                                                if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('error', `Error updating progress: ${error.message}`);
-                                                }
                                                 // Don't update lastSentProgress on error to allow retry
                                             });
                                         }

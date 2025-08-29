@@ -112,8 +112,8 @@ Route::middleware(['student'])->group(function () {
         });
 
         Route::controller(ajaxController::class)->group(function () {
-            Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update')->middleware('video.progress');
-            Route::get('/topic_progress/get', 'get_topic_progress')->name('student.topic.progress.get')->middleware('video.progress');
+            Route::post('/topic_progress/update', 'topic_progress_update')->name('student.topic.progress.update');
+            Route::get('/topic_progress/get', 'get_topic_progress')->name('student.topic.progress.get');
         });
     });
 });
