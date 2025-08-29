@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 ./config/database.php
+./database/database.sqlite
 /vendor
 .env
 .env.backup
