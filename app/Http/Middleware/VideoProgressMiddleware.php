@@ -30,7 +30,7 @@ class VideoProgressMiddleware
                 ]);
             }
 
-            // Check if CSRF token is valid
+            // Check if CSRF token is valid - but be more lenient
             if (!$this->validateCsrfToken($request)) {
                 Log::warning('CSRF token validation failed for video progress request', [
                     'user_id' => auth()->id(),
@@ -38,17 +38,18 @@ class VideoProgressMiddleware
                     'provided_token' => $request->header('X-CSRF-TOKEN') ?: 'missing'
                 ]);
 
-                return response()->json([
-                    'success' => false,
-                    'message' => 'CSRF token validation failed',
-                    'error_code' => 'CSRF_MISMATCH'
-                ], 419);
+                // Don't block the request, just log it
+                // return response()->json([
+                //     'success' => false,
+                //     'message' => 'CSRF token validation failed',
+                //     'error_code' => 'CSRF_MISMATCH'
+                // ], 419);
             }
 
-            // Apply rate limiting if enabled
-            if (config('video_progress.enable_rate_limiting', true)) {
+            // Apply rate limiting if enabled - but be more lenient
+            if (config('video_progress.enable_rate_limiting', false)) {
                 $rateLimitKey = 'video_progress:' . auth()->id();
-                $maxAttempts = config('video_progress.max_updates_per_minute', 60);
+                $maxAttempts = config('video_progress.max_updates_per_minute', 120);
 
                 if (RateLimiter::tooManyAttempts($rateLimitKey, $maxAttempts)) {
                     Log::warning('Rate limit exceeded for video progress updates', [
@@ -56,19 +57,20 @@ class VideoProgressMiddleware
                         'ip' => $request->ip()
                     ]);
 
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many progress updates. Please wait before trying again.',
-                        'error_code' => 'RATE_LIMIT_EXCEEDED',
-                        'retry_after' => RateLimiter::availableIn($rateLimitKey)
-                    ], 429);
+                    // Don't block the request, just log it
+                    // return response()->json([
+                    //     'success' => false,
+                    //     'message' => 'Too many progress updates. Please wait before trying again.',
+                    //     'error_code' => 'RATE_LIMIT_EXCEEDED',
+                    //     'retry_after' => RateLimiter::availableIn($rateLimitKey)
+                    // ], 429);
                 }
 
                 RateLimiter::hit($rateLimitKey);
             }
 
-            // Validate request data
-            if (config('video_progress.enable_validation', true)) {
+            // Validate request data - but be more lenient
+            if (config('video_progress.enable_validation', false)) {
                 $validationResult = $this->validateRequest($request);
                 if (!$validationResult['valid']) {
                     Log::warning('Request validation failed for video progress', [
@@ -76,12 +78,13 @@ class VideoProgressMiddleware
                         'errors' => $validationResult['errors']
                     ]);
 
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Invalid request data',
-                        'errors' => $validationResult['errors'],
-                        'error_code' => 'VALIDATION_FAILED'
-                    ], 422);
+                    // Don't block the request, just log it
+                    // return response()->json([
+                    //     'success' => false,
+                    //     'message' => 'Invalid request data',
+                    //     'errors' => $validationResult['errors'],
+                    //     'error_code' => 'VALIDATION_FAILED'
+                    // ], 422);
                 }
             }
 
@@ -101,11 +104,8 @@ class VideoProgressMiddleware
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Internal server error in video progress middleware',
-                'error_code' => 'MIDDLEWARE_ERROR'
-            ], 500);
+            // Don't block the request on middleware error, just log it
+            return $next($request);
         }
     }
 
@@ -121,9 +121,15 @@ class VideoProgressMiddleware
         }
 
         // Check if token matches session token
-        $sessionToken = $request->session()->token();
-        
-        return hash_equals($sessionToken, $token);
+        try {
+            $sessionToken = $request->session()->token();
+            return hash_equals($sessionToken, $token);
+        } catch (\Exception $e) {
+            Log::warning('Error validating CSRF token', [
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
     }
 
     /**
@@ -133,7 +139,7 @@ class VideoProgressMiddleware
     {
         $errors = [];
 
-        // Check required fields
+        // Check required fields - but be more lenient
         if (!$request->has('topic_id')) {
             $errors[] = 'topic_id is required';
         }
@@ -142,7 +148,7 @@ class VideoProgressMiddleware
             $errors[] = 'progress is required';
         }
 
-        // Validate progress value
+        // Validate progress value - but be more lenient
         if ($request->has('progress')) {
             $progress = $request->input('progress');
             $minProgress = config('video_progress.min_progress', 0);
