@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -132,10 +132,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | These configuration options determine the driver used to determine and
-    | manage Laravel's "maintenance mode" status. The "cache" driver will
-    | allow maintenance mode to be controlled across multiple machines.
-    |
-    | Supported drivers: "file", "cache"
+    | manage Laravel's maintenance mode. The "cache" driver will provide
+    | the fastest maintenance mode implementation since it uses the cache
+    | system to store the maintenance mode cache.
     |
     */
 
@@ -176,7 +175,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | This array of class aliases will be registered when this application
-    | is started. However, feel free to register as many as you wish as
+    | starts. However, feel free to register as many as you'd like as
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
@@ -184,5 +183,19 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Web Server Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for web server deployment
+    |
+    */
+
+    'web_server' => [
+        'subdirectory' => env('APP_SUBDIRECTORY', ''),
+        'force_https' => env('FORCE_HTTPS', false),
+    ],
 
 ];

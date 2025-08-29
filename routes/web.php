@@ -86,7 +86,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/admin/topics/{topic}/edit', 'editTopic')->name('admin.topic.edit');
             // Route::put('/admin/topics/{topic}', 'updateTopic')->name('admin.topic.update');
             Route::put('/admin/topics/{assignment}/{topic}', 'updateTopic')->name('admin.topic.update');
-            Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.deleteTopic');
+            Route::delete('/admin/topics/{topic}', 'deleteTopic')->name('admin.topic.delete');
             Route::get('/admin/assignments/{assignment}/topics/{topic}/files', 'viewTopicFiles')->name('admin.topic.files');
             Route::get('/admin/assignment-status', 'assignmentStatusOverview')->name('admin.checkassignmentsStatus');
             Route::get('/admin/check-assignments/activities/{activity}/details', 'showActivityAssignmentStatus')->name('admin.activityAssignmentStatus');
