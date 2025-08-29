@@ -174,7 +174,7 @@
                                             }
                                         }
 
-                                        // Update progress function with retry mechanism
+                                        // Update progress function (called only on ended or refresh-triggered 100%)
                                         function updateProgress(percent) {
                                             if (!isVideoReady || percent < 0 || percent > 100) {
                                                 return;
@@ -216,53 +216,51 @@
                                             });
                                         }
 
-                                        // Update progress more frequently (every 1% change)
-                                        video.addEventListener('timeupdate', function() {
-                                            if (!isVideoReady || !video.duration) {
-                                                return;
-                                            }
+                                        // --- Simple session-based completion logic ---
+                                        const sessionKey = `topic-{{ $selectedTopic->id }}-completeBy`;
 
-                                            const percent = Math.floor((video.currentTime / video.duration) * 100);
-
-                                            // Send progress update every 1% change
-                                            if (Math.abs(percent - lastSentProgress) >= 1 && percent <= 100) {
-                                                updateProgress(percent);
+                                        // When metadata is loaded, if no session key, set an expiry time = now + duration
+                                        video.addEventListener('loadedmetadata', function() {
+                                            try {
+                                                if (video.duration && !sessionStorage.getItem(sessionKey)) {
+                                                    const completeBy = Date.now() + Math.ceil(video.duration * 1000);
+                                                    sessionStorage.setItem(sessionKey, String(completeBy));
+                                                    console.log('Set session completeBy:', completeBy);
+                                                }
+                                            } catch (e) {
+                                                console.warn('Session storage not available:', e);
                                             }
                                         });
 
-                                        // Save progress when video ends
+                                        // On page load/refresh, if time already passed, mark 100% once
+                                        (function checkSessionAndComplete() {
+                                            try {
+                                                const completeByStr = sessionStorage.getItem(sessionKey);
+                                                if (completeByStr) {
+                                                    const completeBy = parseInt(completeByStr, 10);
+                                                    if (!Number.isNaN(completeBy) && Date.now() >= completeBy) {
+                                                        console.log('Session time reached. Marking topic as 100%.');
+                                                        updateProgress(100);
+                                                        // Update UI immediately
+                                                        updateProgressCircle({{ $selectedTopic->id }}, 100);
+                                                        // Clear the session marker to avoid repeated calls
+                                                        sessionStorage.removeItem(sessionKey);
+                                                    }
+                                                }
+                                            } catch (e) {
+                                                console.warn('Could not read session storage:', e);
+                                            }
+                                        })();
+
+                                        // Mark complete when video ends
                                         video.addEventListener('ended', function() {
                                             console.log('Video ended, marking as 100% complete');
+                                            try { sessionStorage.removeItem(sessionKey); } catch (e) {}
                                             updateProgress(100);
                                         });
 
-                                        // Save progress when page is about to unload
-                                        window.addEventListener('beforeunload', function() {
-                                            if (isVideoReady && video.duration) {
-                                                const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
-                                                if (currentPercent > lastSentProgress) {
-                                                    console.log('Saving final progress before unload:', currentPercent + '%');
-                                                    // Send final progress update using FormData
-                                                    const formData = new FormData();
-                                                    formData.append('topic_id', "{{ $selectedTopic->id }}");
-                                                    formData.append('progress', currentPercent);
-                                                    formData.append('_token', "{{ csrf_token() }}");
-                                                    
-                                                    navigator.sendBeacon("{{ route('student.topic.progress.update') }}", formData);
-                                                }
-                                            }
-                                        });
-
-                                        // Save progress when video is paused
-                                        video.addEventListener('pause', function() {
-                                            if (isVideoReady && video.duration) {
-                                                const currentPercent = Math.floor((video.currentTime / video.duration) * 100);
-                                                if (currentPercent > lastSentProgress) {
-                                                    console.log('Saving progress on pause:', currentPercent + '%');
-                                                    updateProgress(currentPercent);
-                                                }
-                                            }
-                                        });
+                                        // Remove continuous and frequent updates. Progress will only be set to 100%
+                                        // when session time is reached on refresh or when the video ends.
 
                                         // Handle video errors
                                         video.addEventListener('error', function(e) {
