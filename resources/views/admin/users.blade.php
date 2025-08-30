@@ -37,6 +37,10 @@
         @media (min-width: 992px) {
             .menu-toggle { display: none; }
         }
+        /* Pagination scroll position fix */
+        .pagination-container {
+            scroll-margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -74,11 +78,6 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.editUser', $admin) }}" class="btn btn-sm btn-info">Edit</a>
-                                        <form action="{{ route('admin.destroyUser', $admin) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                        </form>
                                     </td>
                                 </tr>
                                 @empty
@@ -144,6 +143,9 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="d-flex justify-content-center pagination-container">
+                        {{ $lecturers->appends(request()->except('lecturers_page'))->links('pagination::bootstrap-4') }}
+                    </div>
                 </div>
             </div>
             <!-- Students Table -->
@@ -190,7 +192,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center pagination-container">
                         {{ $students->appends(request()->except('students_page'))->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
@@ -241,13 +243,40 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script>
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
         }
-        // Scroll to role-specific success placement
-        (function(){
+        
+        // Store scroll position before pagination
+        let currentScrollPosition = 0;
+        
+        // Save scroll position before page unload
+        window.addEventListener('beforeunload', function() {
+            sessionStorage.setItem('scrollPosition', window.pageYOffset);
+        });
+        
+        // Restore scroll position after pagination
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're coming from pagination
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasPagination = urlParams.has('lecturers_page') || urlParams.has('students_page') || urlParams.has('page');
+            
+            if (hasPagination) {
+                // Get the saved scroll position
+                const savedPosition = sessionStorage.getItem('scrollPosition');
+                if (savedPosition) {
+                    // Scroll to the saved position
+                    setTimeout(function() {
+                        window.scrollTo(0, parseInt(savedPosition));
+                    }, 100);
+                    // Clear the saved position
+                    sessionStorage.removeItem('scrollPosition');
+                }
+            }
+            
+            // Scroll to role-specific success placement
             var role = "{{ session('success_role') }}";
             var targetEl = null;
             if(role === 'student') targetEl = document.getElementById('students-success') || document.getElementById('students-section');
@@ -260,7 +289,14 @@
             if(err){
                 err.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-        })();
+        });
+        
+        // Save scroll position before pagination links are clicked
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.pagination-container a')) {
+                sessionStorage.setItem('scrollPosition', window.pageYOffset);
+            }
+        });
     </script>
 </body>
 </html>

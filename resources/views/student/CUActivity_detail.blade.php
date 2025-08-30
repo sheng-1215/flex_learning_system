@@ -13,44 +13,48 @@
                         <div class="card-body">
                             <h5 class="card-title">Course Topics</h5>
                             <hr>
-                            <ul class="list-group list-group-flush">
-                                @foreach ($topics as $topic)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center" data-topic-id="{{ $topic->id }}">
-                                        <a href="{{ route('student.CUActivity', [$activity->id,'topic' => $topic->id]) }}" class="text-decoration-none text-dark flex-grow-1">
-                                            {{ strtoupper($topic->title) }} 
-                                        </a>
+                            <div class="topics-scroll-container">
+                                <ul class="list-group list-group-flush">
+                                    @foreach ($topics as $topic)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" data-topic-id="{{ $topic->id }}">
+                                            <a href="{{ route('student.CUActivity', [$activity->id,'topic' => $topic->id]) }}" 
+                                               class="text-decoration-none text-dark flex-grow-1 topic-link" 
+                                               data-topic-id="{{ $topic->id }}">
+                                                {{ strtoupper($topic->title) }} 
+                                            </a>
 
-                                        {{-- Progress circle --}}
-                                        <div class="text-center me-2">
-                                            <div style="width: 45px; height: 45px; position: relative;">
-                                                <svg viewBox="0 0 36 36" class="circular-chart" style="width: 100%; height: 100%;">
-                                                    <path class="circle-bg"
-                                                        d="M18 2.0845
-                                                            a 15.9155 15.9155 0 0 1 0 31.831
-                                                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                        fill="none"
-                                                        stroke="#eee"
-                                                        stroke-width="3.8"/>
-                                                    <path class="circle"
-                                                        d="M18 2.0845
-                                                            a 15.9155 15.9155 0 0 1 0 31.831
-                                                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                        fill="none"
-                                                        stroke="#007bff"
-                                                        stroke-width="3.8"
-                                                        stroke-dasharray="{{ $topic->progress ?? 0 }}, 100"/>
-                                                    <text x="18" y="20.35" class="percentage" text-anchor="middle" font-size="8" fill="#333">
-                                                        {{ $topic->progress ?? 0 }}%
-                                                    </text>
-                                                </svg>
+                                            {{-- Progress circle --}}
+                                            <div class="text-center me-2">
+                                                <div style="width: 45px; height: 45px; position: relative;">
+                                                    <svg viewBox="0 0 36 36" class="circular-chart" style="width: 100%; height: 100%;">
+                                                        <path class="circle-bg"
+                                                            d="M18 2.0845
+                                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                                                            fill="none"
+                                                            stroke="#eee"
+                                                            stroke-width="3.8"/>
+                                                        <path class="circle"
+                                                            d="M18 2.0845
+                                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                                                            fill="none"
+                                                            stroke="#007bff"
+                                                            stroke-width="3.8"
+                                                            stroke-dasharray="{{ $topic->progress ?? 0 }}, 100"/>
+                                                        <text x="18" y="20.35" class="percentage" text-anchor="middle" font-size="8" fill="#333">
+                                                            {{ $topic->progress ?? 0 }}%
+                                                        </text>
+                                                    </svg>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {{-- Arrow icon --}}
-                                        <i class="fas fa-chevron-right text-secondary"></i>
-                                    </li>
-                                @endforeach
-                            </ul>
+                                            {{-- Arrow icon --}}
+                                            <i class="fas fa-chevron-right text-secondary"></i>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -79,12 +83,6 @@
                                         // Debug logging
                                         console.log('Video progress tracking initialized for topic: {{ $selectedTopic->id }}');
                                         console.log('CSRF Token:', "{{ csrf_token() }}");
-                                        
-                                        // Update debug panel
-                                        if (typeof logToDebugPanel === 'function') {
-                                            logToDebugPanel('video', 'Initializing video progress tracking...');
-                                            logToDebugPanel('status', 'Initializing...');
-                                        }
 
                                         // Check if video element exists
                                         if (!video) {
@@ -110,12 +108,6 @@
                                             console.log('Video metadata loaded. Duration:', video.duration);
                                             isVideoReady = true;
                                             
-                                            if (typeof logToDebugPanel === 'function') {
-                                                logToDebugPanel('video', `Video ready - Duration: ${video.duration}s`);
-                                                logToDebugPanel('status', 'Video loaded, loading saved progress...');
-                                            }
-                                            
-                                            // No server progress to load
                                             // No server progress to load
                                         });
 
@@ -124,9 +116,6 @@
                                             console.log('Video can start playing');
                                             if (!isVideoReady) {
                                                 isVideoReady = true;
-                                                if (typeof logToDebugPanel === 'function') {
-                                                    logToDebugPanel('video', 'Video can start playing');
-                                                }
                                                 if (!isProgressLoaded) {
                                                     loadSavedProgress();
                                                     isProgressLoaded = true;
@@ -304,105 +293,65 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    {{-- Debug Panel for Video Progress --}}
-    @if(isset($selectedTopic) && $selectedTopic->type==='video')
-    <div class="container-fluid mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="fas fa-bug text-warning"></i> 
-                    Video Progress Debug Panel 
-                    <button class="btn btn-sm btn-outline-secondary float-end" onclick="toggleDebugPanel()">
-                        Toggle Debug
-                    </button>
-                </h6>
-            </div>
-            <div class="card-body" id="debug-panel" style="display: none;">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Video Status:</h6>
-                        <div id="video-status" class="text-muted">Loading...</div>
-                        
-                        <h6 class="mt-3">Progress Tracking:</h6>
-                        <div id="progress-status" class="text-muted">Waiting...</div>
-                        
-                        <h6 class="mt-3">Last Update:</h6>
-                        <div id="last-update" class="text-muted">None</div>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Network Requests:</h6>
-                        <div id="network-logs" class="text-muted small" style="max-height: 200px; overflow-y: auto;">
-                            No requests yet...
-                        </div>
-                        
-                        <h6 class="mt-3">Errors:</h6>
-                        <div id="error-logs" class="text-danger small" style="max-height: 150px; overflow-y: auto;">
-                            No errors...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <script>
-        // Debug panel functionality
-        function toggleDebugPanel() {
-            const panel = document.getElementById('debug-panel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-        
-        // Debug logging functions
-        function logToDebugPanel(type, message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}`;
+        // Topic link auto-scroll functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have a selected topic (URL contains topic parameter)
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedTopicId = urlParams.get('topic');
             
-            switch(type) {
-                case 'network':
-                    const networkLogs = document.getElementById('network-logs');
-                    networkLogs.innerHTML += logEntry + '<br>';
-                    networkLogs.scrollTop = networkLogs.scrollHeight;
-                    break;
-                case 'error':
-                    const errorLogs = document.getElementById('error-logs');
-                    errorLogs.innerHTML += logEntry + '<br>';
-                    errorLogs.scrollTop = errorLogs.scrollHeight;
-                    break;
-                case 'status':
-                    document.getElementById('progress-status').innerHTML = message;
-                    break;
-                case 'video':
-                    document.getElementById('video-status').innerHTML = message;
-                    break;
-                case 'update':
-                    document.getElementById('last-update').innerHTML = message;
-                    break;
+            if (selectedTopicId) {
+                // Wait a bit for the page to fully load
+                setTimeout(function() {
+                    // Find the content area to scroll to
+                    const contentArea = document.querySelector('.col-md-9 .card');
+                    if (contentArea) {
+                        // Scroll to the content area with smooth animation
+                        contentArea.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                        
+                        // Add a subtle highlight effect to the selected topic
+                        const selectedTopicLink = document.querySelector(`[data-topic-id="${selectedTopicId}"]`);
+                        if (selectedTopicLink) {
+                            selectedTopicLink.closest('li').style.backgroundColor = '#e3f2fd';
+                            selectedTopicLink.closest('li').style.borderLeft = '4px solid #007bff';
+                            
+                            // Remove highlight after 3 seconds
+                            setTimeout(function() {
+                                selectedTopicLink.closest('li').style.backgroundColor = '';
+                                selectedTopicLink.closest('li').style.borderLeft = '';
+                            }, 3000);
+                        }
+                    }
+                }, 300);
             }
-        }
-        
-        // Override console methods to also log to debug panel
-        const originalLog = console.log;
-        const originalError = console.error;
-        const originalWarn = console.warn;
-        
-        console.log = function(...args) {
-            originalLog.apply(console, args);
-            if (args[0] && typeof args[0] === 'string' && args[0].includes('progress')) {
-                logToDebugPanel('network', args.join(' '));
-            }
-        };
-        
-        console.error = function(...args) {
-            originalError.apply(console, args);
-            logToDebugPanel('error', args.join(' '));
-        };
-        
-        console.warn = function(...args) {
-            originalWarn.apply(console, args);
-            logToDebugPanel('error', args.join(' '));
-        };
+            
+            // Add click event listeners to all topic links for smooth scrolling
+            const topicLinks = document.querySelectorAll('.topic-link');
+            topicLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Store the target topic ID
+                    const targetTopicId = this.getAttribute('data-topic-id');
+                    
+                    // Add a small delay to allow the page to start loading
+                    setTimeout(function() {
+                        // Find the content area and scroll to it
+                        const contentArea = document.querySelector('.col-md-9 .card');
+                        if (contentArea) {
+                            contentArea.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }, 100);
+                });
+            });
+        });
     </script>
-    @endif
     
     <script>
         const url = "{{ $filePath ?? '' }}";
@@ -466,6 +415,33 @@
         font-size: 0.95rem;
     }
 }
+
+/* Course Topics Scroll Container */
+.topics-scroll-container {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #f8f9fa;
+}
+
+.topics-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.topics-scroll-container::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.topics-scroll-container::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 3px;
+}
+
+.topics-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
 #slideshow-container .btn {
     border-radius: 5px;
     padding: 8px 16px;

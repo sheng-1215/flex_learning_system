@@ -101,11 +101,22 @@ class AdminController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $course->update($request->only(['title', 'start_date', 'end_date']));
+        $coverPath = $course->cover_image; // Keep existing image by default
+        if ($request->hasFile('cover_image')) {
+            $coverPath = $request->file('cover_image')->store('covers', 'public');
+        }
+
+        $course->update([
+            'title' => $request->title,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'cover_image' => $coverPath,
+        ]);
 
         $course->enrollments()->where('role', 'lecturer')->delete();
         if ($request->filled('lecturers')) {
@@ -118,17 +129,18 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->route('admin.courses')->with('success', 'Course updated successfully.');
+        return redirect()->route('admin.courses')->with('success', $course->title . ' updated successfully.');
     }
     
 
     public function destroyCourse(Course $course)
     {
+        $courseTitle = $course->title;
         $course->enrollments()->delete();
         $course->activities()->delete();
         $course->delete();
 
-        return redirect()->route('admin.courses')->with('success', 'Course deleted successfully.');
+        return redirect()->route('admin.courses')->with('success', $courseTitle . ' deleted successfully.');
     }
 
     public function addUserToCourse(Course $course)
@@ -234,12 +246,12 @@ class AdminController extends Controller
         $admins = User::where('role', 'admin')->orderByDesc('created_at')->get();
         $lecturers = User::where('role', 'lecturer')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(6, ['*'], 'lecturers_page');
         
         $students = User::where('role', 'student')
             ->with('enrollments.course')
             ->orderByDesc('created_at')
-            ->paginate(10, ['*'], 'students_page');
+            ->paginate(6, ['*'], 'students_page');
         $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
         
         $filtered=$studentPortals->flatMap(function($student) {

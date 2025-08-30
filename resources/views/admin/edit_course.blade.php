@@ -13,6 +13,21 @@
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #495057; color: #ffc107; }
         .content { margin-left: 200px; padding: 20px; }
         .card { border-radius: 10px; }
+        .current-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-preview {
+            margin-top: 10px;
+        }
+        .image-preview img {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -25,13 +40,34 @@
             <div class="card shadow-sm">
                 <div class="card-header"><h5 class="mb-0">Course Details</h5></div>
                 <div class="card-body">
-                    <form action="{{ route('admin.updateCourse', $course) }}" method="POST">
+                    <form action="{{ route('admin.updateCourse', $course) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="form-group">
                             <label for="title">Course Title</label>
                             <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $course->title) }}" required>
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="cover_image">Course Cover Image</label>
+                            @if($course->cover_image)
+                                <div class="mb-3">
+                                    <label class="form-label">Current Image:</label>
+                                    <div>
+                                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="Current course cover" class="current-image">
+                                    </div>
+                                </div>
+                            @endif
+                            <input type="file" class="form-control-file" id="cover_image" name="cover_image" accept="image/*">
+                            <small class="form-text text-muted">Upload a new image to replace the current one. Supported formats: JPEG, PNG, JPG, GIF, WEBP. Max size: 5MB.</small>
+                            <div class="image-preview mt-2" id="imagePreview" style="display: none;">
+                                <label class="form-label">Preview:</label>
+                                <div>
+                                    <img id="previewImg" src="" alt="Image preview">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="start_date">Start Date</label>
@@ -65,5 +101,24 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Image preview functionality
+        document.getElementById('cover_image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html> 
