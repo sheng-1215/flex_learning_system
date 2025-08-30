@@ -98,7 +98,7 @@ Route::middleware(['web'])->group(function () {
         Route::prefix("student")->group(function () {
             Route::controller(ViewController::class)->group(function () {
                 Route::get('/dashboard', 'dashboard')->name('student.dashboard');
-                Route::get('/CUActivity/{id}', 'CUActivity')->name('student.CUActivity');
+                Route::get('/CUActivity/{activity}', 'CUActivity')->name('student.CUActivity');
                 Route::get('/profile',"profile")->name('student.profile');
                 Route::get('/profile/edit',"profile_edit")->name('student.profile.edit');
                 Route::get('/assignment','assignment')->name('student.assignment');

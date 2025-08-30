@@ -704,7 +704,7 @@ class AdminController extends Controller
                         ->where('role', 'student')
                         ->count();
                     
-                    // 计算统计信息
+                    // 计算统计信息 - 修复计算逻辑
                     $totalExpectedSubmissions = $enrolledStudents * $totalAssignments;
                     $submittedCount = $totalSubmissions;
                     $notSubmittedCount = max(0, $totalExpectedSubmissions - $submittedCount);

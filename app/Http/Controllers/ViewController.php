@@ -41,12 +41,21 @@ class ViewController extends Controller
         return view('student.dashboard',compact('course','activities','studentCount'));
     }
 
-    public function CUActivity($id)
+    public function CUActivity(CUActivity $activity)
     {
-        $activity = CUActivity::findOrFail($id);
         $topics = $activity->topics;
-
-        if (request()->has('topic') && request()->get('topic') !== "") {
+        
+        // Load topic progress for the current user
+        $userId = auth()->id();
+        $topics->each(function ($topic) use ($userId) {
+            $topicProgress = \App\Models\TopicProgress::where('user_id', $userId)
+                ->where('topic_id', $topic->id)
+                ->first();
+            
+            $topic->progress = $topicProgress ? $topicProgress->progress : 0;
+        });
+        
+        if (request()->has('topic')) {
             $selectedTopic = $topics->where('id', request()->get('topic'))->first();
             
             if ($selectedTopic) {
@@ -60,6 +69,9 @@ class ViewController extends Controller
                     $topicProgress->progress = 100;
                     $topicProgress->last_watched_at = now();
                     $topicProgress->save();
+                    
+                    // Update the topic progress in the collection
+                    $selectedTopic->progress = 100;
                 }
                 
                 return view('student.CUActivity_detail', compact('activity', 'topics', 'selectedTopic'));

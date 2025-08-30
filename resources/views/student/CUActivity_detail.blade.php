@@ -79,9 +79,11 @@
                                         let isVideoReady = false;
                                         let retryCount = 0;
                                         const maxRetries = 3;
+                                        const topicId = {{ $selectedTopic->id }};
+                                        const userId = {{ auth()->id() }};
 
                                         // Debug logging
-                                        console.log('Video progress tracking initialized for topic: {{ $selectedTopic->id }}');
+                                        console.log('Video progress tracking initialized for topic:', topicId);
                                         console.log('CSRF Token:', "{{ csrf_token() }}");
 
                                         // Check if video element exists
@@ -108,7 +110,8 @@
                                             console.log('Video metadata loaded. Duration:', video.duration);
                                             isVideoReady = true;
                                             
-                                            // No server progress to load
+                                            // Load saved progress from database
+                                            loadSavedProgress();
                                         });
 
                                         // Also check for canplay event
@@ -123,62 +126,75 @@
                                             }
                                         });
 
-                                        // Removed server-based saved progress fetching
+                                        // Load saved progress from database
+                                        function loadSavedProgress() {
+                                            fetch(`/api/topic-progress/${topicId}`, {
+                                                method: 'GET',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                    'Content-Type': 'application/json',
+                                                }
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success && data.progress > 0) {
+                                                    console.log('Loaded saved progress:', data.progress + '%');
+                                                    updateProgress(data.progress);
+                                                    updateProgressCircle(topicId, data.progress);
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.warn('Could not load saved progress:', error);
+                                            });
+                                        }
 
-                                        // Update progress UI only (no server request)
+                                        // Update progress and save to database
                                         function updateProgress(percent) {
                                             if (!isVideoReady || percent < 0 || percent > 100) {
                                                 return;
                                             }
-                                            lastSentProgress = percent;
-                                            updateProgressCircle({{ $selectedTopic->id }}, percent);
+                                            
+                                            // Only update if progress has increased significantly
+                                            if (percent > lastSentProgress + 5 || percent === 100) {
+                                                lastSentProgress = percent;
+                                                
+                                                // Save progress to database
+                                                saveProgressToDatabase(percent);
+                                                
+                                                // Update UI
+                                                updateProgressCircle(topicId, percent);
+                                            }
                                         }
 
-                                        // --- Simple session-based completion logic ---
-                                        const sessionKey = `topic-{{ $selectedTopic->id }}-completeBy`;
-
-                                        // When metadata is loaded, if no session key, set an expiry time = now + duration
-                                        video.addEventListener('loadedmetadata', function() {
-                                            try {
-                                                if (video.duration && !sessionStorage.getItem(sessionKey)) {
-                                                    const completeBy = Date.now() + Math.ceil(video.duration * 1000);
-                                                    sessionStorage.setItem(sessionKey, String(completeBy));
-                                                    console.log('Set session completeBy:', completeBy);
+                                        // Save progress to database
+                                        function saveProgressToDatabase(progress) {
+                                            fetch('/api/topic-progress', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    topic_id: topicId,
+                                                    progress: progress
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    console.log('Progress saved to database:', progress + '%');
                                                 }
-                                            } catch (e) {
-                                                console.warn('Session storage not available:', e);
-                                            }
-                                        });
-
-                                        // On page load/refresh, if time already passed, mark 100% once
-                                        (function checkSessionAndComplete() {
-                                            try {
-                                                const completeByStr = sessionStorage.getItem(sessionKey);
-                                                if (completeByStr) {
-                                                    const completeBy = parseInt(completeByStr, 10);
-                                                    if (!Number.isNaN(completeBy) && Date.now() >= completeBy) {
-                                                        console.log('Session time reached. Marking topic as 100%.');
-                                                        updateProgress(100);
-                                                        // Update UI immediately
-                                                        updateProgressCircle({{ $selectedTopic->id }}, 100);
-                                                        // Clear the session marker to avoid repeated calls
-                                                        sessionStorage.removeItem(sessionKey);
-                                                    }
-                                                }
-                                            } catch (e) {
-                                                console.warn('Could not read session storage:', e);
-                                            }
-                                        })();
+                                            })
+                                            .catch(error => {
+                                                console.error('Error saving progress:', error);
+                                            });
+                                        }
 
                                         // Mark complete when video ends
                                         video.addEventListener('ended', function() {
                                             console.log('Video ended, marking as 100% complete');
-                                            try { sessionStorage.removeItem(sessionKey); } catch (e) {}
                                             updateProgress(100);
                                         });
-
-                                        // Remove continuous and frequent updates. Progress will only be set to 100%
-                                        // when session time is reached on refresh or when the video ends.
 
                                         // Handle video errors
                                         video.addEventListener('error', function(e) {
