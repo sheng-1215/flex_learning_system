@@ -60,10 +60,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/admin/cuactivities/{activity}/topic', 'viewActivitiesTopic')->name('admin.viewActivitiesTopic');
             Route::post("/admin/topic/add/{activity}", 'addTopicToActivity')->name('admin.addTopicToActivity');
             Route::delete('admin/topics/{topic}/delete','deleteActivityTopic')->name('admin.deleteActivityTopic');
-            
             Route::get("/admin/topics/{topic}/download", 'downloadTopic')->name('admin.downloadTopic');
-
-            
             Route::get('/admin/assignments/select-course', 'selectCourseForAssignment')->name('admin.selectCourseForAssignment');
             Route::get('/admin/assignments/select-cuactivity/{course}', 'selectActiviryForAssignment')->name('admin.selectActiviryForAssignment');
             Route::get('/admin/topics/{activity}/assignments', 'viewActivityAssignments')->name('admin.activityAssignment.view');

@@ -20,6 +20,14 @@ class TopicProgressController extends Controller
         ]);
 
         try {
+            // Check if user is authenticated
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
             $userId = Auth::id();
             $topicId = $request->topic_id;
             $progress = $request->progress;
@@ -55,6 +63,14 @@ class TopicProgressController extends Controller
     public function show($topicId)
     {
         try {
+            // Check if user is authenticated
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
             $userId = Auth::id();
             
             $topicProgress = TopicProgress::where('user_id', $userId)

@@ -434,11 +434,27 @@ class AdminController extends Controller
 
     public function addTopicToActivity(CUActivity $activity, Request $request)
     {
+        // Step 1: validate basic fields
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:slideshow,document,video',
-            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,txt,ppt,pptx,mp4|max:10240', // 10MB max per file
         ]);
+
+        // Step 2: type-specific mime validation
+        $mimeByType = [
+            'document' => 'pdf,doc,docx,xls,xlsx,txt',
+            'video' => 'mp4',
+            'slideshow' => 'jpg,jpeg,png,webp,gif',
+        ];
+        $maxSizeKb = 51200; // 50MB
+        $mimes = $mimeByType[$request->type] ?? '';
+
+        $fileRules = [
+            // Require at least one file for all types
+            'file_path' => 'required',
+            'file_path.*' => 'file|mimes:' . $mimes . '|max:' . $maxSizeKb,
+        ];
+        $request->validate($fileRules);
         // dd($request->all());
         $topic = new topic();
         $topic->cu_id = $activity->id;
@@ -558,7 +574,8 @@ class AdminController extends Controller
             "assignment_name" => 'required|string|max:255',
             "description" => 'nullable|string',
             "due_date" => 'required|date',
-            "attachment" => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,mp4|max:51200',
+            // Only allow document types for assignments
+            "attachment" => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:51200',
         ]);
 
         if ($request->has('attachment')) {
@@ -592,10 +609,22 @@ class AdminController extends Controller
 
     public function updateTopic(Request $request, CUActivity $assignment, \App\Models\topic $topic)
     {
+        // Basic validation
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:slideshow,document,video',
-            'file_path.*' => 'nullable|file|mimes:jpg,jpeg,png,pptx,webp,gif,pdf,doc,docx,xls,xlsx,txt,mp4|max:51200',
+        ]);
+
+        // Type-specific rules for optional new uploads
+        $mimeByType = [
+            'document' => 'pdf,doc,docx,xls,xlsx,txt',
+            'video' => 'mp4',
+            'slideshow' => 'jpg,jpeg,png,webp,gif',
+        ];
+        $maxSizeKb = 51200; // 50MB
+        $mimes = $mimeByType[$request->type] ?? '';
+        $request->validate([
+            'file_path.*' => $mimes ? ('nullable|file|mimes:' . $mimes . '|max:' . $maxSizeKb) : 'nullable|file|max:' . $maxSizeKb,
         ]);
 
         $data = [

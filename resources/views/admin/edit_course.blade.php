@@ -58,7 +58,10 @@
                                     </div>
                                 </div>
                             @endif
-                            <input type="file" class="form-control-file" id="cover_image" name="cover_image" accept="image/*">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="cover_image" name="cover_image" accept=".jpg,.jpeg,.png,.webp,.gif">
+                                <label class="custom-file-label" for="cover_image">Choose file</label>
+                            </div>
                             <small class="form-text text-muted">Upload a new image to replace the current one. Supported formats: JPEG, PNG, JPG, GIF, WEBP. Max size: 5MB.</small>
                             <div class="image-preview mt-2" id="imagePreview" style="display: none;">
                                 <label class="form-label">Preview:</label>
@@ -107,6 +110,7 @@
             const file = e.target.files[0];
             const preview = document.getElementById('imagePreview');
             const previewImg = document.getElementById('previewImg');
+            const fileLabel = document.querySelector('label.custom-file-label[for="cover_image"]');
             
             if (file) {
                 const reader = new FileReader();
@@ -115,8 +119,10 @@
                     preview.style.display = 'block';
                 }
                 reader.readAsDataURL(file);
+                if (fileLabel) fileLabel.textContent = file.name;
             } else {
                 preview.style.display = 'none';
+                if (fileLabel) fileLabel.textContent = 'Choose file';
             }
         });
     </script>

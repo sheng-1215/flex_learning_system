@@ -2,10 +2,10 @@
 <div class="form-group">
     <label for="content_file" class="font-weight-bold text-dark">{{ $label }} {{ $required ? '<span class="text-danger">*</span>' : '' }}</label>
     <div class="custom-file">
-        <input type="file" class="custom-file-input" id="content_file" name="{{ $name }}" {{ $required ? 'required' : '' }} {{ $multiple ? 'multiple' : '' }} aria-describedby="file-info">
+        <input type="file" class="custom-file-input" id="content_file" name="{{ $name }}" {{ $required ? 'required' : '' }} {{ $multiple ? 'multiple' : '' }} aria-describedby="file-info" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
         <label class="custom-file-label" for="content_file">Choose file(s)</label>
     </div>
-    <small class="form-text text-muted mt-1">Supported formats: pdf, doc, docx, xls, xlsx</small>
+    <small class="form-text text-muted mt-1">Supported formats: pdf, doc, docx, xls, xlsx, ppt, pptx</small>
     <div id="file-info" class="mt-3 text-muted small d-flex align-items-center" style="display:none;">
         <span id="file-icon" class="mr-2"></span>
         <span id="file-name" class="text-primary font-weight-medium"></span>

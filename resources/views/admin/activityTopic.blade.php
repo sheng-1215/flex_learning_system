@@ -109,12 +109,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="file_path">Upload Content</label>
+                            <label for="file_path">Upload Content <span class="text-danger">*</span></label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="file_path" name="file_path[]" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.mp4">
+                                <input type="file" class="custom-file-input" id="file_path" name="file_path[]" multiple>
                                 <label class="custom-file-label" for="file_path">Choose file(s)</label>
                             </div>
-                            <small class="form-text text-muted">Supported formats: jpg, jpeg, png, webp, gif, pdf, doc, docx, xls, xlsx, txt, ppt, pptx, mp4</small>
+                            <small id="type-help" class="form-text text-muted">Select a type to see allowed formats.</small>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Add Topic</button>
                         <a href="{{ route('admin.courseActivities', ['course' => $activity->course_id]) }}" class="btn btn-secondary ml-2">Back to CU Activities</a>
@@ -225,6 +225,29 @@
             let fileName = $(this).val().split('\\').pop();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
         });
+        // Dynamic accept and helper by type
+        (function(){
+            var typeSelect = document.getElementById('type');
+            var fileInput = document.getElementById('file_path');
+            var help = document.getElementById('type-help');
+            var map = {
+                document: { accept: '.pdf,.doc,.docx,.xls,.xlsx,.txt', text: 'Allowed: pdf, doc, docx, xls, xlsx, txt' },
+                video: { accept: '.mp4', text: 'Allowed: mp4 only' },
+                slideshow: { accept: '.jpg,.jpeg,.png,.webp,.gif', text: 'Allowed: jpg, jpeg, png, webp, gif (images)' }
+            };
+            function apply(){
+                var v = typeSelect.value;
+                if(map[v]){
+                    fileInput.setAttribute('accept', map[v].accept);
+                    help.textContent = map[v].text;
+                } else {
+                    fileInput.removeAttribute('accept');
+                    help.textContent = 'Select a type to see allowed formats.';
+                }
+            }
+            typeSelect.addEventListener('change', apply);
+            apply();
+        })();
         // Scroll to success message in topics section if present
         (function(){
             var successEl = document.getElementById('topics-success');
