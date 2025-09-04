@@ -168,7 +168,7 @@ The **Flex Learning System** is a comprehensive e-learning portal designed to fa
 2. Navigate to your application URL (e.g., `http://localhost:8000`)
 3. You'll see the main login page as shown below:
 
-![Main Login Page](flex%20learning%20main%20page.jpeg)
+![Main Login Page](Login%20Page.png)
 *Main login interface - Enter your credentials to access the system / 主登录界面 - 输入凭据访问系统*
 
 #### Step 2: Login as Admin / 步骤2：以管理员身份登录
@@ -179,7 +179,7 @@ The **Flex Learning System** is a comprehensive e-learning portal designed to fa
 #### Step 3: Explore Admin Features / 步骤3：探索管理员功能
 The admin dashboard provides access to all system management functions:
 
-![Admin Dashboard Overview](flex%20learning%20main%20page.jpeg)
+![Admin Dashboard Overview](Admin_Dashboard.png)
 *Admin dashboard with navigation sidebar and quick access cards / 管理员仪表板，包含导航侧边栏和快速访问卡片*
 
 **Available Functions / 可用功能:**
@@ -238,13 +238,13 @@ Students can now:
 4. Submit assignments
 5. Track their progress
 
-![Student Course View](flex%20learning%20topic.jpeg)
+![Student Course View](Student_Topics_Part.png)
 *Student view of course topics and materials / 学生查看课程主题和材料*
 
-![Assignment Submission](flex%20learning%20submit%20assign.jpeg)
+![Assignment Submission](Student_assignment.png)
 *Student assignment submission interface / 学生作业提交界面*
 
-![Assignment Management](flex%20learning%20assignment%20view.jpeg)
+![Assignment Management](Add%20Assignment.png)
 *Admin view of assignment management / 管理员作业管理界面*
 
 ---
@@ -255,7 +255,7 @@ Students can now:
 
 #### 1. Login Page / 登录页面
 
-![Login Page](flex%20learning%20main%20page.jpeg)
+![Login Page](Login%20Page.png)
 *Main login interface where users can access the system / 主登录界面，用户可以在此访问系统*
 
 **Steps / 步骤:**
@@ -273,7 +273,7 @@ Students can now:
 
 #### 1. Admin Dashboard / 管理员仪表板
 
-![Admin Dashboard](flex%20learning%20main%20page.jpeg)
+![Admin Dashboard](Admin_Dashboard.png)
 *Admin dashboard with quick access cards and navigation sidebar / 管理员仪表板，包含快速访问卡片和导航侧边栏*
 
 **Features Available / 可用功能:**
@@ -323,7 +323,7 @@ Students can now:
 
 #### 4. Assignment Management / 作业管理
 
-![Assignment View](flex%20learning%20assignment%20view.jpeg)
+![Assignment View](Check%20Assignment%20Status.png)
 *Assignment creation and management interface / 作业创建和管理界面*
 
 **Creating Assignments / 创建作业:**
@@ -347,7 +347,7 @@ Students can now:
 
 #### 1. Student Dashboard / 学生仪表板
 
-![Student Dashboard](flex%20learning%20topic.jpeg)
+![Student Dashboard](Student%20Dashboard.png)
 *Student dashboard showing enrolled courses and activities / 学生仪表板显示注册的课程和活动*
 
 **Step-by-Step Access / 逐步访问:**
@@ -384,7 +384,7 @@ Students can now:
 
 #### 3. Assignment Submission Process / 作业提交过程
 
-![Assignment Submission](flex%20learning%20submit%20assign.jpeg)
+![Assignment Submission](Student_assignment.png)
 *Assignment submission interface for students / 学生作业提交界面*
 
 **Step-by-Step Submission / 逐步提交:**
