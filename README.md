@@ -79,7 +79,7 @@ You're ready! The login page should appear.
 
 Usage Guide / 使用指南
 English:
-The system has modules for Admin/Lecturer and Student. We'll explain step by step, assuming you're logged in. Default admin credentials: Email - admin@example.com, Password - password (change after first login).
+The system has modules for Admin/Lecturer and Student. We'll explain step by step, assuming you're logged in. Default admin credentials: Email - admin@gamil.com, Password - password (change after first login).
 1. Logging In (All Users) / 登录（所有用户）
 
 Open the browser and go to the system URL (e.g., http://localhost:8000).
@@ -90,27 +90,27 @@ For students: Verify with IC number first.
 2. Admin/Lecturer Module / 管理员/讲师模块
 Admins manage everything. Lecturers have similar access but focused on courses.
 
-Dashboard: After login, see the control panel. Click icons for tasks.
-Register Account: Click "Register Account". Fill in name, email, role (Lecturer/Student), course, password. Click Submit.
-Manage Users: Click "Manage Users". View list of users. Click Edit/Delete next to a user.
-Import Students: Click "Import Student". Enter details or link to database for bulk import. Reset passwords if needed.
-Manage Courses: Click "Manage Courses". Add new: Enter title, image, dates. View/edit existing courses.
-Manage Assignments: Click "Add Assignment". Select course, enter title, description, upload file, due date. Submit.
-Manage CU Activities: Click "Manage CU Activities". Add activity: Course, title, description, due date.
-Manage Topics: In activities, add topics: Title, type, upload content.
-Check Assignment Status: Click "Assignment Status". View submissions, grades, progress bar. Provide feedback/grades.
-Logout: Click your name or logout button.
+Dashboard: After login, see the control panel. Click icons for tasks.<br>
+Register Account: Click "Register Account". Fill in name, email, role (Lecturer/Student), course, password. Click Submit.<br>
+Manage Users: Click "Manage Users". View list of users. Click Edit/Delete next to a user.<br>
+Import Students: Click "Import Student". Enter details or link to database for bulk import. Reset passwords if needed.<br>
+Manage Courses: Click "Manage Courses". Add new: Enter title, image, dates. View/edit existing courses.<br>
+Manage Assignments: Click "Add Assignment". Select course, enter title, description, upload file, due date. Submit.<br>
+Manage CU Activities: Click "Manage CU Activities". Add activity: Course, title, description, due date.<br>
+Manage Topics: In activities, add topics: Title, type, upload content.<br>
+Check Assignment Status: Click "Assignment Status". View submissions, grades, progress bar. Provide feedback/grades.<br>
+Logout: Click your name or logout button.<br>
 
 3. Student Module / 学生模块
 Students focus on learning and assignments.
 
 Verify/Register: If new, enter IC number to verify. Then login or register.
-Dashboard: See enrolled courses. Click a course to view details.
-View CU Activities & Topics: In course page, see topics/activities. Click to start.
-Assignments: Click "Assignment" tab. See tasks, due dates, scores. Download attachments.
-Upload Assignment: Click "Upload" for a task. Select file (PDF/DOCX, <10MB), click Submit.
-Profile: View your name, email, courses. Update if allowed.
-Logout: Click logout.
+Dashboard: See enrolled courses. Click a course to view details.<br>
+View CU Activities & Topics: In course page, see topics/activities. Click to start.<br>
+Assignments: Click "Assignment" tab. See tasks, due dates, scores. Download attachments.<br>
+Upload Assignment: Click "Upload" for a task. Select file (PDF/DOCX, <10MB), click Submit.<br>
+Profile: View your name, email, courses. Update if allowed.<br>
+Logout: Click logout.<br>
 
 中文:
 系统有管理员/讲师和学生模块。我们将一步步解释，假设你已登录。默认管理员凭证：邮箱 - admin@example.com，密码 - password（首次登录后更改）。
@@ -124,27 +124,27 @@ Logout: Click logout.
 2. 管理员/讲师模块
 管理员管理一切。讲师有类似访问，但专注于课程。
 
-仪表板: 登录后，看到控制面板。点击图标执行任务。
-注册账户: 点击“Register Account”。填写姓名、邮箱、角色（Lecturer/Student）、课程、密码。点击Submit。
-管理用户: 点击“Manage Users”。查看用户列表。点击用户旁的Edit/Delete。
-导入学生: 点击“Import Student”。输入细节或链接数据库批量导入。需要时重置密码。
-管理课程: 点击“Manage Courses”。添加新课程：输入标题、图像、日期。查看/编辑现有课程。
-管理作业: 点击“Add Assignment”。选择课程，输入标题、描述、上传文件、截止日期。提交。
-管理CU活动: 点击“Manage CU Activities”。添加活动：课程、标题、描述、截止日期。
-管理主题: 在活动中添加主题：标题、类型、上传内容。
-检查作业状态: 点击“Assignment Status”。查看提交、成绩、进度条。提供反馈/评分。
-登出: 点击你的名字或登出按钮。
+仪表板: 登录后，看到控制面板。点击图标执行任务。<br>
+注册账户: 点击“Register Account”。填写姓名、邮箱、角色（Lecturer/Student）、课程、密码。点击Submit。<br>
+管理用户: 点击“Manage Users”。查看用户列表。点击用户旁的Edit/Delete。<br>
+导入学生: 点击“Import Student”。输入细节或链接数据库批量导入。需要时重置密码。<br>
+管理课程: 点击“Manage Courses”。添加新课程：输入标题、图像、日期。查看/编辑现有课程。<br>
+管理作业: 点击“Add Assignment”。选择课程，输入标题、描述、上传文件、截止日期。提交。<br>
+管理CU活动: 点击“Manage CU Activities”。添加活动：课程、标题、描述、截止日期。<br>
+管理主题: 在活动中添加主题：标题、类型、上传内容。<br>
+检查作业状态: 点击“Assignment Status”。查看提交、成绩、进度条。提供反馈/评分。<br>
+登出: 点击你的名字或登出按钮。<br>
 
 3. 学生模块
-学生专注于学习和作业。
+学生专注于学习和作业。<br>
 
-验证/注册: 如果是新用户，输入IC号码验证。然后登录或注册。
-仪表板: 查看已注册课程。点击课程查看细节。
-查看CU活动和主题: 在课程页面，看到主题/活动。点击开始。
-作业: 点击“Assignment”标签。查看任务、截止日期、成绩。下载附件。
-上传作业: 为任务点击“Upload”。选择文件（PDF/DOCX，<10MB），点击Submit。
-个人资料: 查看姓名、邮箱、课程。如果允许，更新。
-登出: 点击登出。
+验证/注册: 如果是新用户，输入IC号码验证。然后登录或注册。<br>
+仪表板: 查看已注册课程。点击课程查看细节。<br>
+查看CU活动和主题: 在课程页面，看到主题/活动。点击开始。<br>
+作业: 点击“Assignment”标签。查看任务、截止日期、成绩。下载附件。<br>
+上传作业: 为任务点击“Upload”。选择文件（PDF/DOCX，<10MB），点击Submit。<br>
+个人资料: 查看姓名、邮箱、课程。如果允许，更新。<br>
+登出: 点击登出。<br>
 
 
 
