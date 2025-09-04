@@ -159,61 +159,348 @@ The **Flex Learning System** is a comprehensive e-learning portal designed to fa
 
 ---
 
+## Quick Start Guide / 快速开始指南
+
+### Getting Started / 开始使用
+
+#### Step 1: Access the System / 步骤1：访问系统
+1. Open your web browser
+2. Navigate to your application URL (e.g., `http://localhost:8000`)
+3. You'll see the main login page as shown below:
+
+![Main Login Page](flex%20learning%20main%20page.jpeg)
+*Main login interface - Enter your credentials to access the system / 主登录界面 - 输入凭据访问系统*
+
+#### Step 2: Login as Admin / 步骤2：以管理员身份登录
+1. Enter admin credentials: `admin@gmail.com` / `123`
+2. Click "Login" button
+3. You'll be redirected to the admin dashboard
+
+#### Step 3: Explore Admin Features / 步骤3：探索管理员功能
+The admin dashboard provides access to all system management functions:
+
+![Admin Dashboard Overview](flex%20learning%20main%20page.jpeg)
+*Admin dashboard with navigation sidebar and quick access cards / 管理员仪表板，包含导航侧边栏和快速访问卡片*
+
+**Available Functions / 可用功能:**
+- **Register Account**: Add new students and lecturers
+- **Manage Users**: Edit existing user accounts
+- **Manage Courses**: Create and organize courses
+- **Add Assignment**: Create assignments for students
+- **Check Assignment Status**: Monitor submissions
+
+#### Step 4: Create Your First Course / 步骤4：创建第一个课程
+1. Click "Manage Courses" from the sidebar
+2. Click "Add New Course" button
+3. Fill in course details:
+   - Course title
+   - Description
+   - Cover image
+   - Start and end dates
+4. Save the course
+
+#### Step 5: Add Course Content / 步骤5：添加课程内容
+1. Select your created course
+2. Add CU Activities (Course Units)
+3. Create topics within activities
+4. Upload materials:
+   - Videos
+   - Documents (PDFs)
+   - Slideshows (PowerPoint)
+   - Images
+
+#### Step 6: Register Students / 步骤6：注册学生
+1. Click "Register Account" from sidebar
+2. Fill student information:
+   - Name
+   - Email
+   - Password
+   - Role: Student
+3. Assign to appropriate course
+4. Save registration
+
+#### Step 7: Create Assignments / 步骤7：创建作业
+1. Click "Add Assignment" from sidebar
+2. Select target course
+3. Choose activity for assignment
+4. Set assignment details:
+   - Assignment name
+   - Description
+   - Due date
+   - Upload assignment files
+5. Save assignment
+
+#### Step 8: Student Experience / 步骤8：学生体验
+Students can now:
+1. Login with their credentials
+2. View enrolled courses on dashboard
+3. Access course materials and videos
+4. Submit assignments
+5. Track their progress
+
+![Student Course View](flex%20learning%20topic.jpeg)
+*Student view of course topics and materials / 学生查看课程主题和材料*
+
+![Assignment Submission](flex%20learning%20submit%20assign.jpeg)
+*Student assignment submission interface / 学生作业提交界面*
+
+![Assignment Management](flex%20learning%20assignment%20view.jpeg)
+*Admin view of assignment management / 管理员作业管理界面*
+
+---
+
 ## Usage Guide / 使用指南
+
+### Step-by-Step Visual Guide / 逐步视觉指南
+
+#### 1. Login Page / 登录页面
+
+![Login Page](flex%20learning%20main%20page.jpeg)
+*Main login interface where users can access the system / 主登录界面，用户可以在此访问系统*
+
+**Steps / 步骤:**
+1. Open your browser and navigate to the application URL
+2. Enter your email and password
+3. Click "Login" to access your dashboard
+
+**Default Credentials / 默认凭据:**
+- Admin: `admin@gmail.com` / `123`
+- Student: `jane@gmail.com` / `jane123`
+
+---
 
 ### For Administrators / 管理员使用指南
 
-#### 1. Dashboard Overview / 仪表板概览
-- Access the admin dashboard after logging in
-- View system statistics and quick access cards
-- Navigate through different management sections using the sidebar
+#### 1. Admin Dashboard / 管理员仪表板
 
-#### 2. User Management / 用户管理
-- **Register New Users**: Click "Register Account" to add students or lecturers
-- **Manage Existing Users**: Use "Manage Users" to edit or delete user accounts
-- **Assign Users to Courses**: Add users to specific courses with appropriate roles
+![Admin Dashboard](flex%20learning%20main%20page.jpeg)
+*Admin dashboard with quick access cards and navigation sidebar / 管理员仪表板，包含快速访问卡片和导航侧边栏*
+
+**Features Available / 可用功能:**
+- **Dashboard**: System overview and statistics
+- **Register Account**: Add new students and lecturers
+- **Manage Users**: Edit or delete existing users
+- **Manage Courses**: Create and organize courses
+- **Add Assignment**: Create assignments for students
+- **Check Assignment Status**: Monitor submissions
+
+#### 2. User Registration / 用户注册
+
+**Step-by-Step Process / 逐步过程:**
+
+1. **Click "Register Account"** / 点击"注册账户"
+   - Navigate to the registration page from the sidebar
+
+2. **Fill User Information** / 填写用户信息
+   - Enter name, email, password
+   - Select role (Student/Lecturer)
+   - Choose course assignment if applicable
+
+3. **Submit Registration** / 提交注册
+   - Click "Register" to create the account
+   - User will receive confirmation
 
 #### 3. Course Management / 课程管理
-- **Create Courses**: Add new courses with titles, descriptions, and cover images
-- **Edit Courses**: Modify course information and settings
-- **Course Activities**: Add CU Activities (Course Units) to organize content
-- **Topics Management**: Create topics within activities with multimedia content
+
+**Creating a New Course / 创建新课程:**
+
+1. **Access Course Management** / 访问课程管理
+   - Click "Manage Courses" from sidebar
+   - View existing courses list
+
+2. **Add New Course** / 添加新课程
+   - Click "Add New Course" button
+   - Fill course details:
+     - Course title
+     - Description
+     - Cover image
+     - Start/End dates
+
+3. **Course Activities** / 课程活动
+   - Add CU Activities (Course Units)
+   - Organize content into topics
+   - Upload materials (videos, documents, slideshows)
 
 #### 4. Assignment Management / 作业管理
-- **Create Assignments**: Set up assignments with due dates and descriptions
-- **Monitor Submissions**: Check assignment status and student submissions
-- **Grade Assignments**: Provide grades and feedback to students
+
+![Assignment View](flex%20learning%20assignment%20view.jpeg)
+*Assignment creation and management interface / 作业创建和管理界面*
+
+**Creating Assignments / 创建作业:**
+
+1. **Select Course** / 选择课程
+   - Click "Add Assignment" from sidebar
+   - Choose the target course
+
+2. **Assignment Details** / 作业详情
+   - Enter assignment name
+   - Add description
+   - Set due date
+   - Upload assignment files
+
+3. **Monitor Submissions** / 监控提交
+   - View assignment status
+   - Check student submissions
+   - Grade and provide feedback
 
 ### For Students / 学生使用指南
 
-#### 1. Accessing the System / 访问系统
-- Login with your student credentials
-- View your enrolled courses on the dashboard
-- Navigate through course activities and topics
+#### 1. Student Dashboard / 学生仪表板
 
-#### 2. Course Content / 课程内容
-- **View Activities**: Access different course units and their content
-- **Download Materials**: Download course documents, slideshows, and resources
-- **Watch Videos**: Stream course videos and tutorials
-- **Track Progress**: Monitor your completion status for each topic
+![Student Dashboard](flex%20learning%20topic.jpeg)
+*Student dashboard showing enrolled courses and activities / 学生仪表板显示注册的课程和活动*
 
-#### 3. Assignment Submission / 作业提交
-- **View Assignments**: Check available assignments and their due dates
-- **Submit Work**: Upload assignment files with comments
-- **Check Grades**: View grades and feedback from instructors
-- **Resubmit**: Update submissions if allowed
+**Step-by-Step Access / 逐步访问:**
+
+1. **Login as Student** / 以学生身份登录
+   - Use student credentials (e.g., jane@gmail.com / jane123)
+   - System redirects to student dashboard
+
+2. **View Enrolled Courses** / 查看注册课程
+   - Dashboard shows all enrolled courses
+   - Each course displays activities and progress
+
+3. **Navigate Course Content** / 导航课程内容
+   - Click on course activities to access content
+   - View topics, videos, and materials
+
+#### 2. Course Content Access / 课程内容访问
+
+**Accessing Course Materials / 访问课程材料:**
+
+1. **Select Course Activity** / 选择课程活动
+   - Click on any course activity from dashboard
+   - View available topics and materials
+
+2. **View Course Topics** / 查看课程主题
+   - Browse through different topics
+   - Access videos, documents, and slideshows
+   - Track your progress for each topic
+
+3. **Download Materials** / 下载材料
+   - Click download links for documents
+   - Access slideshow presentations
+   - Stream or download video content
+
+#### 3. Assignment Submission Process / 作业提交过程
+
+![Assignment Submission](flex%20learning%20submit%20assign.jpeg)
+*Assignment submission interface for students / 学生作业提交界面*
+
+**Step-by-Step Submission / 逐步提交:**
+
+1. **View Available Assignments** / 查看可用作业
+   - Navigate to "Assignments" section
+   - View all assigned tasks with due dates
+   - Check assignment requirements and files
+
+2. **Submit Assignment** / 提交作业
+   - Click on specific assignment
+   - Upload your work files
+   - Add comments or notes
+   - Submit before due date
+
+3. **Check Submission Status** / 检查提交状态
+   - View submission confirmation
+   - Check for grades and feedback
+   - Resubmit if allowed by instructor
+
+#### 4. Progress Tracking / 进度跟踪
+
+**Monitoring Learning Progress / 监控学习进度:**
+
+1. **Topic Completion** / 主题完成
+   - Mark topics as completed
+   - View progress indicators
+   - Track overall course progress
+
+2. **Assignment Status** / 作业状态
+   - View submitted assignments
+   - Check grades and feedback
+   - Monitor pending tasks
 
 ### For Lecturers / 讲师使用指南
 
-#### 1. Course Management / 课程管理
-- Access assigned courses through the admin interface
-- Manage course content and activities
-- Monitor student enrollment and progress
+#### 1. Lecturer Access / 讲师访问
+- Login with lecturer credentials
+- Access admin interface with lecturer permissions
+- Manage assigned courses and content
 
-#### 2. Assignment Grading / 作业评分
-- Review student submissions
-- Provide grades and detailed feedback
-- Track assignment completion rates
+#### 2. Course Content Management / 课程内容管理
+- **Edit Course Materials**: Update videos, documents, and slideshows
+- **Manage Topics**: Add or modify learning topics
+- **Organize Activities**: Structure course units effectively
+
+#### 3. Student Monitoring / 学生监控
+- **View Student Progress**: Track completion rates and engagement
+- **Monitor Enrollments**: See which students are enrolled in courses
+- **Check Activity**: Review student participation and progress
+
+#### 4. Assignment Grading / 作业评分
+- **Review Submissions**: Access student assignment submissions
+- **Provide Grades**: Assign scores and feedback
+- **Track Completion**: Monitor assignment completion rates
+
+---
+
+## Interface Features Explained / 界面功能详解
+
+### Main Navigation Elements / 主要导航元素
+
+#### 1. Sidebar Navigation / 侧边栏导航
+- **Dashboard**: Quick access to main functions
+- **User Management**: Register and manage users
+- **Course Management**: Create and organize courses
+- **Assignment Tools**: Create and monitor assignments
+- **System Monitoring**: Track system status and activities
+
+#### 2. Dashboard Cards / 仪表板卡片
+- **Quick Access**: Direct links to common functions
+- **Statistics**: System overview and metrics
+- **Recent Activity**: Latest updates and notifications
+
+#### 3. Content Management / 内容管理
+- **File Upload**: Support for videos, documents, slideshows
+- **Progress Tracking**: Visual indicators for completion
+- **Assignment Status**: Real-time submission monitoring
+
+### Key System Features / 关键系统功能
+
+#### 1. Multi-Media Support / 多媒体支持
+- **Video Streaming**: Direct video playback in browser
+- **Document Downloads**: PDF and other document formats
+- **Slideshow Presentations**: PowerPoint and similar formats
+- **Image Galleries**: Course-related images and graphics
+
+#### 2. Assignment Workflow / 作业工作流程
+- **Creation**: Admin creates assignments with due dates
+- **Distribution**: Automatic assignment to enrolled students
+- **Submission**: Students upload files with comments
+- **Grading**: Instructors provide grades and feedback
+- **Tracking**: Real-time status monitoring
+
+#### 3. Progress Monitoring / 进度监控
+- **Topic Completion**: Track individual topic progress
+- **Course Progress**: Overall course completion rates
+- **Assignment Status**: Submission and grading status
+- **User Activity**: Login and engagement tracking
+
+### Security and Access Control / 安全和访问控制
+
+#### 1. Role-Based Access / 基于角色的访问
+- **Admin**: Full system access and management
+- **Lecturer**: Course and student management
+- **Student**: Course access and assignment submission
+
+#### 2. File Security / 文件安全
+- **Upload Validation**: File type and size restrictions
+- **Access Control**: Role-based file access
+- **Storage Security**: Secure file storage and retrieval
+
+#### 3. Data Protection / 数据保护
+- **CSRF Protection**: Form security measures
+- **Input Validation**: Data sanitization and validation
+- **Session Management**: Secure user sessions
 
 ---
 
