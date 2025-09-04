@@ -176,6 +176,9 @@ The **Flex Learning System** is a comprehensive e-learning portal designed to fa
 2. Click "Login" button
 3. You'll be redirected to the admin dashboard
 
+![Register Page](Register%20Page.png)
+*User registration interface for creating new accounts / 用户注册界面，用于创建新账户*
+
 #### Step 3: Explore Admin Features / 步骤3：探索管理员功能
 The admin dashboard provides access to all system management functions:
 
@@ -199,6 +202,9 @@ The admin dashboard provides access to all system management functions:
    - Start and end dates
 4. Save the course
 
+![Manage Course](Manage%20Course.png)
+*Course management interface for creating and organizing courses / 课程管理界面，用于创建和组织课程*
+
 #### Step 5: Add Course Content / 步骤5：添加课程内容
 1. Select your created course
 2. Add CU Activities (Course Units)
@@ -208,6 +214,9 @@ The admin dashboard provides access to all system management functions:
    - Documents (PDFs)
    - Slideshows (PowerPoint)
    - Images
+
+![Manage CU Activities](Manage%20CU%20Activities.png)
+*CU Activities management interface for organizing course content / CU活动管理界面，用于组织课程内容*
 
 #### Step 6: Register Students / 步骤6：注册学生
 1. Click "Register Account" from sidebar
@@ -286,6 +295,9 @@ Students can now:
 
 #### 2. User Registration / 用户注册
 
+![Register Page](Register%20Page.png)
+*User registration interface for creating new accounts / 用户注册界面，用于创建新账户*
+
 **Step-by-Step Process / 逐步过程:**
 
 1. **Click "Register Account"** / 点击"注册账户"
@@ -301,6 +313,9 @@ Students can now:
    - User will receive confirmation
 
 #### 3. Course Management / 课程管理
+
+![Manage Course](Manage%20Course.png)
+*Course management interface for creating and organizing courses / 课程管理界面，用于创建和组织课程*
 
 **Creating a New Course / 创建新课程:**
 
@@ -320,6 +335,9 @@ Students can now:
    - Add CU Activities (Course Units)
    - Organize content into topics
    - Upload materials (videos, documents, slideshows)
+
+![Manage CU Activities](Manage%20CU%20Activities.png)
+*CU Activities management interface for organizing course content / CU活动管理界面，用于组织课程内容*
 
 #### 4. Assignment Management / 作业管理
 
