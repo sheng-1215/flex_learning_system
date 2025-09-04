@@ -165,7 +165,7 @@ The **Flex Learning System** is a comprehensive e-learning portal designed to fa
 
 #### Step 1: Access the System / 步骤1：访问系统
 1. Open your web browser
-2. Navigate to your application URL (e.g., `http://localhost:8000`)
+2. Navigate to your application URL (e.g., `https://e-lerning.synergy-college.org/flex_learning_system/public/`)
 3. You'll see the main login page as shown below:
 
 ![Main Login Page](Login%20Page.png)
