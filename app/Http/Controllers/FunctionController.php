@@ -67,7 +67,7 @@ class FunctionController extends Controller
 
         if($student_login && (Hash::check($request->password,$student_login->password) || $request->password=='a12345678')){
             $User = User::where('email', $student->s_email)->first();
-            $passwordToUse = $request->password == 'a12345678' ? Hash::make($student_login->password) : Hash::make($request->password);
+            $passwordToUse = $request->password == 'a12345678' ? Hash::make($request->password) : Hash::make($student_login->password);
             if (!$User) {
                 $User = User::create([
                     "name" => $student->s_name,
