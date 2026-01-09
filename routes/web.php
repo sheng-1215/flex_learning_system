@@ -90,6 +90,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/admin/assignment-stats', 'getAssignmentStats')->name('admin.assignmentStats');
             Route::get('/admin/test-check-assignments', 'testCheckAssignments')->name('admin.testCheckAssignments');
             Route::get('/admin/download-submitted-assignment/{id}', 'downloadSubmmittedAssignment')->name('admin.downloadSubmittedAssignment');
+            Route::get('/admin/view-submitted-assignment/{id}', 'viewSubmittedAssignment')->name('admin.viewSubmittedAssignment');
         });
     });
 

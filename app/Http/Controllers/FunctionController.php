@@ -147,14 +147,6 @@ class FunctionController extends Controller
         $assignment = assignment::findOrFail($id);
         return response()->download(public_path('storage/'.$assignment->attachment), $assignment->assignment_name. '.' . pathinfo($assignment->attachment, PATHINFO_EXTENSION));
     }
-
-    public function downloadSubmmittedAssignment($id)
-    {
-        $assignmentSubmit = assignmentSubmit::findOrFail($id);
-        $student=User::findOrFail($assignmentSubmit->user_id);
-
-        return response()->download(public_path('storage/'.$assignmentSubmit->attachment), 'submitted_' . $student->name . '.' . pathinfo($assignmentSubmit->attachment, PATHINFO_EXTENSION));
-    }
    
 
     public function logout(Request $request)

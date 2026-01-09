@@ -846,4 +846,30 @@ class AdminController extends Controller
         
         return response()->json($stats);
     }
+
+    public function downloadSubmmittedAssignment($id)
+    {
+        $assignmentSubmit = assignmentSubmit::findOrFail($id);
+        $student=User::findOrFail($assignmentSubmit->user_id);
+
+        return response()->download(public_path('storage/'.$assignmentSubmit->attachment), 'submitted_' . $student->name . '.' . pathinfo($assignmentSubmit->attachment, PATHINFO_EXTENSION));
+    }
+
+    public function viewSubmittedAssignment($id)
+    {
+        $assignmentSubmit = assignmentSubmit::findOrFail($id);
+        $student=User::findOrFail($assignmentSubmit->user_id);
+
+        $filePath = public_path('storage/'.$assignmentSubmit->attachment);
+        $fileExtension = pathinfo($assignmentSubmit->attachment, PATHINFO_EXTENSION);
+
+        if (in_array($fileExtension, ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'])) {
+            // For document types, we can use Google Docs Viewer or similar services
+            $encodedUrl = urlencode(url('storage/'.$assignmentSubmit->attachment));
+            $viewerUrl = "https://docs.google.com/gview?url={$encodedUrl}&embedded=true";
+            return redirect($viewerUrl);
+        }else {
+            return redirect()->back()->with('error', 'Unsupported file type for viewing.');
+        }
+    }
 }
