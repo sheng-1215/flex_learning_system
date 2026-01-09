@@ -20,7 +20,6 @@ class FunctionController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
         if (Auth::attempt($form)) {
             $request->session()->regenerate();
 
@@ -35,7 +34,6 @@ class FunctionController extends Controller
             }
 
         }
-
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
@@ -47,7 +45,6 @@ class FunctionController extends Controller
         // $authCheck= Http::get("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");        
         // dd("https://registration.synergycollege2u.com/api/student_api.php?ic=$request->ic");
         $student_registration=DB::connection('second_db')->table('student')->where("ic",$request->ic)->first();
-
         
         if($student_registration){
             return redirect()->route("register.verifyForm",$student_registration->id);
@@ -149,6 +146,14 @@ class FunctionController extends Controller
     {
         $assignment = assignment::findOrFail($id);
         return response()->download(public_path('storage/'.$assignment->attachment), $assignment->assignment_name. '.' . pathinfo($assignment->attachment, PATHINFO_EXTENSION));
+    }
+
+    public function downloadSubmmittedAssignment($id)
+    {
+        $assignmentSubmit = assignmentSubmit::findOrFail($id);
+        $student=User::findOrFail($assignmentSubmit->user_id);
+
+        return response()->download(public_path('storage/'.$assignmentSubmit->attachment), 'submitted_' . $student->name . '.' . pathinfo($assignmentSubmit->attachment, PATHINFO_EXTENSION));
     }
    
 

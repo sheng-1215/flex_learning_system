@@ -72,7 +72,7 @@
                                 <td>{{ $submission->submitted_at ??  '-' }}</td>
                                 <td>
                                     @if($submission->attachment)
-                                        <a href="{{ asset('storage/' . $submission->attachment) }}" target="_blank">Download</a>
+                                        <a href="{{ route('admin.downloadSubmittedAssignment', $submission->id) }}" target="_blank">Download</a>
                                     @else
                                         <span class="text-muted">No file</span>
                                     @endif

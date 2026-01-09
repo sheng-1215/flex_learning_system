@@ -75,6 +75,7 @@ Route::middleware(['web'])->group(function () {
             Route::delete('/admin/courses/{course}/assignments/{assignment}', 'deleteAssignment')->name('admin.destroyAssignment');
             Route::get('/admin/assignments/{assignment}/topics', 'viewAssignmentTopics')->name('admin.assignment.topics');
             Route::get('/admin/check-assignments/{assignment}', 'checkAssignments')->name('admin.checkAssignments');
+
             Route::post('/admin/grade-assignments/{assignmentsubmit}', 'gradeAssignments')->name('admin.gradeAssignments');
             Route::post('/admin/feedback-assignments/{assignmentsubmit}', 'feedbackAssignments')->name('admin.feedbackAssignments');
             Route::get('/admin/assignments/{assignment}/topics/add', 'addTopic')->name('admin.topic.add');
@@ -88,6 +89,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/admin/check-assignments/activities/{activity}/details', 'showActivityAssignmentStatus')->name('admin.activityAssignmentStatus');
             Route::get('/admin/assignment-stats', 'getAssignmentStats')->name('admin.assignmentStats');
             Route::get('/admin/test-check-assignments', 'testCheckAssignments')->name('admin.testCheckAssignments');
+            Route::get('/admin/download-submitted-assignment/{id}', 'downloadSubmmittedAssignment')->name('admin.downloadSubmittedAssignment');
         });
     });
 
