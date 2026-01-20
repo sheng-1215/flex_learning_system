@@ -73,7 +73,7 @@
                                 <td>
                                     @if($submission->attachment)
                                         <a href="{{ route('admin.downloadSubmittedAssignment', $submission->id) }}" target="_blank">Download</a>
-                                        <a href="{{ route('admin.viewSubmittedAssignment',$submission->id) }}">View</a>
+                                        <a href="{{ route('admin.viewSubmittedAssignment',$submission->id) }}" target="_blank">View</a>
                                     @else
                                         <span class="text-muted">No file</span>
                                     @endif

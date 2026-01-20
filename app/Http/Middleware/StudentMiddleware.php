@@ -18,11 +18,13 @@ class StudentMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check()) {
+            session(['url.intended' => $request->fullUrl()]);
             return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
         }
 
         $user = auth()->user();
         if ($user->role !== 'student') {
+            session(['url.intended' => $request->fullUrl()]);
             return redirect()->route('login')->with('error', 'Access denied. Student privileges required.');
         }
 

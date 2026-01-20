@@ -46,9 +46,6 @@
     <div class="content">
         <div class="container-fluid">
             <h2 class="mb-4 text-dark font-weight-bold">Manage Topics for CU Activity</h2>
-            
-            
-
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
@@ -144,6 +141,7 @@
                                     <th>Title</th>
                                     <th>Type</th>
                                     <th>Attachment</th>
+                                    <th>Share link</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -191,6 +189,11 @@
                                                 {{ $newattach["filename"] }}
                                             </a>
                                         @endforeach
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary" onclick="navigator.clipboard.writeText('{{ route('student.CUActivity', $activity->id) }}?topic={{ $topic->id }}').then(() => { alert('Link copied to clipboard'); })">
+                                            <i class="fas fa-link mr-1"></i>Copy Link
+                                        </button>
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.topic.edit', $topic->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit mr-1"></i>Edit</a>

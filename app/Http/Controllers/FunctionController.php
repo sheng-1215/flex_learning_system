@@ -25,9 +25,9 @@ class FunctionController extends Controller
 
             $user = Auth::user();
             if ($user->role === 'student') {
-                return redirect()->route('student.dashboard');
+                return redirect()->intended(route('student.dashboard'));
             } else if ($user->role === 'admin' || $user->role === 'lecturer') {
-                return redirect()->route('admin_dashboard');
+                return redirect()->intended(route('admin_dashboard'));
             } else {
                 Auth::logout();
                 return back()->withErrors(['email' => 'Unknown user role.'])->onlyInput('email');
@@ -114,7 +114,8 @@ class FunctionController extends Controller
         $form = $request->validate([
             'file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
         ]);
-
+        
+        
         $assignment=new assignmentSubmit();
         $assignment->user_id = Auth::id();
         $assignment->assignment_id = $request->id;
