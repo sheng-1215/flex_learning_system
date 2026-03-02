@@ -250,7 +250,7 @@ class AdminController extends Controller
         
         $students = User::where('role', 'student')
             ->with('enrollments.course')
-            ->filter(request('name'))
+            ->filter(request('s_name'))
             ->orderByDesc('created_at')
             ->paginate(6, ['*'], 'students_page');
 
