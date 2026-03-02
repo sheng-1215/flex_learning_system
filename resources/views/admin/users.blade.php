@@ -204,6 +204,12 @@
                     @if(session('error'))
                         <div id="portal-error" class="alert alert-danger">{{ session('error') }}</div>
                     @endif
+                    <div class="form-group">
+                            <form method="GET" action="{{ route('admin.users') }}">
+                                <input type="text" name="name" class="form-control" placeholder="Search by name..." value="{{ request('name') }}" >
+                                <button type="submit" class="btn btn-primary mt-2">Search</button>
+                            </form>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>

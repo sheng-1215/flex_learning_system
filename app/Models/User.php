@@ -44,6 +44,16 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function scopeFilter($query, $name)
+    {
+        if ($name ?? false) {
+            dd($name);
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+    }
+
+
+
     public function courses()
     {
         return $this->hasMany(Course::class, 'created_by');

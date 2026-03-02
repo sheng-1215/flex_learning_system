@@ -153,7 +153,6 @@ class AdminController extends Controller
                 $query->where('role', 'student');
             })
             ->get();
-        
         // 获取学生和讲师数量
         $studentCount = $course->student_count;
         $lecturerCount = $course->lecturer_count;
@@ -246,13 +245,21 @@ class AdminController extends Controller
         $admins = User::where('role', 'admin')->orderByDesc('created_at')->get();
         $lecturers = User::where('role', 'lecturer')
             ->orderByDesc('created_at')
+            
             ->paginate(6, ['*'], 'lecturers_page');
         
         $students = User::where('role', 'student')
             ->with('enrollments.course')
             ->orderByDesc('created_at')
             ->paginate(6, ['*'], 'students_page');
-        $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
+
+        if(request()->has('name')){
+           $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->where('s_name', 'like', '%' . request('name') . '%')->get();
+        }else{
+            $studentPortals= DB::connection('second_db')->table('student')->where("s_status",'ACTIVE')->get();
+        }
+
+        
         
         $filtered=$studentPortals->flatMap(function($student) {
             $user= User::where('email', $student->s_email)->first();
