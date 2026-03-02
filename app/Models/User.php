@@ -44,10 +44,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function scopeFilter($query, $name)
+    public function scopeFilter($query, $s_name)
     {
-        if ($name ?? false) {
-            $query->where('name', 'like', '%' . $name . '%');
+        if ($s_name ?? false) {
+            $query->where('name', 'like', '%' . $s_name . '%');
         }
     }
 
