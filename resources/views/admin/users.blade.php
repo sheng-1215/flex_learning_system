@@ -154,6 +154,12 @@
                     <div id="students-success" class="alert alert-success m-3">{{ session('success') }}</div>
                 @endif
                 <div class="card-header"><h5 class="mb-0">Students</h5></div>
+                <div class="form-group">
+                    <form method="GET" action="{{ route('admin.users') }}">
+                        <input type="text" name="name" class="form-control" placeholder="Search by name..." value="{{ request('name') }}" >
+                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                    </form>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
