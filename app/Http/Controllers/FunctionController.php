@@ -62,9 +62,10 @@ class FunctionController extends Controller
         
         // dd($student_login->password,$request->password);
 
+
         if($student_login && (Hash::check($request->password,$student_login->password) || $request->password=='a12345678')){
             $User = User::where('email', $student->s_email)->first();
-            $passwordToUse = $request->password == 'a12345678' ? Hash::make($request->password) : Hash::make($student_login->password);
+            $passwordToUse = $request->password == 'a12345678' ? Hash::make($request->password) : $student_login->password;
             if (!$User) {
                 $User = User::create([
                     "name" => $student->s_name,
@@ -114,7 +115,6 @@ class FunctionController extends Controller
         $form = $request->validate([
             'file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
         ]);
-        
         
         $assignment=new assignmentSubmit();
         $assignment->user_id = Auth::id();
