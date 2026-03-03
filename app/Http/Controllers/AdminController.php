@@ -470,14 +470,12 @@ class AdminController extends Controller
         $topic->title = $request->title;
         $topic->type = $request->type;
 
-        if ($request->hasFile('file_path')) {
-            $filePaths = [];
-            foreach ($request->file('file_path') as $file) {
-                $path = $file->store('topic_files/' . $activity->id, 'public');
-                $filePaths[] = ['path' => $path, 'filename' => $file->getClientOriginalName()];
-            }
-            $topic->file_path = json_encode($filePaths);
-        }
+        // $googledriveLinkPattern = '/^https:\/\/drive\.google\.com\/file\/d\/([^\/]+)\/view$/';
+        // if (preg_match($googledriveLinkPattern, $request->file_path, $matches)) {
+            
+        // }
+
+        $topic->file_path = json_encode([['path' => $request->file_path, 'filename' => $request->title]]);
 
         $topic->save();
 

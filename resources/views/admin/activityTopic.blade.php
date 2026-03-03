@@ -106,12 +106,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="file_path">Upload Content <span class="text-danger">*</span></label>
+                            {{-- <label for="file_path">Upload Content <span class="text-danger">*</span></label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="file_path" name="file_path[]" multiple>
                                 <label class="custom-file-label" for="file_path">Choose file(s)</label>
                             </div>
-                            <small id="type-help" class="form-text text-muted">Select a type to see allowed formats.</small>
+                            <small id="type-help" class="form-text text-muted">Select a type to see allowed formats.</small> --}}
+                            <label for="file_path">Content Link <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="file_path" name="file_path" required placeholder="Enter content link from drive or other hosting (e.g. https://drive.google.com/file/d/FILE_ID/view)">
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Add Topic</button>
                         <a href="{{ route('admin.courseActivities', ['course' => $activity->course_id]) }}" class="btn btn-secondary ml-2">Back to CU Activities</a>
@@ -182,7 +184,7 @@
                                                     }
                                                 }
                                             @endphp
-                                            <a href="{{ route('admin.downloadTopic', $topic->id) }}" target="_blank"
+                                            <a href="{{ $newattach['path'] }}" target="_blank"
                                                class="btn btn-sm btn-info mb-1 text-truncate d-inline-block"
                                                style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                 <i class="fas {{ $icon }} {{ $iconColor }} mr-1"></i>

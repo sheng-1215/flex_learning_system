@@ -64,12 +64,15 @@
                             @if(isset($selectedTopic) && $selectedTopic->type==='video')
                                 <div class="ratio ratio-16x9">
                                      @php
-                                        $videoPath = json_decode($selectedTopic->file_path);        
+                                        $videoPath = json_decode($selectedTopic->file_path); 
+                                        $url = $videoPath[0]->path;
+                                        $embedUrl = str_replace('/view?usp=sharing', '/preview', $url);       
                                     @endphp
-                                    <video id="topic-video" class="embed-responsive-item w-100" controls controlsList="nodownload noplaybackrate" disablepictureinpicture>
+                                    {{-- <video id="topic-video" class="embed-responsive-item w-100" controls controlsList="nodownload noplaybackrate" disablepictureinpicture>
                                         <source src="{{ asset('storage/' . $videoPath[0]->path) }}" type="video/mp4">
                                         Your browser does not support the video tag.
-                                    </video>
+                                    </video> --}}
+                                    <iframe id="topic-video" src="{{ $embedUrl }}" width="640" height="480" class="embed-responsive-item w-100" allowfullscreen></iframe>
                                 </div>
                                 <script>
                                     document.addEventListener('DOMContentLoaded', function() {
@@ -231,58 +234,20 @@
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='slideshow')
                                 @php
                                     $slidePaths = json_decode($selectedTopic->file_path);
-                                    $slides = [];
-                                    if (is_array($slidePaths)) {
-                                        foreach ($slidePaths as $path) {
-                                            $slides[] = asset('storage/' . $path->path);
-                                        }
-                                    }
                                 @endphp
-                                <div id="slideshow-container" style="text-align: center;">
-                                    <img id="slideshow-image" src="{{ $slides[0] ?? '' }}" style="max-height: 500px; max-width: 100%;">
-                                    <div style="margin-top: 10px;">
-                                        <button id="prev-slide" class="btn btn-outline-primary me-2">Previous</button>
-                                        <button id="next-slide" class="btn btn-primary">Next</button>
-                                    </div>
-                                </div>
-                                <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        const slides = <?php echo json_encode($slides); ?>;
-                                        let currentSlide = 0;
-
-                                        const image = document.getElementById('slideshow-image');
-                                        const prevButton = document.getElementById('prev-slide');
-                                        const nextButton = document.getElementById('next-slide');
-
-                                        function showSlide(index) {
-                                            if (index >= slides.length) currentSlide = 0;
-                                            if (index < 0) currentSlide = slides.length - 1;
-                                            image.src = slides[currentSlide];
-                                        }
-
-                                        prevButton.addEventListener('click', () => {
-                                            currentSlide--;
-                                            showSlide(currentSlide);
-                                        });
-
-                                        nextButton.addEventListener('click', () => {
-                                            currentSlide++;
-                                            showSlide(currentSlide);
-                                        });
-
-                                        showSlide(currentSlide);
-                                    });
-                                </script>
+                                <iframe src="{{ $slidePaths[0]->path ?? '' }}" width="100%" height="600px"></iframe>
+                                
                             @elseif(isset($selectedTopic) && $selectedTopic->type==='document')
                                 @php
                                     $fileName = json_decode($selectedTopic->file_path);
                                     $fileName = $fileName[0]->path ?? '';
+                                    $embedUrl = str_replace('/view?usp=sharing', '/preview', $fileName);
                                 @endphp
                                 @if(Str::endsWith($fileName, '.pdf'))
-                                    <iframe src="{{ asset('storage/' . $fileName) }}" width="100%" height="600px"></iframe>
+                                    <iframe src="{{ $embedUrl }}" width="100%" height="600px"></iframe>
                                 @elseif(Str::endsWith($fileName, '.docx'))
                                     <iframe 
-                                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $fileName)) }}" 
+                                        src="{{ $embedUrl }}" 
                                         width="100%" height="600px">
                                     </iframe>
                                 @else
